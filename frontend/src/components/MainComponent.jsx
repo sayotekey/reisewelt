@@ -9,6 +9,8 @@ import ContactBanner from "./ContactBanner.jsx";
 import AboutUs from "./AboutUs.jsx";
 import CustomerRating from "./CustomerRating.jsx";
 import OurAdvantages from "./OurAdvantages.jsx";
+import 'react-datepicker/dist/react-datepicker.css'; /////!!
+
 
 const MainComponent = () => {
   return (
