@@ -11,10 +11,9 @@ export default function SearchForm() {
   const [showDropdown, setShowDropdown] = useState(false);
   const [hotels, setHotels] = useState([]);
   const [searchCity, setSearchCity] = useState(""); // State for search input (wohin ?)
-const [myCity, setMyCity] = useState(""); // State for my city (von wo ?)
-const [dateRange, setDateRange] = useState([null, null]); // State for date range
-const[startDate, endDate] = dateRange;
-
+  const [myCity, setMyCity] = useState(""); // State for my city (von wo ?)
+  const [dateRange, setDateRange] = useState([null, null]); // State for date range
+  const [startDate, endDate] = dateRange;
 
   // onclick  button fetch hotels from backend
   const fetchHotels = async () => {
@@ -26,6 +25,21 @@ const[startDate, endDate] = dateRange;
       });
       console.log("Fetched hotels:", res.data);
       setHotels(res.data);
+
+      // Lesen die zuletzt gespeicherten Suchen aus localStorage
+      const previousSearches =
+        JSON.parse(localStorage.getItem("lastSearches")) || [];
+      // Create a new search object
+      const newSearch = {
+        to: searchCity,
+        startDate: startDate ? startDate.toISOString() : null,
+        endDate: endDate ? endDate.toISOString() : null,
+        adults,
+        children,
+      };
+      //
+      const updatedSearches = [newSearch, ...previousSearches].slice(0, 3); // Limit to 3 searches
+      localStorage.setItem("lastSearches", JSON.stringify(updatedSearches));
     } catch (error) {
       console.error("Error fetching hotels:", error);
       return [];
@@ -44,8 +58,8 @@ const[startDate, endDate] = dateRange;
             type="text"
             placeholder="Add text"
             className="w-full p-2 rounded border border-gray-800"
-         value={myCity}
-         onChange={(e)=> setMyCity(e.target.value)}
+            value={myCity}
+            onChange={(e) => setMyCity(e.target.value)}
           />
         </div>
 
@@ -58,7 +72,7 @@ const[startDate, endDate] = dateRange;
             type="text"
             placeholder="Optional"
             className="w-full p-2 rounded border border-gray-800"
-               value={searchCity}
+            value={searchCity}
             onChange={(e) => setSearchCity(e.target.value)}
           />
         </div>
@@ -76,7 +90,6 @@ const[startDate, endDate] = dateRange;
             onChange={(update) => {
               setDateRange(update);
             }}
-          
             className="w-full p-2 rounded border border-gray-800"
             placeholderText="Datum auswählen"
             dateFormat="dd.MM.yyyy"
@@ -156,6 +169,7 @@ const[startDate, endDate] = dateRange;
           Suchen
         </button>
       </div>
+
       {/* Hotels List */}
       <div className="mt-6">
         <h2 className="text-lg font-semibold mb-4">Gefundene Hotels:</h2>
