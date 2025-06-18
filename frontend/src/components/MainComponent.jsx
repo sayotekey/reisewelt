@@ -10,6 +10,7 @@ import AboutUs from "./AboutUs.jsx";
 import CustomerRating from "./CustomerRating.jsx";
 import OurAdvantages from "./OurAdvantages.jsx";
 import 'react-datepicker/dist/react-datepicker.css'; /////!!
+import {Routes, Route} from "react-router-dom";
 
 
 const MainComponent = () => {
