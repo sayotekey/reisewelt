@@ -59,6 +59,7 @@ router.get('/amadeus/cityCode', async (req, res) => {
   }
 });
 
+
 //neue route für hotels von MongoDB
 // router.get('/fetch/:cityCode', async (req, res) => {
 // /fetch ist nicht notwendig, aber erlaubt. Für eine klassische REST-API 
