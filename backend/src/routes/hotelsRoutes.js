@@ -42,7 +42,7 @@ router.get('/', async (req, res) => {
     // Überprüfen, ob count angegeben ist und eine positive Zahl ist
    //if (!count || typeof count !== 'number' || count <= 0) {
        // return res.status(400).json({ message: 'Geben Sie eine positive Zahl in „count“ an.' });
-    }
+    
 
    // try {
       // Aufruf der Funktion  seedHotels zum Generieren von Hotels
