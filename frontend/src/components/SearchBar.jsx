@@ -52,28 +52,30 @@ export default function SearchForm() {
         {/* Reiseziel */}
         <div>
           <label className="font-semibold mb-1 flex items-center gap-2">
-            Von Wo?
+            Wohin möchtest du reisen?
           </label>
           <input
             type="text"
             placeholder="Add text"
             className="w-full p-2 rounded border border-gray-800"
+
             value={myCity}
             onChange={(e) => setMyCity(e.target.value)}
+
           />
         </div>
 
         {/* Flug hinzufügen */}
         <div>
-          <label className="font-semibold mb-1">
-            Wohin möchtest du reisen?
-          </label>
+          <label className="font-semibold mb-1">Flüg hinzufügen</label>
           <input
             type="text"
             placeholder="Optional"
             className="w-full p-2 rounded border border-gray-800"
-            value={searchCity}
-            onChange={(e) => setSearchCity(e.target.value)}
+
+           // value={searchCity}
+           // onChange={(e) => setSearchCity(e.target.value)}
+
           />
         </div>
 

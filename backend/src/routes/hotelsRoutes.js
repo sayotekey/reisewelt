@@ -1,3 +1,4 @@
+
 // const express = require('express');
 import express from 'express';
 // const Hotel = require('../models/hotelModels');
@@ -32,6 +33,32 @@ router.get('/', async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 });
+
+
+// generieren von hotels
+//*router.post('/generate', async (req, res) => {
+  //  const { count } = req.body; 
+
+    // Überprüfen, ob count angegeben ist und eine positive Zahl ist
+   //if (!count || typeof count !== 'number' || count <= 0) {
+       // return res.status(400).json({ message: 'Geben Sie eine positive Zahl in „count“ an.' });
+    }
+
+   // try {
+      // Aufruf der Funktion  seedHotels zum Generieren von Hotels
+        //const hotels = await seedHotels(count);
+        //erfolgreich generierte Hotels zurückgeben
+        //res.status(201).json({
+            //message: `Erstellen ${hotels.length} hotels erfolgreich!`,
+            //hotels
+       // });
+  //  } catch (error) {
+       // console.error('Error:', error);
+       // res.status(500).json({ message: 'Error creating hotels' });
+ //   }
+//}); 
+
+
 
 
 
@@ -76,3 +103,4 @@ router.get('/:cityCode', async (req, res) => {
 
 export default router;
 // module.exports = router;
+

@@ -1,8 +1,10 @@
+
 // const axios = require('axios');
 import axios from "axios";
 import HotelAmadeus from "../models/hotelModelAmadeus.js";
-
 let accessToken = ''; // Variable to store the access token von Amadeus API.
+
+
 
 // Funktion zum Abrufen des Tokens (Zugriffsschlüssels)
 async function getAccessToken() {
@@ -110,8 +112,5 @@ async function getHotelOffers(hotelIds) {
     }
 
 }
-
-
-
 export default { fetchHotels, getHotelsByCityCode, getHotelOffers };
 

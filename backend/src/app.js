@@ -1,3 +1,4 @@
+
 // require('dotenv').config();
 import 'dotenv/config';
 // const express = require('express');
@@ -9,6 +10,7 @@ import hotelsRoutes from './routes/hotelsRoutes.js';
 // const cors = require('cors');
 import cors from 'cors';
 
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -17,11 +19,9 @@ app.use(cors());
 app.use(express.json());
 
 // Routes
-app.use('/api/hotels', hotelsRoutes);
+app.use('/api/hotels', hotelsRoutes);//!!
 
 // DB connection
-console.log(process.env.MONGODB_URL);
-
 mongoose.connect(`${process.env.MONGODB_URL}`)
   .then(() => {
     console.log('MongoDB connected');
