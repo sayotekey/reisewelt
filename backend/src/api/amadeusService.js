@@ -1,39 +1,44 @@
 
-const axios = require('axios');
-
+import axios from 'axios'; // Importiere axios für HTTP-Anfragen
+/* const qs = require ('qs') */// koddiere body in URL-encoded format, damit Amadeus API es versteht
 let accessToken = ''; // Variable to store the access token von Amadeus API.
 
+
+
 // Funktion zum Abrufen des Tokens (Zugriffsschlüssels)
-async function getAccessToken() {
-    const response = await axios.post('https://test.api.amadeus.com/v1/security/oauth2/token', null, {
-        params: {
-            grant_type: 'client_credentials',// Specify the grant type für unser token request
+const getAccessToken = async() => {
+    try {
+ const response = await axios.post('https://test.api.amadeus.com/v1/security/oauth2/token', qs.stringify({
+ grant_type: 'client_credentials',// Specify the grant type für unser token request
             client_id: process.env.AMADEUS_API_KEY,
             client_secret: process.env.AMADEUS_API_Secret
-        },
-        headers:{
-'Content-Type': 'application/x-www-form-urlencoded'//teilt dem Amadeus-Server mit, in welchem Format wir Daten übertragen.
+ }),
+ {        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded' // teilt dem Amadeus-Server mit, in welchem Format wir Daten übertragen.
         }
-    });
-    accessToken = responce.data.access_token; //speichern access token in unsere Variable
-    return accesToken;}
-
-    //wir erstelllen 2 function , sie werden undere hotels erhalten
-    async function fetchHotels(cityCode = 'BER'){
-        if (!accessToken){
-            await getAccessToken(); // Check if access token is available, if not, fetch it
-        }
-        const response = await axios.get('https://test.api.amadeus.com/v1/reference-data/locations/hotels/by-city',{
-            headers:{
-                Authorization: `Bearer ${accessToken}` // ich habe token ich kann infoHotels sehen 
-            },
-            //Wir geben den Code der Stadt ein, in der wir Hotels suchen möchten. (BER, PAR; ROM)
-            params:{
-                cityCode,
-            }
-        });
-        return response.data.data; // Return the list of hotels
     }
-    module.exports = {
-        fetchHotels,
-    };
+ 
+    );
+
+   return response.data.access_token; // Return the access token from the response
+} catch (error) {
+     console.error('Ошибка при получении токена доступа:', error.response?.data || error.message);
+    throw error;
+  }
+};
+
+// Поиск отелей через Amadeus API
+const fetchHotels = async ({ cityCode = 'PAR', checkInDate = '2025-07-01', adults = 1  }) => {
+    const token = await getAccessToken();
+        const params = { cityCode, checkInDate, adults }; // Добавляем параметры запроса
+
+const response = await axios.get(
+        'https://test.api.amadeus.com/v2/shopping/hotel-offers',
+        {
+            headers: { Authorization: `Bearer ${token}` },
+            params: params
+        }
+    );
+    return response.data;
+};
+export default { getAccessToken, fetchHotels };

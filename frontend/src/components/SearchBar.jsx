@@ -11,10 +11,9 @@ export default function SearchForm() {
   const [showDropdown, setShowDropdown] = useState(false);
   const [hotels, setHotels] = useState([]);
   const [searchCity, setSearchCity] = useState(""); // State for search input (wohin ?)
-const [myCity, setMyCity] = useState(""); // State for my city (von wo ?)
-const [dateRange, setDateRange] = useState([null, null]); // State for date range
-const[startDate, endDate] = dateRange;
-
+  const [myCity, setMyCity] = useState(""); // State for my city (von wo ?)
+  const [dateRange, setDateRange] = useState([null, null]); // State for date range
+  const [startDate, endDate] = dateRange;
 
   // onclick  button fetch hotels from backend
   const fetchHotels = async () => {
@@ -38,28 +37,23 @@ const[startDate, endDate] = dateRange;
         {/* Reiseziel */}
         <div>
           <label className="font-semibold mb-1 flex items-center gap-2">
-            Von Wo?
+            Wohin möchtest du reisen?
           </label>
           <input
             type="text"
             placeholder="Add text"
             className="w-full p-2 rounded border border-gray-800"
-         value={myCity}
-         onChange={(e)=> setMyCity(e.target.value)}
+            onChange={(e) => setSearchCity(e.target.value)}
           />
         </div>
 
         {/* Flug hinzufügen */}
         <div>
-          <label className="font-semibold mb-1">
-            Wohin möchtest du reisen?
-          </label>
+          <label className="font-semibold mb-1">Flüg hinzufügen</label>
           <input
             type="text"
             placeholder="Optional"
             className="w-full p-2 rounded border border-gray-800"
-               value={searchCity}
-            onChange={(e) => setSearchCity(e.target.value)}
           />
         </div>
 
@@ -76,7 +70,6 @@ const[startDate, endDate] = dateRange;
             onChange={(update) => {
               setDateRange(update);
             }}
-          
             className="w-full p-2 rounded border border-gray-800"
             placeholderText="Datum auswählen"
             dateFormat="dd.MM.yyyy"

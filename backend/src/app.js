@@ -1,8 +1,9 @@
-require('dotenv').config();
-const express = require('express');
-const mongoose = require('mongoose');
-const hotelsRoutes = require('./routes/hotelsRoutes');
-const cors = require('cors');
+import 'dotenv/config';
+
+import express from 'express';
+import mongoose from 'mongoose';
+import hotelsRoutes from'./routes/hotelsRoutes.js';
+import cors from'cors';
 
 
 const app = express();
@@ -13,10 +14,10 @@ app.use(cors());
 app.use(express.json());
 
 // Routes
-app.use('/api/hotels', hotelsRoutes);
+app.use('/api/hotels', hotelsRoutes);//!!
 
 // DB connection
-mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(`${process.env.MONGODB_URL}`)
   .then(() => {
     console.log('MongoDB connected');
     app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
