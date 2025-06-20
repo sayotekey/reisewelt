@@ -1,9 +1,14 @@
-import 'dotenv/config';
 
+// require('dotenv').config();
+import 'dotenv/config';
+// const express = require('express');
 import express from 'express';
+// const mongoose = require('mongoose');
 import mongoose from 'mongoose';
-import hotelsRoutes from'./routes/hotelsRoutes.js';
-import cors from'cors';
+// const hotelsRoutes = require('./routes/hotelsRoutes');
+import hotelsRoutes from './routes/hotelsRoutes.js';
+// const cors = require('cors');
+import cors from 'cors';
 
 
 const app = express();

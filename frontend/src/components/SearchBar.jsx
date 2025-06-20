@@ -25,6 +25,21 @@ export default function SearchForm() {
       });
       console.log("Fetched hotels:", res.data);
       setHotels(res.data);
+
+      // Lesen die zuletzt gespeicherten Suchen aus localStorage
+      const previousSearches =
+        JSON.parse(localStorage.getItem("lastSearches")) || [];
+      // Create a new search object
+      const newSearch = {
+        to: searchCity,
+        startDate: startDate ? startDate.toISOString() : null,
+        endDate: endDate ? endDate.toISOString() : null,
+        adults,
+        children,
+      };
+      //
+      const updatedSearches = [newSearch, ...previousSearches].slice(0, 3); // Limit to 3 searches
+      localStorage.setItem("lastSearches", JSON.stringify(updatedSearches));
     } catch (error) {
       console.error("Error fetching hotels:", error);
       return [];
@@ -43,7 +58,10 @@ export default function SearchForm() {
             type="text"
             placeholder="Add text"
             className="w-full p-2 rounded border border-gray-800"
-            onChange={(e) => setSearchCity(e.target.value)}
+
+            value={myCity}
+            onChange={(e) => setMyCity(e.target.value)}
+
           />
         </div>
 
@@ -54,6 +72,10 @@ export default function SearchForm() {
             type="text"
             placeholder="Optional"
             className="w-full p-2 rounded border border-gray-800"
+
+           // value={searchCity}
+           // onChange={(e) => setSearchCity(e.target.value)}
+
           />
         </div>
 
@@ -149,6 +171,7 @@ export default function SearchForm() {
           Suchen
         </button>
       </div>
+
       {/* Hotels List */}
       <div className="mt-6">
         <h2 className="text-lg font-semibold mb-4">Gefundene Hotels:</h2>
