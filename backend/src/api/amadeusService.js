@@ -2,6 +2,7 @@
 // const axios = require('axios');
 import axios from "axios";
 import HotelAmadeus from "../models/hotelModelAmadeus.js";
+import SearchedHotel from "../models/searchedHotel.js";
 let accessToken = ''; // Variable to store the access token von Amadeus API.
 
 
@@ -30,7 +31,7 @@ async function getAccessToken() {
 }
 
 //wir erstellen 2 function , sie werden unsere hotels erhalten
-async function fetchHotels(cityCode = 'BER') {
+async function fetchAndSaveHotels(cityCode) {
     try {
         if (!accessToken) {
             await getAccessToken(); // Check if access token is available, if not, fetch it
@@ -41,34 +42,35 @@ async function fetchHotels(cityCode = 'BER') {
             },
             //Wir geben den Code der Stadt ein, in der wir Hotels suchen möchten. (BER, PAR; ROM)
             params: {
-                cityCode,
+                cityCode
             }
         });
-        return response.data.data; // Return the list of hotels
+
+        const searchedHotelList = response.data.data;
+        const limitedHotels = searchedHotelList.slice(0, 30);
+
+        limitedHotels.forEach(async hotel => {
+            const newHotel = new SearchedHotel({
+                hotelId: hotel.hotelId,
+                name: hotel.name,
+                chainCode: hotel.chainCode,
+                iataCode: hotel.iataCode,
+                geoCode: hotel.geoCode,
+                ...(hotel.address?.countryCode && {
+                    address: { countryCode: hotel.address.countryCode }
+                })
+            });
+
+            await newHotel.save();
+
+        });
     } catch (error) {
         console.error('Error fetching hotels:', error.response ? error.response.data : error.message);
         throw new Error('Failed to fetch hotels');
     }
 }
 
-// Funktion zum Abrufen von Hotels nach Stadtcode
-async function getHotelsByCityCode(cityCode) {
-    try {
-        const token = await getAccessToken();
-        const response = await axios.get(
-            `https://test.api.amadeus.com/v1/reference-data/locations/hotels/by-city`,
-            {
-                headers: { Authorization: `Bearer ${token}` },
-                params: { cityCode }
-            }
-        );
-        return response.data;
-    } catch (error) {
-        console.error('Error fetching hotels by city code:', error.response ? error.response.data : error.message);
-        throw new Error('Failed to fetch hotels by city code');
-    }
-}
-
+//https://test.api.amadeus.com/v3/shopping/hotel-offers?hotelIds=EBLONEBE
 async function getHotelOffers(hotelIds) {
     try {
         const token = await getAccessToken();
@@ -112,5 +114,5 @@ async function getHotelOffers(hotelIds) {
     }
 
 }
-export default { fetchHotels, getHotelsByCityCode, getHotelOffers };
+export default { fetchAndSaveHotels, getHotelOffers };
 

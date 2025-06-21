@@ -5,6 +5,7 @@ import express from 'express';
 import Hotel from "../models/hotelModels.js"
 // const amadeusServise = require('../api/amadeusService');
 import amadeusService from "../api/amadeusService.js"
+import SearchedHotel from "../models/searchedHotel.js"
 
 // Erstelle einen Router aus Express
 const router = express.Router();
@@ -37,25 +38,25 @@ router.get('/', async (req, res) => {
 
 // generieren von hotels
 //*router.post('/generate', async (req, res) => {
-  //  const { count } = req.body; 
+//  const { count } = req.body; 
 
-    // Überprüfen, ob count angegeben ist und eine positive Zahl ist
-   //if (!count || typeof count !== 'number' || count <= 0) {
-       // return res.status(400).json({ message: 'Geben Sie eine positive Zahl in „count“ an.' });
-    
+// Überprüfen, ob count angegeben ist und eine positive Zahl ist
+//if (!count || typeof count !== 'number' || count <= 0) {
+// return res.status(400).json({ message: 'Geben Sie eine positive Zahl in „count“ an.' });
 
-   // try {
-      // Aufruf der Funktion  seedHotels zum Generieren von Hotels
-        //const hotels = await seedHotels(count);
-        //erfolgreich generierte Hotels zurückgeben
-        //res.status(201).json({
-            //message: `Erstellen ${hotels.length} hotels erfolgreich!`,
-            //hotels
-       // });
-  //  } catch (error) {
-       // console.error('Error:', error);
-       // res.status(500).json({ message: 'Error creating hotels' });
- //   }
+
+// try {
+// Aufruf der Funktion  seedHotels zum Generieren von Hotels
+//const hotels = await seedHotels(count);
+//erfolgreich generierte Hotels zurückgeben
+//res.status(201).json({
+//message: `Erstellen ${hotels.length} hotels erfolgreich!`,
+//hotels
+// });
+//  } catch (error) {
+// console.error('Error:', error);
+// res.status(500).json({ message: 'Error creating hotels' });
+//   }
 //}); 
 
 
@@ -79,7 +80,8 @@ router.get('/amadeus/cityCode', async (req, res) => {
   try {
     const cityCode = req.query.cityCode;
 
-    const hotels = await amadeusService.getHotelsByCityCode(cityCode);
+    //const hotels = await amadeusService.getHotelsByCityCode(cityCode);
+    const hotels = await SearchedHotel.find({ iataCode: cityCode });
     res.json(hotels);
   } catch (err) {
     res.status(400).json({ message: err.message });
