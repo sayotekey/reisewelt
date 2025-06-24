@@ -10,6 +10,7 @@ import LoginPage from "./pages/LoginPage.jsx";
 import RegisterPage from "./pages/RegisterPage.jsx";
 import LastMinuteDeals from "./pages/LastMinuteDeals.jsx";
 import FivehundredEuroDeals from "./pages/FivehundredEuroDeals.jsx";
+import ErrorPage from "./pages/ErrorPage.jsx";
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
           path="/fivehundredeuro-deals"
           element={<FivehundredEuroDeals />}
         />
+        <Route path="*" element={<ErrorPage />} />
       </Routes>
       <FooterComponent />
       {/* // </BrowserRouter> */}
