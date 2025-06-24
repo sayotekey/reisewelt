@@ -24,7 +24,7 @@ const LastMinuteComponent = () => {
               Super Last Minute
             </h3>
             <button
-              className="absolute right-16 bottom-5"
+              className="absolute right-16 bottom-5 bg-gray-800 rounded px-2 py-2 cursor-pointer"
               onClick={() => navigate("/lastminute-deals")} // = case sensitiv - lieber lowercase
             >
               Jetzt entdecken
@@ -42,7 +42,7 @@ const LastMinuteComponent = () => {
               Urlaub unter 500€
             </h3>
             <button
-              className="absolute right-16 bottom-5"
+              className="absolute right-16 bottom-5  bg-gray-800 rounded px-2 py-2 cursor-pointer"
               onClick={() => navigate("/fivehundredeuro-deals")} // = case sensitiv - lieber lowercase
             >
               Jetzt entdecken
