@@ -25,7 +25,7 @@ const LastMinute = () => {
             </h3>
             <button
               className="absolute right-16 bottom-5"
-              onClick={() => navigate("/lastMinuteDeals")}
+              onClick={() => navigate("/lastminute-deals")} // = case sensitiv - lieber lowercase
             >
               Jetzt entdecken
             </button>
@@ -43,7 +43,7 @@ const LastMinute = () => {
             </h3>
             <button
               className="absolute right-16 bottom-5"
-              onClick={() => navigate("/fivehundredEuroDeals")}
+              onClick={() => navigate("/fivehundredeuro-deals")} // = case sensitiv - lieber lowercase
             >
               Jetzt entdecken
             </button>

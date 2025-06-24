@@ -1,7 +1,7 @@
 import React from "react";
 
-const LastMinutesDeals = () => {
+const LastMinuteDeals = () => {
   return <div>Liste toller Last Minute Deals</div>;
 };
 
-export default LastMinutesDeals;
+export default LastMinuteDeals;
