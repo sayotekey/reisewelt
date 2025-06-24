@@ -1,0 +1,97 @@
+{"data": [
+        {
+            "type": "hotel-offers",
+            "hotel": {
+                "type": "hotel",
+                "hotelId": "EBLONEBE",
+                "chainCode": "EB",
+                "dupeId": "700013278",
+                "name": "The London EDITION",
+                "cityCode": "LON",
+                "latitude": 51.51713,
+                "longitude": -0.13635
+            },
+            "available": true,
+            "offers": [
+                {
+                    "id": "691DVYWF5P",
+                    "checkInDate": "2025-07-11",
+                    "checkOutDate": "2025-07-18",
+                    "rateCode": "RAC",
+                    "rateFamilyEstimated": {
+                        "code": "PRO",
+                        "type": "P"
+                    },
+                    "room": {
+                        "type": "AP7",
+                        "typeEstimated": {
+                            "category": "SUPERIOR_ROOM"
+                        },
+                        "description": {
+                            "text": "Prepay Non-refundable Non-changeable, prepay in full\nSuperior Queen, 1 Queen, Mini fridge,\n19sqm/204sqft-24sqm/258sqft, Wireless",
+                            "lang": "EN"
+                        }
+                    },
+                    "guests": {
+                        "adults": 1
+                    },
+                    "price": {
+                        "currency": "GBP",
+                        "base": "4724.00",
+                        "total": "4960.20",
+                        "variations": {
+                            "average": {
+                                "base": "674.86"
+                            },
+                            "changes": [
+                                {
+                                    "startDate": "2025-07-11",
+                                    "endDate": "2025-07-14",
+                                    "base": "684.00"
+                                },
+                                {
+                                    "startDate": "2025-07-14",
+                                    "endDate": "2025-07-15",
+                                    "base": "676.00"
+                                },
+                                {
+                                    "startDate": "2025-07-15",
+                                    "endDate": "2025-07-16",
+                                    "base": "660.00"
+                                },
+                                {
+                                    "startDate": "2025-07-16",
+                                    "endDate": "2025-07-18",
+                                    "base": "668.00"
+                                }
+                            ]
+                        }
+                    },
+                    "policies": {
+                        "cancellations": [
+                            {
+                                "description": {
+                                    "text": "NON-REFUNDABLE RATE"
+                                },
+                                "policyType": "CANCELLATION"
+                            }
+                        ],
+                        "paymentType": "deposit",
+                        "refundable": {
+                            "cancellationRefund": "NON_REFUNDABLE"
+                        }
+                    },
+                    "self": "https://test.api.amadeus.com/v3/shopping/hotel-offers/691DVYWF5P",
+                    "roomInformation": {
+                        "description": "Prepay Non-refundable Non-changeable, prepay in full\nSuperior Queen, 1 Queen, Mini fridge,\n19sqm/204sqft-24sqm/258sqft, Wireless",
+                        "type": "AP7",
+                        "typeEstimated": {
+                            "category": "SUPERIOR_ROOM"
+                        }
+                    }
+                }
+            ],
+            "self": "https://test.api.amadeus.com/v3/shopping/hotel-offers?hotelIds=EBLONEBE&checkInDate=2025-07-11&checkOutDate=2025-07-18"
+        }
+    ]
+}
