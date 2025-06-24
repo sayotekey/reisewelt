@@ -13,7 +13,8 @@ import FivehundredEuroDeals from "./pages/FivehundredEuroDeals.jsx";
 
 function App() {
   return (
-    <BrowserRouter>
+    <>
+      {/* // <BrowserRouter>/ */}
       <HeaderComponent />
       <Routes>
         <Route path="/" element={<MainComponent />} />
@@ -27,7 +28,8 @@ function App() {
         />
       </Routes>
       <FooterComponent />
-    </BrowserRouter>
+      {/* // </BrowserRouter> */}
+    </>
   );
 }
 
