@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import beachFivehundredDeals from "../images/beach-fivehundred-deals.jpg";
 import LuggageLastMinute from "../images/luggage-last-minute.jpg";
 
-const LastMinute = () => {
+const LastMinuteComponent = () => {
   const navigate = useNavigate();
 
   return (
@@ -54,4 +54,4 @@ const LastMinute = () => {
   );
 };
 
-export default LastMinute;
+export default LastMinuteComponent;
