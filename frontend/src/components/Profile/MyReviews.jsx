@@ -1,6 +1,6 @@
 import AddReviewForm from "../AddReviewForm";
 
-const MyReviews = (user, loadUser) => {
+const MyReviews = ({ user, loadUser }) => {
   return (
     <section className="space-y-2">
       <h2 className="text-xl font-semibold">Bewertungen</h2>
@@ -37,6 +37,8 @@ const MyReviews = (user, loadUser) => {
       {/* Bewertungen hinzufügen */}
       <div className="space-y-2">
         <h2 className="text-xl font-semibold">Bewertung hinzufügen</h2>
+        {/* Formular für Backend*/}
+        {/*
         {Array.isArray(user.bookings) &&
           user.bookings.map(
             (booking) =>
@@ -47,7 +49,9 @@ const MyReviews = (user, loadUser) => {
                   onReviewAdded={loadUser} // Aktualisiere die Benutzerdaten nach dem Hinzufügen einer Bewertung
                 />
               )
-          )}
+          ) }
+              */}
+        <AddReviewForm tripId="dummy-trip-id" onReviewAdded={() => {}} />
       </div>
     </section>
   );
