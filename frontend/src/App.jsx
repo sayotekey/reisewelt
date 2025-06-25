@@ -20,6 +20,7 @@ function App() {
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
         <Route path="/lastminute-deals" element={<LastMinuteDeals />} />
         <Route
           path="/fivehundredeuro-deals"
