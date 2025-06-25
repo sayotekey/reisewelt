@@ -11,6 +11,7 @@ import amadeusService from "./api/amadeusService.js"
 
 
 
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 const cityCodes = ["PAR", "BER", "ROM", "MAD", "VIE", "AMS", "BRU", "CPH", "STO", "LON"];
