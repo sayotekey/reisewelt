@@ -8,9 +8,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ContactPage from "./pages/ContactPage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import RegisterPage from "./pages/RegisterPage.jsx";
-import LastMinuteDeals from "./pages/LastMinuteDeals.jsx";
-import FivehundredEuroDeals from "./pages/FivehundredEuroDeals.jsx";
-import ErrorPage from "./pages/ErrorPage.jsx";
+import ProfilePage from "./pages/ProfilePage.jsx";
 
 function App() {
   return (
