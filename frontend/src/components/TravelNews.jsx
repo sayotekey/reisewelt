@@ -1,4 +1,4 @@
-// src/components/TravelNews.jsx
+
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import NewsCard from "./NewsCard";
@@ -16,8 +16,8 @@ const TravelNews = () => {
         const sorted = res.data.sort(
           (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
         );
-        console.log("Найдено новостей:", sorted);
-        setNews(sorted.slice(sorted)); // Только 4 последние новости
+        console.log(sorted);
+        setNews(sorted.slice(sorted));//alle Nachrichten
       })
       .catch((err) => {
         console.error("Fehler beim Laden der News:", err);
@@ -81,7 +81,7 @@ const TravelNews = () => {
       <div className="mt-8 text-center">
         <Link
           to="/news"
-          className="inline-block bg-blue-300 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition"
+          className="inline-block bg-blue-200 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition"
         >
           Weitere News anzeigen
         </Link>
@@ -91,3 +91,7 @@ const TravelNews = () => {
 };
 
 export default TravelNews;
+
+
+// TravelNews.jsx — Eine Komponente, die eine Liste von Nachrichten lädt und anzeigt.
+

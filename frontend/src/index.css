@@ -21,7 +21,7 @@ a {
   text-decoration: inherit;
 }
 a:hover {
-  color: green;
+  color: rgb(11, 82, 11);
 }
 
 body {
