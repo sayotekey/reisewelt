@@ -1,26 +1,23 @@
-
-// const express = require('express');
 import express from 'express';
-// const Hotel = require('../models/hotelModels');
-import Hotel from "../models/hotelModels.js"
-// const amadeusServise = require('../api/amadeusService');
-import amadeusService from "../api/amadeusService.js"
-import SearchedHotel from "../models/searchedHotel.js"
+
+// import Hotel from "../models/hotelModels.js"
+// import amadeusService from "../api/amadeusService.js"
+// import SearchedHotel from "../models/searchedHotel.js"
 
 // Erstelle einen Router aus Express
 const router = express.Router();
 
 // Definiere die Routen
-router.post('/', async (req, res) => {
-  try {
-    console.log(req.body);
-    const hotel = new Hotel(req.body);
-    await hotel.save();
-    res.status(201).json(hotel);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
-});
+// router.post('/', async (req, res) => {
+//   try {
+//     console.log(req.body);
+//     const hotel = new Hotel(req.body);
+//     await hotel.save();
+//     res.status(201).json(hotel);
+//   } catch (err) {
+//     res.status(400).json({ message: err.message });
+//   }
+// });
 
 router.get('/', async (req, res) => {
   try {
@@ -63,7 +60,7 @@ router.get('/', async (req, res) => {
 
 
 
-//neue route für hotels von Amadeus API
+//neue route für hotels von Amadeus API via POSTMAN-ANFRAGE
 // route lautet: http://localhost:3000/api/hotels/amadeus/hotelIds
 router.get('/amadeus/hotelIds', async (req, res) => {
   try {
@@ -76,17 +73,17 @@ router.get('/amadeus/hotelIds', async (req, res) => {
   }
 });
 
-router.get('/amadeus/cityCode', async (req, res) => {
-  try {
-    const cityCode = req.query.cityCode;
+// router.get('/amadeus/cityCode', async (req, res) => {
+//   try {
+//     const cityCode = req.query.cityCode;
 
-    //const hotels = await amadeusService.getHotelsByCityCode(cityCode);
-    const hotels = await SearchedHotel.find({ iataCode: cityCode });
-    res.json(hotels);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
-});
+//     //const hotels = await amadeusService.getHotelsByCityCode(cityCode);
+//     const hotels = await SearchedHotel.find({ iataCode: cityCode });
+//     res.json(hotels);
+//   } catch (err) {
+//     res.status(400).json({ message: err.message });
+//   }
+// });
 
 
 //neue route für hotels von MongoDB
@@ -104,5 +101,4 @@ router.get('/:cityCode', async (req, res) => {
 })
 
 export default router;
-// module.exports = router;
 
