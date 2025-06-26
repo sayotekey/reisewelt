@@ -112,4 +112,5 @@ mongoose.connect(process.env.MONGODB_URL)
 
 
 
-  ///node src/services/seedNews.js BEFEHLEN, um die Nachrichten zu generieren und in die Datenbank zu schreiben
+  ///node src/services/seedNews.js BEFEHLEN, um die Nachrichten zu generieren und in die Datenbank zu schreiben 
+  //https://www.pexels.com/
