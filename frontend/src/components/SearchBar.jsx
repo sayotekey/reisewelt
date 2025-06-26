@@ -15,16 +15,19 @@ export default function SearchForm() {
   const [dateRange, setDateRange] = useState([null, null]); // State for date range
   const [startDate, endDate] = dateRange;
 
-  // onclick  button fetch hotels from backend
-  const fetchHotels = async () => {
+  // onclick  button fetchs hotels with data from backend
+  const getCombinedData = async (myCity) => {
     try {
-      const res = await axios.get("http://localhost:3000/api/hotels", {
-        params: {
-          city: searchCity, // Pass the search city to the backend
-        },
-      });
-      console.log("Fetched hotels:", res.data);
-      setHotels(res.data);
+      const response = await axios.get(
+        "http://localhost:3000/api/amadeus/combined",
+        {
+          params: {
+            cityName: myCity, // Pass the search city to the backend
+          },
+        }
+      );
+      console.log("Fetched Information:", response.data);
+      setHotels(response.data);
 
       // Lesen die zuletzt gespeicherten Suchen aus localStorage
       const previousSearches =
@@ -58,10 +61,8 @@ export default function SearchForm() {
             type="text"
             placeholder="Add text"
             className="w-full p-2 rounded border border-gray-800"
-
             value={myCity}
             onChange={(e) => setMyCity(e.target.value)}
-
           />
         </div>
 
@@ -73,9 +74,8 @@ export default function SearchForm() {
             placeholder="Optional"
             className="w-full p-2 rounded border border-gray-800"
 
-           // value={searchCity}
-           // onChange={(e) => setSearchCity(e.target.value)}
-
+            // value={searchCity}
+            // onChange={(e) => setSearchCity(e.target.value)}
           />
         </div>
 
@@ -165,7 +165,7 @@ export default function SearchForm() {
       {/* Suchen Button */}
       <div className="mt-6 flex justify-end">
         <button
-          onClick={fetchHotels}
+          onClick={() => getCombinedData(myCity)}
           className="bg-purple-600 text-white px-6 py-2 rounded hover:bg-purple-700 transition"
         >
           Suchen
@@ -178,7 +178,7 @@ export default function SearchForm() {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {hotels.map((hotel) => (
             <div
-              key={hotel._id}
+              key={hotel.hotelId}
               className="p-4 bg-yellow-200 rounded shadow transform transition-transform hover:scale-105"
             >
               <h3 className="font-bold">{hotel.name}</h3>

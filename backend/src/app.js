@@ -1,31 +1,32 @@
-
-// require('dotenv').config();
 import 'dotenv/config';
-// const express = require('express');
 import express from 'express';
-// const mongoose = require('mongoose');
 import mongoose from 'mongoose';
-// const hotelsRoutes = require('./routes/hotelsRoutes');
-import hotelsRoutes from './routes/hotelsRoutes.js';
-import userRoutes from './routes/userRoutes.js';
-// const cors = require('cors');
 import cors from 'cors';
+
+import hotelsRoutes from './routes/hotelsRoutes.js';
+import amadeusRoutes from './routes/amadeusRoutes.js';
+import userRoutes from './routes/userRoutes.js';
+
 import SearchedHotel from "./models/searchedHotel.js";
-import amadeusService from "./api/amadeusService.js"
+// import { fetchAndSaveHotels } from "./api/amadeusService.js";
 
 
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const cityCodes = ["PAR", "BER", "ROM", "MAD", "VIE", "AMS", "BRU", "CPH", "STO", "LON"];
+// const cityCodes = ["PAR", "BER", "ROM", "MAD", "VIE", "AMS", "BRU", "CPH", "STO", "LON"];
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 
 // Routes
-app.use('/api/hotels', hotelsRoutes);//!!
-app.use('/api/users', userRoutes); 
+app.use('/api/hotels', hotelsRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/amadeus', amadeusRoutes);// Amadeus API routes lautet : http://localhost:3000/api/amadeus/combined?cityCode=PAR
+app.use("/api/amadeus/test", (req, res) => {
+  res.json({ message: "Amadeus API is working!" });
+});
 
 // DB connection
 mongoose.connect(process.env.MONGODB_URL)
@@ -35,9 +36,9 @@ mongoose.connect(process.env.MONGODB_URL)
     const exists = await SearchedHotel.findOne();
     if (!exists) {
       console.log("Database will be filled with hotel data.");
-      cityCodes.forEach(city => {
-        amadeusService.fetchAndSaveHotels(city);
-      });
+      // cityCodes.forEach(city => {
+      //   amadeusService.fetchAndSaveHotels(city);
+      // });
       console.log("Database filling is done.");
     } else {
       console.log("Database is already filled.");
