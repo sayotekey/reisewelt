@@ -7,16 +7,16 @@ const CustomerReviews = () => {
   const visibleReviews = reviews.slice(startIndex, startIndex + 3);
 
   const handlePrev = () => {
-    if (startIndex > 0) {
-      setStartIndex(startIndex - 1);
+    if (startIndex >= 3) {
+      setStartIndex(startIndex - 3);
     }
   };
 
-  const handleNext = () => {
-    if (startIndex + 3 < reviews.length) {
-      setStartIndex(startIndex + 1);
-    }
-  };
+ const handleNext = () => {
+  if (startIndex + 3 < reviews.length) {
+    setStartIndex(startIndex + 3);
+  }
+};
 
   return (
     <section className="py-12 bg-gray-400">
@@ -33,7 +33,7 @@ const CustomerReviews = () => {
             {visibleReviews.map((review) => (
               <div
                 key={review.id}
-                className="bg-white shadow-md rounded-2xl p-4 flex-1 min-w-[30%]"
+                className="bg-white shadow-md rounded-2xl p-4 min-w-[30%] max-w-[30%] h-[250px] flex flex-col justify-between"
               >
                 <div className="flex items-center mb-2">
                   <div
@@ -42,7 +42,7 @@ const CustomerReviews = () => {
                     {review.initial}
                   </div>
                   <div>
-                    <p className="font-semibold">{review.name}</p>
+                    <p className="  text-yellow-900 font-semibold">{review.name}</p>
                     <p className="text-sm text-gray-500">{review.date}</p>
                   </div>
                 </div>
@@ -51,7 +51,7 @@ const CustomerReviews = () => {
                     <Star key={i} size={16} fill="currentColor" stroke="none" />
                   ))}
                 </div>
-                <p className="text-gray-700 text-sm">{review.text}</p>
+                <p className="text-gray-700 text-sm line-clamp-4 overflow-hidden">{review.text}</p>
               </div>
             ))}
           </div>
