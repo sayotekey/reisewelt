@@ -21,12 +21,13 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/profile" element={<ProfilePage />} />
-        {/* <Route path="/lastminute-deals" element={<LastMinuteDeals />} />
+        <Route path="/lastminute-deals" element={<LastMinuteDeals />} />
+        <Route path="/news" element={<AllNews />} /> 
         <Route
           path="/fivehundredeuro-deals"
           element={<FivehundredEuroDeals />}
         />
-        <Route path="*" element={<ErrorPage />} /> */}
+        <Route path="*" element={<ErrorPage />} />
       </Routes>
       <FooterComponent />
       {/* // </BrowserRouter> */}
