@@ -1,4 +1,5 @@
 import UserModel from "../models/UserModel.js";
+import hotelModels from "../models/hotelModels.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
@@ -55,5 +56,26 @@ export const loginUser = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ message: "Serverfehler", error: error });
+  }
+};
+
+// Benutzerprofil abrufen - Get Profile
+
+export const getUserProfile = async (req, res) => {
+  try {
+    const user = await UserModel.findById(req.user.id)
+      .select("-password") // Passwort nicht zurückgeben
+      .populate("reviews.hotelId") // Ausgewählte Hotels in Reviews
+      .populate("bookings.hotelId") // Ausgewählte Hotels in Buchungen
+      .populate("favoriteHotels"); // Ausgewählte Hotels in Favoriten
+
+    if (!user) {
+      return res.status(404).json({ message: "Benutzer nicht gefunden" });
+    }
+
+    res.json(user);
+  } catch (error) {
+    console.error("Fehler beim Laden des Benutzerprofils:", error);
+    res.status(500).json({ message: "Serverfehler" });
   }
 };

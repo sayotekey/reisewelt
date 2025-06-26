@@ -1,18 +1,18 @@
-import axios from 'axios';
-import { useState} from 'react';
+import axios from "axios";
+import { useState } from "react";
 
-const FavoriteTrips = ({user, onUpdate}) => {
+const FavoriteHotels = ({ user, onUpdate }) => {
   const [loading, setLoading] = useState(false);
 
-   // Eine Reise aus den Merkzettel entfernen
-  const removeFavorite = async (tripId) => {
+  // Eine Reise aus den Merkzettel entfernen
+  const removeFavorite = async (hotelId) => {
     try {
-      await axios.delete(`/api/user/favoriteTrips/${tripId}`, {
+      await axios.delete(`/api/user/favoriteHotels/${hotelId}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
       onUpdate(); // Callback zum Aktualisieren der Favoritenliste
     } catch (error) {
-      console.error("Error removing favorite trip:", error);
+      console.error("Error removing favorite hotel:", error);
     } finally {
       setLoading(false);
     }
@@ -21,19 +21,19 @@ const FavoriteTrips = ({user, onUpdate}) => {
   return (
     <section className="space-y-2">
       <h2 className="text-xl font-semibold">Merkzettel</h2>
-      {!user?.favoriteTrips ? (
+      {!user?.favoriteHotels ? (
         <p>Loading...</p>
-      ) : user.favoriteTrips.length === 0 ? (
+      ) : user.favoriteHotels.length === 0 ? (
         <p>Keine Reisen auf dem Merkzettel.</p>
       ) : (
         <ul className="space-y-2">
-          {user.favoriteTrips.map((trip) => (
-            <li key={trip._id} className="flex justify-between items-center">
+          {user.favoriteHotels.map((hotel) => (
+            <li key={hotel._id} className="flex justify-between items-center">
               <span>
-                {trip.title} - {trip.location}
+                {hotel.title} - {hotel.location}
               </span>
               <button
-                onClick={() => removeFavorite(trip._id)}
+                onClick={() => removeFavorite(hotel._id)}
                 className="text-red-500 hover:text-red-700"
                 disabled={loading}
               >
@@ -47,4 +47,4 @@ const FavoriteTrips = ({user, onUpdate}) => {
   );
 };
 
-export default FavoriteTrips;
+export default FavoriteHotels;

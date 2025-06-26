@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import PersonalDaten from "../components/Profile/PersonalDaten";
-import FavoriteTrips from "../components/Profile/FavoriteTrips";
+import FavoriteHotels from "../components/Profile/FavoriteHotels";
 import MyBookings from "../components/Profile/MyBookings";
 import MyReviews from "../components/Profile/MyReviews";
 import ChangePasswordForm from "../components/Profile/ChangePasswordForm";
@@ -69,7 +69,7 @@ const ProfilePage = () => {
           {activeTab === "personal" && <PersonalDaten user={user} />}
           {activeTab === "password" && <ChangePasswordForm user={user} />}
           {activeTab === "favorites" && (
-            <FavoriteTrips user={user} onUpdate={loadUser} />
+            <FavoriteHotels user={user} onUpdate={loadUser} />
           )}
           {activeTab === "bookings" && <MyBookings user={user} />}
           {activeTab === "reviews" && (

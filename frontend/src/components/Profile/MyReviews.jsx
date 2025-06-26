@@ -16,7 +16,7 @@ const MyReviews = ({ user, loadUser }) => {
               <li key={review._id} className="border p-4">
                 <p>
                   <strong>Reise:</strong>
-                  {review.tripId?.title || "Unbekannt"}
+                  {review.hotelId?.title || "Unbekannt"}
                 </p>
                 <p>
                   <strong>Bewertung:</strong> {review.rating} ⭐
@@ -42,16 +42,16 @@ const MyReviews = ({ user, loadUser }) => {
         {Array.isArray(user.bookings) &&
           user.bookings.map(
             (booking) =>
-              booking.tripId && (
+              booking.hotelId && (
                 <AddReviewForm
                   key={booking._id}
-                  tripId={booking.tripId._id}
+                  hotelId={booking.hotelId._id}
                   onReviewAdded={loadUser} // Aktualisiere die Benutzerdaten nach dem Hinzufügen einer Bewertung
                 />
               )
           ) }
               */}
-        <AddReviewForm tripId="dummy-trip-id" onReviewAdded={() => {}} />
+        <AddReviewForm hotelId="dummy-hotel-id" onReviewAdded={() => {}} />
       </div>
     </section>
   );

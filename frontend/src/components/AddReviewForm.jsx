@@ -55,7 +55,7 @@ const AddReviewForm = ({ tripId, onReviewAdded }) => {
 
   return (
     <form onSubmit={handleSubmit} className="border p-4 space-y-4">
-      {/* Bereitungsauswahl */}
+      {/* Bewertungsauswahl */}
       <div>
         <label className="block font-medium"> Bewertung: </label>
         <StarRaiting rating={rating} setRating={setRating} />
