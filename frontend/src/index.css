@@ -21,7 +21,7 @@ a {
   text-decoration: inherit;
 }
 a:hover {
-  color: green;
+  color: rgb(11, 82, 11);
 }
 
 body {
@@ -67,4 +67,14 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+}
+
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
