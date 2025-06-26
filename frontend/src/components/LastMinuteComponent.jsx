@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import beachFivehundredDeals from "../images/beach-fivehundred-deals.jpg";
 import LuggageLastMinute from "../images/luggage-last-minute.jpg";
 
-const LastMinute = () => {
+const LastMinuteComponent = () => {
   const navigate = useNavigate();
 
   return (
@@ -24,7 +24,7 @@ const LastMinute = () => {
               Super Last Minute
             </h3>
             <button
-              className="absolute right-16 bottom-5"
+              className="absolute right-16 bottom-5 bg-gray-800 rounded px-2 py-2 cursor-pointer"
               onClick={() => navigate("/lastminute-deals")} // = case sensitiv - lieber lowercase
             >
               Jetzt entdecken
@@ -42,7 +42,7 @@ const LastMinute = () => {
               Urlaub unter 500€
             </h3>
             <button
-              className="absolute right-16 bottom-5"
+              className="absolute right-16 bottom-5  bg-gray-800 rounded px-2 py-2 cursor-pointer"
               onClick={() => navigate("/fivehundredeuro-deals")} // = case sensitiv - lieber lowercase
             >
               Jetzt entdecken
@@ -54,4 +54,4 @@ const LastMinute = () => {
   );
 };
 
-export default LastMinute;
+export default LastMinuteComponent;

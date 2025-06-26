@@ -89,12 +89,9 @@ const HeaderComponent = () => {
       <div className="flex items-center justify-between w-full">
         <nav className="flex items-center gap-5">
           <NavLink to="/">Logo</NavLink>
-
           <NavLink to="/contact"> Kontakt </NavLink>
-
           {/* hier später Pfad anpassen auf Login-Pfad des Benutzers!! */}
           <NavLink to="/account/wishlist">Merkliste</NavLink>
-
           <div className="relative w-auto" ref={languageDropdownRef}>
             <div
               className="flex items-center h-8 px-3 py-2 cursor-pointer rounded"
@@ -182,6 +179,7 @@ const HeaderComponent = () => {
           <div className="text-black">Dark/Light</div>
           {/* // */}
           <NavLink to="/login">Login/Olena</NavLink>
+          {/* /login=http://localhost:5173/login */}
         </nav>
       </div>
     </header>

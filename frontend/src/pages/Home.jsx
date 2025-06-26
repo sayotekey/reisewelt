@@ -2,7 +2,7 @@ import React from "react";
 import HeroSection from "../components/HeroSection";
 import SearchBar from "../components/SearchBar";
 import LastSearch from "../components/LastSearch";
-import LastMinute from "../components/LastMinute";
+import LastMinuteComponent from "../components/LastMinuteComponent";
 import TopTravelDestinations from "../components/TopTravelDestinations";
 import TravelNews from "../components/TravelNews";
 import ContactBanner from "../components/ContactBanner";
@@ -18,7 +18,7 @@ const Home = () => {
       <HeroSection />
       <SearchBar />
       <LastSearch />
-      <LastMinute />
+      <LastMinuteComponent />
       <TopTravelDestinations />
       <TravelNews />
       <ContactBanner />
