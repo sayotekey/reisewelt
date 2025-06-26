@@ -4,11 +4,13 @@ import axios from "axios";
 import NewsCard from "../components/NewsCard"; // путь к твоей карточке
 import { Link } from "react-router-dom";
 
+//!!
 const AllNews = () => {
   const [news, setNews] = useState([]);
 
   useEffect(() => {
-    axios.get("http://localhost:3000/api/news")
+    axios
+      .get("http://localhost:3000/api/news")
       .then((res) => {
         const sorted = res.data.sort(
           (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
