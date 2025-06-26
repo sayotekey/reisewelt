@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const { Schema } = mongoose;
 
 const bookingSchema = new Schema({
-  tripId: { type: Schema.Types.ObjectId, ref: "Trip", required: true },
+  hotelId: { type: Schema.Types.ObjectId, ref: "Hotel", required: true },
   status: {
     type: String,
     enum: ["Pending", "Confirmed", "Cancelled"],
@@ -13,7 +13,7 @@ const bookingSchema = new Schema({
 });
 
 const reviewSchema = new Schema({
-  tripId: { type: Schema.Types.ObjectId, ref: "Trip", required: true },
+  hotelId: { type: Schema.Types.ObjectId, ref: "Hotel", required: true },
   comment: { type: String, required: true },
   rating: { type: Number, min: 1, max: 5, required: true },
   date: { type: Date, default: Date.now },
@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema(
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    favoriteTrips: [{ type: Schema.Types.ObjectId, ref: "Trip" }],
+    favoriteHotels: [{ type: Schema.Types.ObjectId, ref: "Hotel" }],
     bookings: [bookingSchema],
     reviews: [reviewSchema],
   },
