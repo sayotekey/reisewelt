@@ -6,9 +6,13 @@ import cors from 'cors';
 import hotelsRoutes from './routes/hotelsRoutes.js';
 import amadeusRoutes from './routes/amadeusRoutes.js';
 import userRoutes from './routes/userRoutes.js';
+import newsRoutes from './routes/newsRoutes.js';
+import cors from 'cors';
 
 import SearchedHotel from "./models/searchedHotel.js";
 // import { fetchAndSaveHotels } from "./api/amadeusService.js";
+import amadeusService from "./api/amadeusService.js"
+
 
 
 
@@ -21,6 +25,10 @@ app.use(cors());
 app.use(express.json());
 
 // Routes
+app.use('/api/hotels', hotelsRoutes);//!!
+app.use('/api/users', userRoutes);
+app.use('/api/news', newsRoutes);
+
 app.use('/api/hotels', hotelsRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/amadeus', amadeusRoutes);// Amadeus API routes lautet : http://localhost:3000/api/amadeus/combined?cityCode=PAR
