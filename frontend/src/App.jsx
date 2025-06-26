@@ -25,22 +25,14 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/profile" element={<ProfilePage />} />
-<<<<<<< olena2
-        {/* <Route path="/lastminute-deals" element={<LastMinuteDeals />} />
-=======
         <Route path="/lastminute-deals" element={<LastMinuteDeals />} />
         <Route path="/news" element={<AllNews />} /> 
->>>>>>> main
         <Route
           path="/fivehundredeuro-deals"
           element={<FivehundredEuroDeals />}
         />
-<<<<<<< olena2
-        <Route path="*" element={<ErrorPage />} /> */}
-=======
         <Route path="*" element={<ErrorPage />} />
         <Route path="/news/:id" element={<SingleNews />} />
->>>>>>> main
       </Routes>
       <FooterComponent />
       {/* // </BrowserRouter> */}
