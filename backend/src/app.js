@@ -7,11 +7,10 @@ import hotelsRoutes from './routes/hotelsRoutes.js';
 import amadeusRoutes from './routes/amadeusRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import newsRoutes from './routes/newsRoutes.js';
-import cors from 'cors';
 
 import SearchedHotel from "./models/searchedHotel.js";
 // import { fetchAndSaveHotels } from "./api/amadeusService.js";
-import amadeusService from "./api/amadeusService.js"
+
 
 
 
