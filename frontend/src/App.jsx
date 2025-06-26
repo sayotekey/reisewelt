@@ -9,6 +9,10 @@ import ContactPage from "./pages/ContactPage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import RegisterPage from "./pages/RegisterPage.jsx";
 import ProfilePage from "./pages/ProfilePage.jsx";
+import LastMinuteDeals from "./pages/LastMinuteDeals.jsx";
+import FivehundredEuroDeals from "./pages/FivehundredEuroDeals.jsx";
+import SingleNews from "./pages/SingleNews.jsx";
+
 
 function App() {
   return (
@@ -27,6 +31,7 @@ function App() {
           element={<FivehundredEuroDeals />}
         />
         <Route path="*" element={<ErrorPage />} />
+        <Route path="/news/:id" element={<SingleNews />} />
       </Routes>
       <FooterComponent />
       {/* // </BrowserRouter> */}

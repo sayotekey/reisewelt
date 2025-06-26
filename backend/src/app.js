@@ -1,17 +1,14 @@
 
-// require('dotenv').config();
 import 'dotenv/config';
-// const express = require('express');
 import express from 'express';
-// const mongoose = require('mongoose');
 import mongoose from 'mongoose';
-// const hotelsRoutes = require('./routes/hotelsRoutes');
 import hotelsRoutes from './routes/hotelsRoutes.js';
 import userRoutes from './routes/userRoutes.js';
-// const cors = require('cors');
+import newsRoutes from './routes/newsRoutes.js';
 import cors from 'cors';
 import SearchedHotel from "./models/searchedHotel.js";
 import amadeusService from "./api/amadeusService.js"
+
 
 
 
@@ -26,7 +23,8 @@ app.use(express.json());
 // Routes
 app.use('/api/hotels', hotelsRoutes);//!!
 app.use('/api/users', userRoutes); 
-
+ app.use('/api/news', newsRoutes);
+ 
 // DB connection
 mongoose.connect(process.env.MONGODB_URL)
   .then(async () => {
