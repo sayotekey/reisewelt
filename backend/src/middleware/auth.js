@@ -14,7 +14,7 @@ const auth = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET); // Token verifizieren
-    req.user = { id: decoded.id }; // Benutzer-ID aus dem Token extrahieren
+    req.user = { id: decoded.id,  name: decoded.name }; // Benutzer-ID aus dem Token extrahieren
     next(); // Leite die Anfrage an den Controller weiter
   } catch (error) {
     console.error("Ungültiger Token:", error);
