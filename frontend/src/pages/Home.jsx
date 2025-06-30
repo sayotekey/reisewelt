@@ -7,7 +7,7 @@ import TopTravelDestinations from "../components/TopTravelDestinations";
 import TravelNews from "../components/TravelNews";
 import ContactBanner from "../components/ContactBanner";
 import AboutUs from "../components/AboutUs";
-import CustomerRating from "../components/CustomerRating";
+import CustomerReviews from "../components/CustomerReviews";
 import OurAdvantages from "../components/OurAdvantages";
 
 import "react-datepicker/dist/react-datepicker.css"; /////!!
@@ -23,7 +23,7 @@ const Home = () => {
       <TravelNews />
       <ContactBanner />
       <AboutUs />
-      <CustomerRating />
+      <CustomerReviews />
       <OurAdvantages />
     </div>
   );
