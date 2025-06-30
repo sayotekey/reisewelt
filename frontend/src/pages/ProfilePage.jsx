@@ -28,7 +28,7 @@ const ProfilePage = () => {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-      console.log("User data:", res.data);
+      // console.log("User data:", res.data);
       
       setLocalUser(res.data);
     } catch (error) {

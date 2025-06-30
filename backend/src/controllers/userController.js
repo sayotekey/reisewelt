@@ -65,7 +65,7 @@ export const getUserProfile = async (req, res) => {
   try {
     const user = await UserModel.findById(req.user.id)
       .select("-password") // Passwort nicht zurückgeben
-      .populate("reviews.hotelId") // Ausgewählte Hotels in Reviews
+      .populate("reviews") // Bewertungen des Benutzers
       .populate("bookings.hotelId") // Ausgewählte Hotels in Buchungen
       .populate("favoriteHotels"); // Ausgewählte Hotels in Favoriten
 

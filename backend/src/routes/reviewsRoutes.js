@@ -2,6 +2,7 @@ import express from "express";
 import auth from "../middleware/auth.js"; 
 
 import Review from "../models/reviewModel.js";
+import UserModel from "../models/UserModel.js";
 
 const router = express.Router();
 
@@ -18,6 +19,10 @@ router.get("/", async (req, res) => {
 
 // create a new review (auth required)
 router.post("/", auth, async (req, res) => {
+
+  // console.log("Body:", req.body);
+  // console.log("User ", req.user); 
+  
   const { text, rating } = req.body;
 
   if (!text || !rating) {
@@ -33,6 +38,12 @@ router.post("/", auth, async (req, res) => {
     });
 
     await newReview.save();
+
+    // Rewiew-ID in UserModel speichern
+    await UserModel.findByIdAndUpdate(req.user.id, {
+      $push: { reviews: newReview._id }, 
+      }); 
+
     res.status(201).json(newReview);
   } catch (error) {
     console.error("Fehler beim Speichern der Bewertung:", error);
