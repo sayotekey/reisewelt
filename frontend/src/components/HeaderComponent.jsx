@@ -186,9 +186,9 @@ const HeaderComponent = () => {
           {user ? (
             <>
               <NavLink to="/profile"> {user.name || "Profile"} </NavLink>
-              <button onClick={logout} className="ml-2 text-blue-600">
+              {/* <button onClick={logout} className="ml-2 text-blue-600">
                 Logout
-              </button>
+              </button> */}
             </>
           ) : (
             <NavLink to="/login">Login</NavLink>
