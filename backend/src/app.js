@@ -11,6 +11,10 @@ import newsRoutes from './routes/newsRoutes.js';
 import SearchedHotel from "./models/searchedHotel.js";
 // import { fetchAndSaveHotels } from "./api/amadeusService.js";
 
+
+
+
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 // const cityCodes = ["PAR", "BER", "ROM", "MAD", "VIE", "AMS", "BRU", "CPH", "STO", "LON"];

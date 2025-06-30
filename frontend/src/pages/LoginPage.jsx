@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import validateRegister from "../utils/validation";
 import axios from "axios";
+
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -9,6 +11,7 @@ const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
 
+  const {login} = useAuth(); 
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -36,6 +39,8 @@ const LoginPage = () => {
 
         localStorage.setItem("token", token);
         localStorage.setItem("user", JSON.stringify(user));
+
+        login(user); // Aktualisieren des Auth-Kontexts mit dem Benutzer
 
         // alert("Login erfolgreich!");
         navigate("/");

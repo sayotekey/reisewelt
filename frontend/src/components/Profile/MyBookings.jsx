@@ -12,7 +12,7 @@ const MyBookings = () => {
             <li key={booking._id} className="flex justify-between items-center">
               <p>
                 <strong>Reise:</strong>
-                {booking.tripId?.title || "Unbekannt"}
+                {booking.hotelId?.title || "Unbekannt"}
               </p>
               <p>
                 <strong>Status:</strong> {booking.status}

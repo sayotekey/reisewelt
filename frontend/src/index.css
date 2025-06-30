@@ -24,16 +24,16 @@ a:hover {
   color: rgb(11, 82, 11);
 }
 
-body {
+/* body {
   margin: 0;
   display: flex;
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
-}
+} */
 
 h1 {
-  font-size: 3.2em;
+  /* font-size: 3.2em; */
   line-height: 1.1;
 }
 
@@ -75,6 +75,16 @@ button:focus-visible {
 }
 
 .no-scrollbar {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; 
+  scrollbar-width: none; 
+}
+
+
+.hide-scrollbar {
+  scrollbar-width: none; 
+  -ms-overflow-style: none;  
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; 
 }
