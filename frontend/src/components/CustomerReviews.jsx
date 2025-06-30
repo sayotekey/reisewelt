@@ -11,7 +11,6 @@ export default function CustomerReviews() {
   const navigate = useNavigate();
   const [successMessage, setSuccessMessage] = useState("");
 
-
   useEffect(() => {
     fetch("/api/reviews")
       .then((res) => res.json())
@@ -20,11 +19,11 @@ export default function CustomerReviews() {
   }, []);
 
   const scrollLeft = () => {
-    scrollRef.current.scrollBy({ left: -400, behavior: "smooth" });
+    scrollRef.current.scrollBy({ left: -1320, behavior: "smooth" });
   };
 
   const scrollRight = () => {
-    scrollRef.current.scrollBy({ left: 400, behavior: "smooth" });
+    scrollRef.current.scrollBy({ left: 1320, behavior: "smooth" });
   };
 
   const handleReviewClick = () => {
@@ -49,33 +48,35 @@ export default function CustomerReviews() {
         body: JSON.stringify({ text, rating }),
       });
 
-  if (res.status === 401) {
-      localStorage.removeItem("token");
-      alert("Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an.");
-      navigate("/login");
-      return;
-    } else if (!res.ok) {
-      const errorData = await res.json();
-      alert(errorData.message || "Fehler beim Absenden der Bewertung");
-      return;
-    }
+      if (res.status === 401) {
+        localStorage.removeItem("token");
+        alert("Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an.");
+        navigate("/login");
+        return;
+      } else if (!res.ok) {
+        const errorData = await res.json();
+        alert(errorData.message || "Fehler beim Absenden der Bewertung");
+        return;
+      }
 
-    const newReview = await res.json();
-    setReviews((prev) => [newReview, ...prev]);
-    setText("");
-    setRating(5);
-    setShowForm(false);
-    setSuccessMessage("Vielen Dank! Ihr Feedback wurde erfolgreich gespeichert.");
-setTimeout(() => setSuccessMessage(""), 3000); 
-  } catch (err) {
-    console.error(err);
-    alert("Netzwerkfehler. Bitte versuchen Sie es später erneut.");
-  }
-};
+      const newReview = await res.json();
+      setReviews((prev) => [newReview, ...prev]);
+      setText("");
+      setRating(5);
+      setShowForm(false);
+      setSuccessMessage(
+        "Vielen Dank! Ihr Feedback wurde erfolgreich gespeichert."
+      );
+      setTimeout(() => setSuccessMessage(""), 3000);
+    } catch (err) {
+      console.error(err);
+      alert("Netzwerkfehler. Bitte versuchen Sie es später erneut.");
+    }
+  };
 
   return (
-    <div className=" py-10 relative overflow-hidden">
-      <div className="max-w-6xl mx-auto px-4">
+    <div className="py-10">
+      <div className="max-w-[1360px] mx-auto px-4 relative">
         <div className="flex justify-between items-center mb-6 relative">
           <h2 className="text-2xl font-semibold text-white text-center w-full">
             Das sagen unsere Kunden
@@ -83,16 +84,16 @@ setTimeout(() => setSuccessMessage(""), 3000);
           <button
             onClick={handleReviewClick}
             className="absolute right-6 p-2 bg-amber-100 text-blue-700 hover:underline font-semibold rounded-md"
-          > {successMessage}
+          >
+            {successMessage}
             Bewertung schreiben
           </button>
         </div>
 
-        {/* form*/}
         {showForm && (
           <form
             onSubmit={handleSubmit}
-            className="bg-white  text-black p-4 rounded shadow mb-6"
+            className="bg-white text-black p-4 rounded shadow mb-6"
           >
             <label className="block mb-2">
               <span className="text-gray-700 font-medium">Ihr Feedback:</span>
@@ -127,57 +128,62 @@ setTimeout(() => setSuccessMessage(""), 3000);
           </form>
         )}
 
-        {/* Стрелки */}
-        <button
-          onClick={scrollLeft}
-          className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-gray-300 rounded-full p-2 shadow hover:bg-gray-400 z-10"
-        >
-          <ArrowLeft size={20} />
-        </button>
-        <button
-          onClick={scrollRight}
-          className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-gray-300 rounded-full p-2 shadow hover:bg-gray-400 z-10"
-        >
-          <ArrowRight size={20} />
-        </button>
+        {/* container */}
+        <div className="relative">
+          {/* arrow left */}
+          <button
+            onClick={scrollLeft}
+            className="absolute -left-11 top-1/2 transform -translate-y-1/2 bg-gray-300 rounded-full p-2 shadow hover:bg-gray-400 z-20"
+          >
+            <ArrowLeft size={20} />
+          </button>
 
-        {/* Слайдер отзывов */}
-        <div
-          ref={scrollRef}
-          className="flex space-x-6 overflow-x-auto scroll-smooth pb-4 hide-scrollbar"
-        >
-          {reviews.map((review) => (
-            <div
-              key={review._id}
-              className="bg-white rounded-xl shadow-md p-5 min-w-[300px] max-w-[320px] flex-shrink-0"
-            >
-              <div className="flex items-center mb-2">
-                <div
-                  className="w-10 h-10 rounded-full flex items-center justify-center text-blue-500 font-bold mr-3"
-                  style={{ backgroundColor: getRandomColor(review.text) }}
-                >
-                  {review.name ? review.name[0].toUpperCase() : "U"}
+          {/* slider */}
+          <div
+            ref={scrollRef}
+            className="flex space-x-6 overflow-x-auto scroll-smooth pb-4 hide-scrollbar"
+          >
+            {reviews.map((review) => (
+              <div
+                key={review._id}
+                className="bg-white rounded-xl shadow-md p-5 w-[300px] flex-shrink-0"
+              >
+                <div className="flex items-center mb-2">
+                  <div
+                    className="w-10 h-10 rounded-full flex items-center justify-center text-blue-500 font-bold mr-3"
+                    style={{ backgroundColor: getRandomColor(review.text) }}
+                  >
+                    {review.name ? review.name[0].toUpperCase() : "U"}
+                  </div>
+                  <div>
+                    <p className="font-semibold text-gray-900">
+                      {review.name || "Unbekannt"}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      {new Date(review.createdAt).toLocaleDateString()}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <p className="font-semibold text-gray-900">
-                    {review.name || "Unbekannt"}
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    {new Date(review.createdAt).toLocaleDateString()}
-                  </p>
+                <div className="flex items-center text-yellow-400 mb-2">
+                  {"★".repeat(review.rating)}
+                  {"☆".repeat(5 - review.rating)}
                 </div>
+                <p className="text-sm text-gray-800">
+                  {review.text.length > 180
+                    ? review.text.slice(0, 180) + "..."
+                    : review.text}
+                </p>
               </div>
-              <div className="flex items-center text-yellow-400 mb-2">
-                {"★".repeat(review.rating)}
-                {"☆".repeat(5 - review.rating)}
-              </div>
-              <p className="text-sm text-gray-800">
-                {review.text.length > 180
-                  ? review.text.slice(0, 180) + "..."
-                  : review.text}
-              </p>
-            </div>
-          ))}
+            ))}
+          </div>
+
+          {/* arrow right */}
+          <button
+            onClick={scrollRight}
+            className="absolute -right-11 top-1/2 transform -translate-y-1/2 bg-gray-300 rounded-full p-2 shadow hover:bg-gray-400 z-20"
+          >
+            <ArrowRight size={20} />
+          </button>
         </div>
       </div>
     </div>
