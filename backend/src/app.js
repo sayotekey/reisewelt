@@ -2,7 +2,7 @@ import 'dotenv/config';
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
-
+import reviewsRoutes from './routes/reviewsRoutes.js';
 import hotelsRoutes from './routes/hotelsRoutes.js';
 import amadeusRoutes from './routes/amadeusRoutes.js';
 import userRoutes from './routes/userRoutes.js';
@@ -10,6 +10,8 @@ import newsRoutes from './routes/newsRoutes.js';
 
 import SearchedHotel from "./models/searchedHotel.js";
 // import { fetchAndSaveHotels } from "./api/amadeusService.js";
+
+
 
 
 
@@ -27,6 +29,7 @@ app.use(express.json());
 app.use('/api/hotels', hotelsRoutes);//!!
 app.use('/api/users', userRoutes);
 app.use('/api/news', newsRoutes);
+app.use('/api/reviews', reviewsRoutes);
 
 app.use('/api/hotels', hotelsRoutes);
 app.use('/api/users', userRoutes);
