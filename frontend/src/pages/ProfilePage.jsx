@@ -13,7 +13,7 @@ const ProfilePage = () => {
   //Laden der Benutzerdaten beim Laden der Komponente
   const loadUser = async () => {
     try {
-      const res = await axios.get("/api/user/profile", {
+      const res = await axios.get("/api/users/profile", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
