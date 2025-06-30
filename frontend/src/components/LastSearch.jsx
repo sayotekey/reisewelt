@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import lastSearchImg from "../assets/lastSearchImg.png";
+import lastSearchImg from "../images/lastSearchImg.png";
 
 const LastSearch = () => {
   const [lastSearches, setLastSearches] = useState([]);
