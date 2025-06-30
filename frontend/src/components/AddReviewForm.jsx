@@ -35,7 +35,7 @@ const AddReviewForm = ({ tripId, onReviewAdded }) => {
     try {
       await axios.post(
         `/api/reviews`,
-        { tripId, rating, comment },
+        { rating, text: comment },
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         }

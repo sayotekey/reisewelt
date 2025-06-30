@@ -26,7 +26,7 @@ const userSchema = new mongoose.Schema(
     password: { type: String, required: true },
     favoriteHotels: [{ type: Schema.Types.ObjectId, ref: "Hotel" }],
     bookings: [bookingSchema],
-    reviews: [reviewSchema],
+    reviews: [{type: mongoose.Schema.Types.ObjectId, ref: "Review"}],
   },
   { timestamps: true }
 );
