@@ -5,6 +5,7 @@ import unitedStates from "../images/united-states.png";
 import ukraine from "../images/ukraine.png";
 import france from "../images/france.png";
 import turkey from "../images/turkey.png";
+import { useAuth } from "../context/AuthContext.jsx";
 
 import euroSignDark from "../icons/euro-sign-solid-black.svg";
 // import euroSign from "../icons/euro-sign-solid-white.svg";
@@ -53,6 +54,9 @@ const HeaderComponent = () => {
   const languageDropdownRef = useRef(null);
   const currencyDropdownRef = useRef(null);
   // console.log(currencyDark);
+
+  // Holt den aktuellen Benutzer und die Logout-Funktion aus dem Auth-Kontext
+  const { user, logout } = useAuth();
 
   useEffect(() => {
     function handleClickOutsideFlag(event) {
@@ -178,7 +182,17 @@ const HeaderComponent = () => {
            */}
           <div className="text-black">Dark/Light</div>
           {/* // */}
-          <NavLink to="/login">Login/Olena</NavLink>
+          {/* <NavLink to="/login">Login/Olena</NavLink> */}
+          {user ? (
+            <>
+              <NavLink to="/profile"> {user.name || "Profile"} </NavLink>
+              <button onClick={logout} className="ml-2 text-blue-600">
+                Logout
+              </button>
+            </>
+          ) : (
+            <NavLink to="/login">Login</NavLink>
+          )}
           {/* /login=http://localhost:5173/login */}
         </nav>
       </div>
