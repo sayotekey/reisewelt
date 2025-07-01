@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import validateRegister from "../utils/validation";
+import validateRegisterPassword from "../utils/validateRegisterPassword";
 import axios from "axios";
 
 
@@ -18,7 +18,7 @@ const LoginPage = () => {
     e.preventDefault();
 
     // Validierung der Eingaben
-    const validationErrors = validateRegister({ email, password }, "login");
+    const validationErrors = validateRegisterPassword({ email, password }, "login");
     setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length === 0) {
