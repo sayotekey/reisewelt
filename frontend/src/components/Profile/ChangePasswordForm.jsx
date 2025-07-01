@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import { validatePasswordChange } from "../../utils/validatePasswordChange";
 
 const ChangePasswordForm = () => {
   const [oldPassword, setOldPassword] = useState("");
@@ -10,6 +11,17 @@ const ChangePasswordForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const { isValid, errors } = validatePasswordChange({
+      oldPassword,
+      newPassword,
+    });
+
+    if (!isValid) {
+      setMessage(Object.values(errors).join(" "));
+      return;
+    }
+
     try {
       // Sende die Anfrage zum Ändern des Passworts
       const res = await axios.post(
