@@ -8,9 +8,10 @@ import axios from "axios";
 import validCities from "../utils/validCities.js";
 
 import xButtonDelete from "../icons/x-solid.svg";
+
 import finder from "../icons/finder.gif";
 import search from "../icons/search.gif";
-import itcRoyal from "../images/itc-royal-bengal.jpg";
+import gptExample from "../images/ChatGPT.png";
 
 export default function SearchForm() {
   const [adults, setAdults] = useState(2);
@@ -121,7 +122,7 @@ export default function SearchForm() {
               tabIndex={-1}
               aria-label="Eingabe löschen"
             >
-              <div className="absolute -top-8 right-0 w-10 h-10 flex justify-center">
+              <div className="absolute top-3 right-0 w-10 h-10 flex justify-cente">
                 <img src={xButtonDelete} alt="x-icon" width={15} />
               </div>
             </button>
@@ -270,23 +271,78 @@ export default function SearchForm() {
         </h2>
         {/* <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"> */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-6">
-          {/*  */} <img src={itcRoyal} className="w-1/3 h-auto" alt="" />
           {hotels.map((hotel) => (
-            <div className="flex flex-wrap w-1/2" key={hotel.hotel.dupeId}>
-              {/* einige Hotelnamen sind full-caps => Anpassen! */}
-              <h3 className="font-bold w-full">{hotel.hotel.name}</h3>
-              {/* <p>{Bewertung später}</p> */}
-              <h4 className="block w-full">&#40;{hotel.hotel.cityCode}&#41;</h4>
-              <p className="block">
-                {hotel.offers?.[0]?.checkInDate}&#45;
-                {hotel.offers?.[0]?.checkOutDate}
-              </p>
-
-              <p>
-                Preis ab:
-                {hotel.offers?.[0]?.price?.total}
-                {hotel.offers?.[0]?.price?.currency}
-              </p>
+            <div
+              className="flex gap-4 my-4 mx-2 transform transition-transform duration-500 hover:scale-105 cursor-pointer"
+              key={hotel.hotel.dupeId}
+              onClick={() =>
+                (window.location.href = `/hotel/${hotel.hotel.dupeId}`)
+              }
+            >
+              <img
+                src={gptExample}
+                alt="gpt-example-picture"
+                className="w-1/3"
+              />
+              <div className="flex flex-wrap w-1/2">
+                <h3 className="font-bold w-full">
+                  {hotel.hotel.name
+                    .toLowerCase()
+                    .replace(/\b\w/g, (char) => char.toUpperCase())}
+                </h3>
+                {/* <p>{Bewertung später}</p> */}
+                <h4 className="block w-full">
+                  &#40;
+                  {
+                    // Finde den passenden Stadtnamen zum CityCode
+                    validCities.find((city) =>
+                      city
+                        .toLowerCase()
+                        .includes(hotel.hotel.cityCode.toLowerCase())
+                    ) || hotel.hotel.cityCode
+                  }
+                  &#41;&#44;
+                </h4>
+                <p className="block">
+                  {hotel.offers?.[0]?.checkInDate
+                    ? new Date(hotel.offers[0].checkInDate).toLocaleDateString(
+                        "de-DE",
+                        {
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "numeric",
+                        }
+                      )
+                    : ""}
+                  &#32; &#45;&#32;
+                  {hotel.offers?.[0]?.checkOutDate
+                    ? new Date(hotel.offers[0].checkOutDate).toLocaleDateString(
+                        "de-DE",
+                        {
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "numeric",
+                        }
+                      )
+                    : ""}
+                </p>
+                {/* Anzahl + Erwachsene(r) */}
+                <p>
+                  {hotel.offers[0].guests.adults}&#32;
+                  {hotel.offers[0].guests.adults > 1
+                    ? "Erwachsene"
+                    : "Erwachsener"}
+                </p>
+                {/* Kinder optional */}
+                <p>
+                  Preis ab:&#32;
+                  {hotel.offers?.[0]?.price?.total
+                    ? hotel.offers[0].price.total.replace(".", ",")
+                    : ""}
+                  &#32;
+                  {hotel.offers[0]?.price.currency.replace("EUR", "€")}
+                </p>
+              </div>
             </div>
           ))}
         </div>
