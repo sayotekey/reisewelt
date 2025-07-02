@@ -7,12 +7,12 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ContactPage from "./pages/ContactPage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import RegisterPage from "./pages/RegisterPage.jsx";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage.jsx";
 import ProfilePage from "./pages/ProfilePage.jsx";
 import LastMinuteDeals from "./pages/LastMinuteDeals.jsx";
 import FivehundredEuroDeals from "./pages/FivehundredEuroDeals.jsx";
 import SingleNews from "./pages/SingleNews.jsx";
 import AllNews from "./pages/AllNews.jsx";
-
 
 function App() {
   return (
@@ -20,10 +20,11 @@ function App() {
       {/* // <BrowserRouter>/ */}
       <HeaderComponent />
       <Routes>
-        <Route path="/" element={<MainComponent />} /> 
+        <Route path="/" element={<MainComponent />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/lastminute-deals" element={<LastMinuteDeals />} />
         <Route path="/news" element={<AllNews />} />

@@ -216,7 +216,7 @@ const LoginPage = () => {
             </button>
             <div className="flex justify-between mt-4 ">
               <a
-                href="#"
+                href="/forgot-password"
                 className="text-sm ml-2 mt-3 hover:text-blue-500 cursor-pointer hover:-translate-y-1 duration-500 transition-all"
               >
                 Password vergessen?
