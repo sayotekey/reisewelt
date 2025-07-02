@@ -69,7 +69,7 @@ const ForgotPasswordPage = () => {
           </div>
           <button
             type="submit"
-            className="block w-full bg-black rounded-xl hover:bg-indigo-700 hover:-translate-y-1 transition-all duration-500 text-white font-semibold py-2"
+            className="block w-1/2 mx-auto bg-black rounded-xl hover:bg-indigo-700 hover:-translate-y-1 transition-all duration-500 text-white font-semibold py-2"
           >
             Zurücksetzen-Link senden
           </button>
