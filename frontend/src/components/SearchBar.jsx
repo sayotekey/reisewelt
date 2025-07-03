@@ -187,13 +187,13 @@ export default function SearchForm() {
         </div>
         {/* Flug hinzufügen */}
         <div>
-          <label className="font-semibold  mb-1 flex text-purple-400 gap-2">
+          <label className="font-semibold hover:cursor-pointer mb-1 flex text-purple-400 gap-2">
             Optional
           </label>
           <input
             type="text"
             placeholder="  +  Flug hinzufügen"
-            className="w-full p-2 border rounded border-dashed border-gray-600 text-gray-600 placeholder-gray-600"
+            className="w-full p-2 hover:cursor-pointer border rounded border-dashed border-gray-600 text-gray-600 placeholder-gray-600"
           />
         </div>
 
