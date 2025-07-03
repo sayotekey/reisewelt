@@ -13,6 +13,8 @@ import travelGoal from "../icons/mountain-city-solid-black.svg";
 import plane from "../icons/plane-solid-black.svg";
 import plane2 from "../icons/plane2-solid-black.png";
 import persons from "../icons/people-group-solid-black.svg";
+import wishlistHeartFull from "../icons/heart-solid-black.svg";
+import wishlistHeartEmpty from "../icons/heart-regular-black.svg";
 
 import finder from "../icons/finder.gif";
 import search from "../icons/search.gif";
@@ -348,11 +350,22 @@ export default function SearchForm() {
                 (window.location.href = `/hotel/${hotel.hotel.dupeId}`)
               }
             >
-              <img
-                src={gptExample}
-                alt="gpt-example-picture"
-                className="w-1/3"
-              />
+              <div className="w-2/5 relative">
+                <div className="z-10 flex absolute top-2 right-2">
+                  <img
+                    src={wishlistHeartEmpty}
+                    alt="icon: heart"
+                    className="h-5 w-5 z-10"
+                    // onClick={handleAddToWishlist}
+                  />
+                </div>
+                <img
+                  src={gptExample}
+                  alt="gpt-example-picture"
+                  className="rounded-tl-xl rounded-bl-xl"
+                />
+              </div>
+
               <div className="flex flex-wrap w-1/2">
                 <h3 className="font-bold w-full">
                   {hotel.hotel.name
