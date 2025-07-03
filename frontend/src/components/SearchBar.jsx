@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaCalendarAlt } from "react-icons/fa";
@@ -33,6 +33,8 @@ export default function SearchForm() {
   const [dateRange, setDateRange] = useState([null, null]); // State for date range
   const [startDate, endDate] = dateRange;
   const [loading, setLoading] = useState(false);
+
+  const dropdownRef = useRef();
 
   // Filtere Vorschläge nach Eingabe (case-insensitive, enthält den Text)
   const suggestions = myCity
@@ -78,7 +80,7 @@ export default function SearchForm() {
   };
 
   const handleChildrenAgePopUp = () => {
-    setChildrenAge(true);
+    setChildrenAges(true);
   };
 
   const handleSearch = () => {
@@ -181,7 +183,7 @@ export default function SearchForm() {
               tabIndex={-1}
               aria-label="Eingabe löschen"
             >
-              <div className="absolute top-3 right-0 w-10 h-10 flex justify-cente">
+              <div className="absolute top-3 right-0 w-10 h-10 flex justify-center">
                 <img src={xButtonDelete} alt="x-icon" width={15} />
               </div>
             </button>
@@ -229,10 +231,10 @@ export default function SearchForm() {
           </div>
 
           <div
-            className="w-full p-2 rounded border border-gray-800 bg-white cursor-pointer"
+            className="w-full p-2 rounded border border-gray-800 pl-4 bg-white cursor-pointer"
             onClick={() => setShowDropdown(!showDropdown)}
           >
-            {adults} Erwachsene, {children} Kinder
+            {adults} Erwachsene, {children} Kinder (0 - 17 Jahre)
           </div>
 
           <AnimatePresence>
@@ -241,7 +243,7 @@ export default function SearchForm() {
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="absolute z-10 bg-white border border-gray-800 rounded p-4 mt-2 w-full shadow-md"
+                className="absolute z-15 bg-white border border-gray-800 rounded p-4 mt-2 w-full shadow-md"
               >
                 <div className="flex justify-between items-center mb-3">
                   <span>Erwachsene</span>
@@ -262,7 +264,7 @@ export default function SearchForm() {
                   </div>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span>Kinder</span>
+                  <span>Kinder (0 - 17 Jahre)</span>
                   <div className="flex gap-2 items-center">
                     <button
                       className="px-2 py-1 border rounded bg-gray-200 text-gray-700 min-w-[33%] border-transparent font-bold text-lg hover:bg-gray-200 flex items-center justify-center"
@@ -275,37 +277,62 @@ export default function SearchForm() {
                       className="px-2 py-1 border rounded bg-gray-200 text-gray-700 min-w-[33%] border-transparent font-bold text-lg hover:bg-gray-200 flex items-center justify-center"
                       onClick={() => {
                         setChildren(children + 1);
-                        handleChildrenAgePopUp();
+                        // handleChildrenAgePopUp();
                       }}
                     >
                       &#43;
                     </button>
                   </div>
                 </div>
-                <div className="pt-3 pb-2">
-                  <p className="pb-3">Alter bei Rückreise</p>
-                  <div className="border border-amber-400 w-fit px-2">
-                    <label className="flex">
-                      Alter
-                      <img
-                        src={arrowDown}
-                        alt="arrowDown"
-                        className="w-3.5 mx-2"
-                      />
-                    </label>
-                  </div>
-                </div>
-                <div className="relative h-6">
-                  <button className="bg-purple-400 rounded absolute bottom-0 right-0 w-fit px-2 py-1">
-                    Angaben speichern
-                  </button>
-                </div>
+                {children >= 1 && (
+                  <>
+                    <div className="pt-3 pb-2 w-full">
+                      <p className="pb-3">Alter bei Rückreise:</p>
+                      {/* Für jedes Kind ein Dropdown */}
+                      <div className="grid grid-cols-2 gap-2">
+                        {Array.from({ length: children }).map((_, idx) => (
+                          <div
+                            key={idx}
+                            className="mb-2 flex items-center gap-2"
+                          >
+                            <label className="flex items-center gap-2">
+                              Kind {idx + 1}
+                            </label>
+                            <select
+                              className="border rounded px-1 py-0.5"
+                              value={childrenAges[idx] || ""}
+                              onChange={(e) => {
+                                const newAges = [...childrenAges];
+                                newAges[idx] = e.target.value;
+                                setChildrenAges(newAges);
+                              }}
+                            >
+                              <option value="Alter">Alter wählen</option>
+                              {Array.from({ length: 18 }).map((_, age) => (
+                                <option key={age} value={age}>
+                                  {age}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="relative h-8">
+                      <button
+                        className="bg-purple-400 rounded absolute bottom-0 right-0 w-fit px-2 py-1"
+                        onClick={() => setShowDropdown(false)}
+                      >
+                        Angaben speichern
+                      </button>
+                    </div>
+                  </>
+                )}
               </motion.div>
             )}
           </AnimatePresence>
         </div>
       </div>
-      {/* Suchen Button */}
       <div className="mt-6 flex justify-end">
         <button
           onClick={() => {
@@ -335,7 +362,6 @@ export default function SearchForm() {
           <img src={search} width={200} alt="find-gif" />
         </div>
       )}
-
       <div className="mt-6">
         <h2 className="text-lg font-semibold mb-4">
           Gefundene Hotels in {myCity}:
@@ -351,7 +377,7 @@ export default function SearchForm() {
               }
             >
               <div className="w-2/5 relative">
-                <div className="z-10 flex absolute top-2 right-2">
+                <div className="flex absolute top-2 right-2">
                   <img
                     src={wishlistHeartEmpty}
                     alt="icon: heart"
