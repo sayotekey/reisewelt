@@ -10,13 +10,18 @@ const ForgotPasswordPage = () => {
     e.preventDefault();
 
     try {
-      await axios.post("http://localhost:3000/api/users/forgot-password", {
-        email,
-      });
+      const response = await axios.post(
+        "http://localhost:3000/api/users/forgot-password",
+        {
+          email,
+        }
+      );
 
       setMessage(
-        "Ein Link zum Zurücksetzen des Passworts wurde an Ihre E-Mail-Adresse gesendet."
+        response.data.message ||
+          "Ein Link zum Zurücksetzen des Passworts wurde an Ihre E-Mail-Adresse gesendet."
       );
+
       setError("");
     } catch (error) {
       setError(
@@ -77,6 +82,10 @@ const ForgotPasswordPage = () => {
           >
             Zurücksetzen-Link senden
           </button>
+          {message && (
+            <p className="text-green-500 text-center mt-4">{message}</p>
+          )}
+          {error && <p className="text-red-500 text-center mt-4">{error}</p>}
         </form>
       </div>
     </div>
