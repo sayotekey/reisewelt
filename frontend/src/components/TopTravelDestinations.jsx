@@ -11,14 +11,48 @@ const fadeInStyle = `
   .animate-fade-in {
     animation: fadeIn 1s ease-out;
   }
+  
+  @keyframes slowBounce {
+    0%, 20%, 50%, 80%, 100% {
+      transform: translateY(0);
+    }
+    40% {
+      transform: translateY(-15px);
+    }
+    60% {
+      transform: translateY(-8px);
+    }
+  }
+  
+  .animate-slow-bounce {
+    animation: slowBounce 2s infinite;
+  }
+  
+  @keyframes customPulse {
+    0%, 100% {
+      opacity: 0.7;
+    }
+    50% {
+      opacity: 0.4;
+    }
+  }
+  
+  .animate-custom-pulse {
+    animation: customPulse 2s ease-in-out infinite;
+  }
 `;
 
 // Stile zum Head hinzufügen
 if (typeof document !== 'undefined') {
-  const styleSheet = document.createElement("style");
-  styleSheet.type = "text/css";
-  styleSheet.innerText = fadeInStyle;
-  document.head.appendChild(styleSheet);
+  // Проверяем, не добавлены ли уже стили
+  const existingStyle = document.getElementById('top-travel-animations');
+  if (!existingStyle) {
+    const styleSheet = document.createElement("style");
+    styleSheet.type = "text/css";
+    styleSheet.id = "top-travel-animations";
+    styleSheet.innerText = fadeInStyle;
+    document.head.appendChild(styleSheet);
+  }
 }
 
 // Struktur: Land → Städte (aktualisiert entsprechend der Amadeus API)
@@ -61,8 +95,12 @@ const TopTravelDestinations = () => {
     setSelectedCity(city);
     
     try {
-      console.log(`Загружаем отели для города: ${city}`);
-      const response = await axios.get(`http://localhost:3000/api/amadeus/combined?cityName=${city}`);
+      console.log(`Lade Hotels für Stadt: ${city}`);
+      const url = `http://localhost:3000/api/amadeus/combined?cityName=${city}`;
+      console.log(`API URL: ${url}`);
+      
+      const response = await axios.get(url);
+      console.log(`API Antwort für ${city}:`, response);
       
       if (response.data && response.data.length > 0) {
         const hotelsWithCity = response.data.map(hotel => ({
@@ -70,13 +108,15 @@ const TopTravelDestinations = () => {
           cityName: city
         }));
         setHotels(hotelsWithCity);
-        console.log(`Найдено ${hotelsWithCity.length} отелей в ${city}`);
+        console.log(`✅ Gefunden ${hotelsWithCity.length} Hotels in ${city}:`, hotelsWithCity);
       } else {
         setHotels([]);
         setError(`Keine Hotels in ${city} gefunden.`);
+        console.log(`❌ Keine Hotels in ${city} gefunden. Response:`, response.data);
       }
     } catch (e) {
-      console.error(`Ошибка при загрузке отелей для города ${city}:`, e);
+      console.error(`❌ Fehler beim Laden der Hotels für Stadt ${city}:`, e);
+      console.error('Error details:', e.response?.data || e.message);
       setError(`Fehler beim Laden der Hotels für ${city}.`);
       setHotels([]);
     } finally {
@@ -111,13 +151,13 @@ const TopTravelDestinations = () => {
         <div className="lg:w-1/2">
           {!activeCountry && (
             <div className="flex flex-col items-center justify-center py-12 animate-fade-in">
-              <h4 className="text-xl font-semibold mb-2 text-blue-800 opacity-70 animate-pulse">
+              <h4 className="text-xl font-semibold mb-2 text-blue-800 opacity-70 animate-custom-pulse">
                 Bitte wähle ein Land
               </h4>
               <p className="text-sm text-gray-500 opacity-60">
                 Klicken Sie auf ein Land oben, um Städte zu sehen
               </p>
-              <div className="mt-8 text-6xl opacity-30" style={{animation: 'bounce 2s infinite'}}>
+              <div className="mt-8 text-6xl opacity-30 animate-slow-bounce">
                 🌍
               </div>
             </div>
