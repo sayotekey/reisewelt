@@ -11,7 +11,7 @@ import hero9 from "../images/heroSection9.jpg";
 
 
 
-const images = [hero1, hero2, hero3, hero4, hero6, hero7, hero8, hero9];
+const images = [hero4, hero2, hero3,  hero1, hero6, hero7, hero8, hero9];
 
 const quotes = [
   {
