@@ -7,7 +7,12 @@ import axios from "axios";
 
 import validCities from "../utils/validCities.js";
 
-import xButtonDelete from "../icons/x-solid.svg";
+import xButtonDelete from "../icons/x-solid-black.svg";
+import arrowDown from "../icons/angle-down-solid-black.svg";
+import travelGoal from "../icons/mountain-city-solid-black.svg";
+import plane from "../icons/plane-solid-black.svg";
+import plane2 from "../icons/plane2-solid-black.png";
+import persons from "../icons/people-group-solid-black.svg";
 
 import finder from "../icons/finder.gif";
 import search from "../icons/search.gif";
@@ -16,14 +21,16 @@ import gptExample from "../images/ChatGPT.png";
 export default function SearchForm() {
   const [adults, setAdults] = useState(2);
   const [children, setChildren] = useState(0);
-  const [showDropdown, setShowDropdown] = useState(false);
+  const [childrenAges, setChildrenAges] = useState([]);
   const [hotels, setHotels] = useState([]);
   const [myCity, setMyCity] = useState(""); // State for my city (von wo ?)
   const [error, setError] = useState("");
+  const [showDropdown, setShowDropdown] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(-1);
   const [dateRange, setDateRange] = useState([null, null]); // State for date range
-  const [loading, setLoading] = useState(false);
   const [startDate, endDate] = dateRange;
+  const [loading, setLoading] = useState(false);
 
   // Filtere Vorschläge nach Eingabe (case-insensitive, enthält den Text)
   const suggestions = myCity
@@ -35,13 +42,41 @@ export default function SearchForm() {
   const handleInputChange = (e) => {
     setMyCity(e.target.value);
     setShowSuggestions(true);
-    setError("");
+    setSelectedIndex(-1);
+    // setError("");
+  };
+
+  const handleKeyDown = (e) => {
+    if (!showSuggestions || suggestions.length === 0) return;
+
+    if (e.key === "ArrowDown") {
+      // Auswahl nach unten bewegen
+      setSelectedIndex((prev) =>
+        prev < suggestions.length - 1 ? prev + 1 : 0
+      );
+    }
+    if (e.key === "ArrowUp") {
+      // Auswahl nach oben bewegen
+      setSelectedIndex((prev) =>
+        prev > 0 ? prev - 1 : suggestions.length - 1
+      );
+    }
+    if (e.key === "Enter" && selectedIndex >= 0) {
+      setMyCity(suggestions[selectedIndex]);
+      setShowSuggestions(false);
+      setSelectedIndex(-1);
+    }
   };
 
   const handleSuggestionClick = (city) => {
     setMyCity(city);
     setShowSuggestions(false);
-    setError("");
+    setSelectedIndex(-1);
+    // setError("");
+  };
+
+  const handleChildrenAgePopUp = () => {
+    setChildrenAge(true);
   };
 
   const handleSearch = () => {
@@ -101,9 +136,16 @@ export default function SearchForm() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Reiseziel */}
         <div className="relative w-full max-w-md">
-          <label className="font-semibold mb-1 flex items-center gap-2">
-            Wohin möchtest du reisen?
-          </label>
+          <div className="flex  mb-1 gap-2">
+            <img
+              src={travelGoal}
+              alt="icon: mountain and building"
+              className="h-4"
+            />
+            <label className="font-semibold flex items-center gap-2">
+              Wohin möchtest du reisen?
+            </label>
+          </div>
           <input
             type="text"
             placeholder="Reiseziel eingeben"
@@ -111,13 +153,28 @@ export default function SearchForm() {
             value={myCity}
             onChange={handleInputChange}
             onFocus={() => setShowSuggestions(true)}
-            // autoComplete="off"
+            onKeyDown={handleKeyDown}
+            autoComplete="off"
           />
-
+          {showSuggestions && suggestions.length > 0 && (
+            <ul className="absolute z-10 bg-white border border-gray-300 w-full mt-1 rounded shadow max-h-48 overflow-y-auto">
+              {suggestions.map((city, idx) => (
+                <li
+                  key={city}
+                  className={`px-4 py-2 cursor-pointer hover:bg-indigo-100 ${
+                    idx === selectedIndex ? "bg-indigo-200" : ""
+                  }`}
+                  onMouseDown={() => handleSuggestionClick(city)}
+                >
+                  {city}
+                </li>
+              ))}
+            </ul>
+          )}
           {myCity && (
             <button
               type="button"
-              className="absolute right-0 top-4 -translate-y-1/2 text-gray-400 cursor-pointer min-w-2"
+              className="absolute -right-2 top-4 -translate-y-1/2 text-gray-400 cursor-pointer min-w-2"
               onClick={() => setMyCity("")}
               tabIndex={-1}
               aria-label="Eingabe löschen"
@@ -127,36 +184,22 @@ export default function SearchForm() {
               </div>
             </button>
           )}
-          {/* Dropdown für Vorschläge */}
-          {showSuggestions && suggestions.length > 0 && (
-            <ul className="absolute z-10 bg-white border border-gray-300 w-full mt-1 rounded shadow max-h-56 overflow-y-auto">
-              {suggestions.map((city) => (
-                <li
-                  key={city}
-                  className="px-4 py-2 cursor-pointer hover:bg-indigo-100"
-                  onClick={() => handleSuggestionClick(city)}
-                >
-                  {city}
-                </li>
-              ))}
-            </ul>
-          )}
         </div>
-
         {/* Flug hinzufügen */}
         <div>
-          <label className="font-semibold mb-1">Flüg hinzufügen</label>
+          <label className="font-semibold  mb-1 flex text-purple-400 gap-2">
+            Optional
+          </label>
           <input
             type="text"
-            placeholder="Optional"
-            className="w-full p-2 rounded border border-gray-800"
+            placeholder="  +  Flug hinzufügen"
+            className="w-full p-2 border rounded border-dashed border-gray-600 text-gray-600 placeholder-gray-600"
           />
         </div>
 
-        {/* Wann reisen */}
         <div>
           <label className="font-semibold mb-1 flex items-center gap-2">
-            <FaCalendarAlt className="text-gray-600" />
+            <FaCalendarAlt className="text-black" />
             Wann reisen?
           </label>
           <DatePicker
@@ -172,12 +215,17 @@ export default function SearchForm() {
             isClearable
           />
         </div>
-
         {/* Personenwahl */}
         <div className="relative">
-          <label className="font-semibold mb-1">
-            Wie viele Personen reisen?
-          </label>
+          <div className="flex flex-row mb-1 ">
+            <img
+              src={persons}
+              alt="icon: group of 3 people"
+              className="h-5 pr-2"
+            />
+            <label className="font-semibold">Wie viele Personen reisen?</label>
+          </div>
+
           <div
             className="w-full p-2 rounded border border-gray-800 bg-white cursor-pointer"
             onClick={() => setShowDropdown(!showDropdown)}
@@ -223,11 +271,32 @@ export default function SearchForm() {
                     <span>{children}</span>
                     <button
                       className="px-2 py-1 border rounded bg-gray-200 text-gray-700 min-w-[33%] border-transparent font-bold text-lg hover:bg-gray-200 flex items-center justify-center"
-                      onClick={() => setChildren(children + 1)}
+                      onClick={() => {
+                        setChildren(children + 1);
+                        handleChildrenAgePopUp();
+                      }}
                     >
                       &#43;
                     </button>
                   </div>
+                </div>
+                <div className="pt-3 pb-2">
+                  <p className="pb-3">Alter bei Rückreise</p>
+                  <div className="border border-amber-400 w-fit px-2">
+                    <label className="flex">
+                      Alter
+                      <img
+                        src={arrowDown}
+                        alt="arrowDown"
+                        className="w-3.5 mx-2"
+                      />
+                    </label>
+                  </div>
+                </div>
+                <div className="relative h-6">
+                  <button className="bg-purple-400 rounded absolute bottom-0 right-0 w-fit px-2 py-1">
+                    Angaben speichern
+                  </button>
                 </div>
               </motion.div>
             )}

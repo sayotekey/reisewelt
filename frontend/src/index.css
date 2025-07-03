@@ -24,6 +24,10 @@ a:hover {
   color: rgb(11, 82, 11);
 }
 
+.my-cursor {
+  cursor: url("../src/icons/angle-down-solid.svg"), pointer;
+}
+
 /* body {
   margin: 0;
   display: flex;
@@ -31,11 +35,11 @@ a:hover {
   min-width: 320px;
   min-height: 100vh;
 } */
-
+/*
 h1 {
-  /* font-size: 3.2em; */
+  font-size: 3.2em; 
   line-height: 1.1;
-}
+}*/
 
 /* button {
   border-radius: 8px;
@@ -69,22 +73,20 @@ button:focus-visible {
   }
 }
 
-
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
 
 .no-scrollbar {
-  -ms-overflow-style: none; 
-  scrollbar-width: none; 
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
-
 .hide-scrollbar {
-  scrollbar-width: none; 
-  -ms-overflow-style: none;  
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 .hide-scrollbar::-webkit-scrollbar {
-  display: none; 
+  display: none;
 }
