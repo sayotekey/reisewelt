@@ -10,7 +10,7 @@ const NewsCard = ({ _id, title, content, image, createdAt }) => {
   });
 
 
-    const fallbackImage = "/images/fallback.jpg";// Fallback-Bild, falls das Bild nicht geladen werden kann
+    const fallbackImage = "/images/fallback.jpg"; // Fallback image if the image fails to load
 
 
   return (
@@ -21,9 +21,9 @@ const NewsCard = ({ _id, title, content, image, createdAt }) => {
       transition={{ duration: 0.4 }}
     >
       <Link to={`/news/${_id}`}>
-        <div className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition duration-300 h-80 flex flex-col">
-          {/* BILD-UMSCHLAG */}
-          <div className="h-40 overflow-hidden">
+        <div className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition duration-300 h-48 sm:h-56 lg:h-80 flex flex-col">
+          {/* IMAGE CONTAINER */}
+          <div className="h-28 sm:h-32 lg:h-40 overflow-hidden">
             <img
               src={image || fallbackImage}
               alt={title}
@@ -35,15 +35,18 @@ const NewsCard = ({ _id, title, content, image, createdAt }) => {
             />
           </div>
 
-          <div className="p-4 flex flex-col justify-between flex-grow">
+          <div className="p-2 sm:p-3 lg:p-4 flex flex-col justify-between flex-grow">
             <div>
-              <h3 className="text-lg font-semibold text-gray-600 mb-2 line-clamp-2">
+              <h3 className="text-sm sm:text-base lg:text-lg font-semibold text-gray-600 mb-2 line-clamp-2">
                 {title}
               </h3>
-             {content.find((block) => block.type === "paragraph")?.text}
-
+              {/* Show content only on desktop */}
+              <p className="text-sm text-gray-500 mb-2 line-clamp-3 hidden lg:block">
+                {content.find((block) => block.type === "paragraph")?.text}
+              </p>
             </div>
-            <p className="text-xs text-gray-400">{formattedDate}</p>
+            {/* Show date only on desktop */}
+            <p className="text-xs text-gray-400 hidden lg:block">{formattedDate}</p>
           </div>
         </div>
       </Link>
@@ -53,4 +56,4 @@ const NewsCard = ({ _id, title, content, image, createdAt }) => {
 
 export default NewsCard;
 
-//NewsCard.jsx - Eine Nachrichtenkarte
+//NewsCard.jsx - A news card component
