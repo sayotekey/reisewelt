@@ -201,10 +201,17 @@ export default function SearchForm() {
           )}
         </div>
         {/* Flug hinzufügen */}
-        <div>
-          <label className="font-semibold hover:cursor-pointer mb-1 flex text-purple-400 gap-2">
-            Optional
-          </label>
+        <div className="w-full max-w-md">
+          <div className="flex mb-1 gap-2">
+            <img
+              src={plane}
+              alt="icon: mountain and building"
+              className="h-4"
+            />
+            <label className="font-semibold hover:cursor-pointer flex text-black gap-2">
+              Willst du fliegen?
+            </label>
+          </div>
           <input
             type="text"
             placeholder="  +  Flug hinzufügen"
