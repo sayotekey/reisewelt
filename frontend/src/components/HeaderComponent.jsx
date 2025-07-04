@@ -89,109 +89,168 @@ const HeaderComponent = () => {
 
   //
   return (
-    <header className="w-full sticky top-0 z-50 bg-white">
-      <div className="flex items-center justify-between w-full">
-        <nav className="flex items-center gap-5">
-          <NavLink to="/">Logo</NavLink>
-          <NavLink to="/contact"> Kontakt </NavLink>
-          {/* hier später Pfad anpassen auf Login-Pfad des Benutzers!! */}
-          <NavLink to="/account/wishlist">Merkliste</NavLink>
-          <div className="relative w-auto" ref={languageDropdownRef}>
-            <div
-              className="flex items-center h-8 px-3 py-2 cursor-pointer rounded"
-              onClick={() => {
-                setOpenLanguage((prev) => !prev);
-                setOpenCurrency(false); //
-              }}
-              tabIndex={0}
-              role="button"
+    <header className="header-full-width w-full sticky top-0 z-50 bg-purple-100 border-b border-gray-200 shadow-sm">
+      <div className="w-full px-6 sm:px-8 lg:px-12">
+        <div className="flex items-center justify-between h-18">
+          {/* Logo - слева */}
+          <div className="flex-shrink-0">
+            <NavLink 
+              to="/" 
+              className="text-3xl font-bold text-blue-600 hover:text-blue-700 transition-colors duration-200"
             >
-              <img
-                src={selectedLanguage.img}
-                alt={selectedLanguage.label}
-                className="w-6 h-6"
-              />
+              Reisewelt
+            </NavLink>
+          </div>
+
+          {/* Навигация посередине, сдвинутая вправо */}
+          <nav className="hidden md:flex items-center space-x-10 ml-20">
+            <NavLink 
+              to="/contact" 
+              className="text-gray-700 hover:text-blue-600 font-semibold text-lg transition-colors duration-200"
+            >
+              Kontakt
+            </NavLink>
+            
+            <NavLink 
+              to="/account/wishlist"
+              className="text-gray-700 hover:text-blue-600 font-semibold text-lg transition-colors duration-200"
+            >
+              Merkliste
+            </NavLink>
+
+            {/* Выбор языка */}
+            <div className="relative" ref={languageDropdownRef}>
+              <button
+                className="flex items-center p-3 hover:bg-gray-100 rounded-lg transition-colors duration-200"
+                onClick={() => {
+                  setOpenLanguage((prev) => !prev);
+                  setOpenCurrency(false);
+                }}
+                aria-label="Select language"
+              >
+                <img
+                  src={selectedLanguage.img}
+                  alt={selectedLanguage.label}
+                  className="w-7 h-7 rounded-sm"
+                />
+                <svg className="w-5 h-5 ml-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              
+              {openLanguage && (
+                <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-20 min-w-[140px]">
+                  {languages.map((lang) => (
+                    <button
+                      key={lang.value}
+                      className={`flex items-center w-full px-4 py-3 text-left hover:bg-gray-50 first:rounded-t-lg last:rounded-b-lg transition-colors duration-200 ${
+                        selectedLanguage.value === lang.value ? "bg-blue-50 text-blue-600" : "text-gray-700"
+                      }`}
+                      onClick={() => {
+                        setSelectedLanguage(lang);
+                        setOpenCurrency(false);
+                        setOpenLanguage(false);
+                      }}
+                    >
+                      <img
+                        src={lang.img}
+                        alt={`${lang.label} flag`}
+                        className="w-6 h-6 mr-3 rounded-sm"
+                      />
+                      <span className="text-base font-medium">{lang.label}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
-            {openLanguage && (
-              <div className="absolute left-0 right-0 mt-1 bg-white border border-gray-300 rounded shadow-lg z-10 h-50 w-auto ">
-                {languages.map((lang) => (
-                  <div
-                    key={lang.value}
-                    className={`flex items-center px-3 py-2 cursor-pointer hover:bg-gray-300 ${
-                      selectedLanguage.value === lang.value ? "bg-gray-100" : ""
-                    }`}
-                    onClick={() => {
-                      setSelectedLanguage(lang);
-                      setOpenCurrency(false);
-                      setOpenLanguage(false);
-                      // Optional: Sprache wechseln
-                    }}
-                  >
-                    <img
-                      src={lang.img}
-                      alt={`${lang.label} flag`}
-                      className="w-6 h-6"
-                    />
-                  </div>
-                ))}
-              </div>
+
+            {/* Выбор валюты */}
+            <div className="relative" ref={currencyDropdownRef}>
+              <button
+                className="flex items-center p-3 hover:bg-gray-100 rounded-lg transition-colors duration-200"
+                onClick={() => {
+                  setOpenCurrency((prev) => !prev);
+                  setOpenLanguage(false);
+                }}
+                aria-label="Select currency"
+              >
+                <img
+                  src={selectedCurrency.img}
+                  alt={selectedCurrency.value}
+                  className="w-7 h-7"
+                />
+                <svg className="w-5 h-5 ml-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              
+              {openCurrency && (
+                <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-20 min-w-[140px]">
+                  {currencyDark.map((curr) => (
+                    <button
+                      key={curr.value}
+                      className={`flex items-center w-full px-4 py-3 text-left hover:bg-gray-50 first:rounded-t-lg last:rounded-b-lg transition-colors duration-200 ${
+                        selectedCurrency.value === curr.value ? "bg-blue-50" : ""
+                      }`}
+                      onClick={() => {
+                        setSelectedCurrency(curr);
+                        setOpenLanguage(false);
+                        setOpenCurrency(false);
+                      }}
+                    >
+                      <img
+                        src={curr.img}
+                        alt={`${curr.value} currency`}
+                        className="w-6 h-6 mr-3"
+                      />
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Переключатель темы */}
+            <button className="p-3 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+              </svg>
+            </button>
+          </nav>
+
+          {/* Sign in - справа */}
+          <div className="flex items-center">
+            {user ? (
+              <NavLink 
+                to="/profile" 
+                className="flex items-center px-5 py-3 text-blue-600 hover:text-blue-700 font-semibold text-lg transition-colors duration-200"
+              >
+                <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                {user.name || "Profile"}
+              </NavLink>
+            ) : (
+              <NavLink 
+                to="/login"
+                className="flex items-center px-7 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold text-lg transition-colors duration-200 shadow-sm"
+              >
+                <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                </svg>
+                Sign In
+              </NavLink>
             )}
           </div>
-          <div className="relative w-auto" ref={currencyDropdownRef}>
-            <div
-              className="flex items-center border h-9 px-3 py-2 cursor-pointer rounded"
-              onClick={() => {
-                setOpenCurrency((prev) => !prev);
-                setOpenLanguage(false);
-              }}
-              tabIndex={0}
-              role="button"
-            >
-              <img
-                src={selectedCurrency.img}
-                alt={selectedCurrency.value}
-                className="w-6 h-6"
-              />
-            </div>
-            {openCurrency && (
-              <div className="absolute left-0 right-0 mt-1 bg-white border border-gray-300 rounded shadow-xl z-10 h-40 w-auto ">
-                {currencyDark.map((curr) => (
-                  <div
-                    key={curr.value}
-                    className={`flex items-center px-3 py-2 cursor-pointer hover:bg-gray-300 ${
-                      selectedCurrency.value === curr.value ? "bg-gray-100" : ""
-                    }`}
-                    onClick={() => {
-                      setSelectedCurrency(curr);
-                      setOpenLanguage(false);
-                      setOpenCurrency(false);
-                      //Optional: Währung wechseln
-                    }}
-                  >
-                    <img
-                      src={curr.img}
-                      alt={`${curr.value} currency`}
-                      className="w-6 h-6"
-                    />
-                  </div>
-                ))}
-              </div>
-            )}
+
+          {/* Мобильное меню (для маленьких экранов) */}
+          <div className="md:hidden">
+            <button className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
           </div>
-          {/* hier später Umschalter für Light/Dark-Mode einfügen
-           */}
-          <div className="text-black">Dark/Light</div>
-          {/* // */}
-          {/* <NavLink to="/login">Login/Olena</NavLink> */}
-          {user ? (
-            <>
-              <NavLink to="/profile"> {user.name || "Profile"} </NavLink>
-            </>
-          ) : (
-            <NavLink to="/login">Login</NavLink>
-          )}
-          {/* /login=http://localhost:5173/login */}
-        </nav>
+        </div>
       </div>
     </header>
   );
