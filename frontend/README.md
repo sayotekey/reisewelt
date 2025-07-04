@@ -17,3 +17,6 @@ npm install react-datepicker react-icons framer-motion
 import в main : import 'react-datepicker/dist/react-datepicker.css';
 
 https://developers.amadeus.com/my-apps/Reise%20Project?userId=natali.insajt@gmail.com
+
+
+npm install leaflet react-leaflet  //europe map 

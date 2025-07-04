@@ -2,6 +2,7 @@ import UserModel from "../models/UserModel.js";
 import hotelModels from "../models/hotelModels.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import nodemailer from "nodemailer";
 
 // Regestrierung eines neuen Benutzers - Register
 export const registerUser = async (req, res) => {
@@ -46,9 +47,13 @@ export const loginUser = async (req, res) => {
         .json({ message: "Ungültige E-Mail oder Passwort" });
 
     // JWT Token generieren
-    const token = jwt.sign({ id: user._id, name: user.name }, process.env.JWT_SECRET, {
-      expiresIn: "1d",
-    });
+    const token = jwt.sign(
+      { id: user._id, name: user.name },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1d",
+      }
+    );
 
     res.json({
       token,
@@ -60,7 +65,6 @@ export const loginUser = async (req, res) => {
 };
 
 // Benutzerprofil abrufen - Get Profile
-
 export const getUserProfile = async (req, res) => {
   try {
     const user = await UserModel.findById(req.user.id)
@@ -77,5 +81,116 @@ export const getUserProfile = async (req, res) => {
   } catch (error) {
     console.error("Fehler beim Laden des Benutzerprofils:", error);
     res.status(500).json({ message: "Serverfehler" });
+  }
+};
+
+// Passwort ändern - Change Password
+export const changePassword = async (req, res) => {
+  const { oldPassword, newPassword } = req.body;
+  const userId = req.user.id;
+
+  try {
+    // Benutzer suchen
+    const user = await UserModel.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "Benutzer nicht gefunden" });
+    }
+
+    // Altes Passwort wird mit dem in der Datenbank gehashten Passwort verglichen
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Altes Passwort ist falsch" });
+    }
+
+    // Neues Passwort hashen
+    const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+
+    // Passwort aktualisieren
+    user.password = hashedNewPassword;
+    await user.save();
+
+    res.json({ message: "Passwort erfolgreich geändert" });
+  } catch (error) {
+    console.error("Fehler beim Ändern des Passworts:", error);
+    res.status(500).json({ message: "Serverfehler" });
+  }
+};
+
+// Passwort zurücksetzen - Forgot Password
+export const forgotPassword = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    // Überprüfen, ob die E-Mail vorhanden ist
+    const user = await UserModel.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "Benutzer nicht gefunden." });
+    }
+
+    // Erstellen einen JWT-Token
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
+
+    // Erstellen den Reset-URL
+    const resetUrl = `http://localhost:5173/reset-password?token=${token}`;
+
+    // E-Mail-Transporter konfigurieren
+    const transporter = nodemailer.createTransport({
+      host: process.env.EMAIL_HOST,
+      port: Number(process.env.EMAIL_PORT),
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+
+    await transporter.sendMail({
+      to: user.email,
+      subject: "Passwort zurücksetzen",
+      html: `<p>Klicken Sie auf den folgenden Link, um Ihr Passwort zurückzusetzen:</p>
+             <a href="${resetUrl}">${resetUrl}</a>`,
+    });
+
+    res.json({
+      message:
+        "Ein Link zum Zurücksetzen des Passworts wurde an Ihre E-Mail-Adresse gesendet.",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Fehler beim Senden der E-Mail" });
+  }
+};
+
+// Passwort zurücksetzen - Reset Password
+
+export const resetPassword = async (req, res) => {
+  const { token, newPassword } = req.body;
+
+  if (!token || !newPassword) {
+    return res
+      .status(400)
+      .json({ message: "Token und neues Passwort sind erforderlich." });
+  }
+
+  try {
+    // Überprüfen den Token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await UserModel.findById(decoded.id);
+
+    // Überprüfen, ob der Benutzer existiert
+    if (!user) {
+      return res.status(404).json({ message: "Benutzer nicht gefunden." });
+    }
+
+    // Passwort hashen
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+    await user.save();
+
+    res.json({ message: "Passwort erfolgreich zurückgesetzt." });
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({ message: "Ungültiger oder abgelaufener Token." });
   }
 };

@@ -240,7 +240,7 @@ const ProfilePage = () => {
       </div>
 
       {/* Rechter Bereich - Inhalt basierend auf dem aktiven Tab */}
-      <div className="flex-1 p-6 text-gray-900">{renderContent()}</div>
+      <div className="flex-1 pt-10 p-30 text-gray-900">{renderContent()}</div>
     </div>
   );
 };

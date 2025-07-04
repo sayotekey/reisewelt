@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import validateRegister from "../utils/validation";
+import validateRegisterPassword from "../utils/validateRegisterPassword";
 import axios from "axios";
-
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -11,48 +10,52 @@ const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
 
-  const {login} = useAuth(); 
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Validierung der Eingaben
-    const validationErrors = validateRegister({ email, password }, "login");
-    setErrors(validationErrors);
+    const { isValid, errors: validationErrors } = validateRegisterPassword(
+      { email, password },
+      "login"
+    );
 
-    if (Object.keys(validationErrors).length === 0) {
-      // (Backend API call would go here)
+    if (!isValid) {
+      setErrors(validationErrors);
 
-      try {
-        // Senden die Anfrage an die Backend-API zum Einloggen
-        const response = await axios.post(
-          "http://localhost:3000/api/users/login",
-          {
-            email,
-            password,
-          }
-        );
-
-        // Warten auf die Antwort und speichern das Token und den Benutzer im Local Storage
-        const { token, user } = response.data;
-
-        localStorage.setItem("token", token);
-        localStorage.setItem("user", JSON.stringify(user));
-
-        login(user); // Aktualisieren des Auth-Kontexts mit dem Benutzer
-
-        // alert("Login erfolgreich!");
-        navigate("/");
-      } catch (error) {
-        const message = error.response?.data?.message || "Serverfehler";
-        setErrors({ loginError: message });
-      }
+      return;
     }
 
-    // console.log("Email:", email);
-    // console.log("Password:", password);
+    try {
+      // Senden die Anfrage an die Backend-API zum Einloggen
+      const response = await axios.post(
+        "http://localhost:3000/api/users/login",
+        {
+          email,
+          password,
+        }
+      );
+
+      // Warten auf die Antwort und speichern das Token und den Benutzer im Local Storage
+      const { token, user } = response.data;
+
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
+
+      login(user); // Aktualisieren des Auth-Kontexts mit dem Benutzer
+
+      // alert("Login erfolgreich!");
+      navigate("/");
+    } catch (error) {
+      const message = error.response?.data?.message || "Serverfehler";
+      setErrors({ loginError: message });
+    }
   };
+
+  // console.log("Email:", email);
+  // console.log("Password:", password);
 
   return (
     <div className="h-screen flex">
@@ -213,7 +216,7 @@ const LoginPage = () => {
             </button>
             <div className="flex justify-between mt-4 ">
               <a
-                href="#"
+                href="/forgot-password"
                 className="text-sm ml-2 mt-3 hover:text-blue-500 cursor-pointer hover:-translate-y-1 duration-500 transition-all"
               >
                 Password vergessen?

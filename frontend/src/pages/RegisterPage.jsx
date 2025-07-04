@@ -1,5 +1,5 @@
 import { useState } from "react";
-import validateRegister from "../utils/validation";
+import validateRegisterPassword from "../utils/validateRegisterPassword";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify"; // Bibliothek für Benachrichtigungen
 import "react-toastify/dist/ReactToastify.css"; // Bibliothek für Benachrichtigungen
@@ -33,11 +33,12 @@ const RegisterPage = () => {
     e.preventDefault();
 
     // Validierung der Eingaben
+    const { isValid, errors: validationErrors } = validateRegisterPassword(
+      formData,
+      "register"
+    );
 
-    const validationErrors = validateRegister(formData, "register");
-
-    // Wenn Validierungsfehler vorhanden sind, setze den Fehlerstatus
-    if (Object.keys(validationErrors).length > 0) {
+    if (!isValid) {
       setError(validationErrors);
       return;
     }
