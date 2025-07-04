@@ -62,6 +62,8 @@ router.get("/combined", async (req, res) => {
         const token = await getAccessToken(); // access token holen
 
         // Anfrage an verschiedene Amadeus-Endpunkte
+        // später=>  Promiss all einbauen für abfrage von rating und geocode!!
+
         const hotelsbyCity = await fetchFromAmadeus(`/v1/reference-data/locations/hotels/by-city?cityCode=${cityCode}`, token); // alle Hotels by Citycode
 
         // console.log("hotelbyCity-Length", hotelsbyCity.data.length); // Ausgabe im Terminal zur Kontrolle
@@ -70,7 +72,7 @@ router.get("/combined", async (req, res) => {
             hotelIds: hotel.hotelId // holt aus Amadeus-Anfrage Nr. 1 alle HotelIds für die spätere Verwendung (=> 2.Anfrage fuer Offers)
         }))
         console.log("hotelIdList-Length", hotelIdList.length);
-        console.log("hotelIdList", hotelIdList.slice(0, 2));
+        //  console.log("hotelIdList", hotelIdList.slice(0, 2));
 
         for (let i = 0; i < hotelIdList.length; i++) {
             console.log("Frage Hotel-ID an:", hotelIdList[i]); // Ausgabe im Terminal zur Kontrolle
@@ -80,10 +82,9 @@ router.get("/combined", async (req, res) => {
             if (result && result.data && Array.isArray(result.data) && result.data.length > 0) {
                 finalListOfHotelData.push(...result.data);
                 console.log("Angebote gefunden für Hotel-ID:", hotelIdList[i].hotelIds);
-                if (finalListOfHotelData.length >= 3) {
-                    break; // Schleife beenden, sobald 3 Einträge gefunden wurden
-                }
-
+                //     if (finalListOfHotelData.length >= 4) {
+                //         break; // Schleife beenden, sobald 3 Einträge gefunden wurden
+                //     }
             } else {
                 console.log("No offers found or error for hotelId:", hotelIdList[i].hotelIds);
             }
@@ -91,6 +92,7 @@ router.get("/combined", async (req, res) => {
         // Send the collected hotel data as the response after the loop
         res.json(finalListOfHotelData);
     }
+
     catch (error) {
         console.error("Error in searchbar route:", error);
         res.status(500).json({ message: "Internal server error" });

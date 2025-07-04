@@ -1,7 +1,6 @@
 @import "tailwindcss";
 @import "leaflet/dist/leaflet.css"; /* europe maps*/
 
-
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -33,11 +32,11 @@ a:hover {
   min-width: 320px;
   min-height: 100vh;
 } */
-
+/*
 h1 {
-  /* font-size: 3.2em; */
+  font-size: 3.2em; 
   line-height: 1.1;
-}
+}*/
 
 /* button {
   border-radius: 8px;
@@ -71,24 +70,22 @@ button:focus-visible {
   }
 }
 
-
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
 
 .no-scrollbar {
-  -ms-overflow-style: none; 
-  scrollbar-width: none; 
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
-
 .hide-scrollbar {
-  scrollbar-width: none; 
-  -ms-overflow-style: none;  
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 .hide-scrollbar::-webkit-scrollbar {
-  display: none; 
+  display: none;
 }
 
 .hero-section {
@@ -114,7 +111,7 @@ button:focus-visible {
     padding: 10px;
     border-radius: 15px;
   }
-  
+
   .quote {
     display: none;
   }
@@ -236,14 +233,36 @@ button:focus-visible {
   border-radius: 3px;
 }
 
-.europa { top: 80px; left: 310px; background: orange; color: black; }
-.afrika { top: 170px; left: 330px; }
-.nordamerika { top: 80px; left: 100px; }
-.südamerika { top: 210px; left: 150px; }
-.karibik { top: 140px; left: 200px; }
-.asien { top: 90px; left: 440px; }
-.australien { top: 230px; left: 500px; }
-
+.europa {
+  top: 80px;
+  left: 310px;
+  background: orange;
+  color: black;
+}
+.afrika {
+  top: 170px;
+  left: 330px;
+}
+.nordamerika {
+  top: 80px;
+  left: 100px;
+}
+.südamerika {
+  top: 210px;
+  left: 150px;
+}
+.karibik {
+  top: 140px;
+  left: 200px;
+}
+.asien {
+  top: 90px;
+  left: 440px;
+}
+.australien {
+  top: 230px;
+  left: 500px;
+}
 
 .header-full-width {
   width: 100vw;
