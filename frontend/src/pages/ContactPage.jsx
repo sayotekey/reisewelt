@@ -1,4 +1,5 @@
 import faqData from "../data/faqData";
+import ContactForm from "../components/Contact/ContactForm";
 
 const ContactPage = () => {
   return (
@@ -22,8 +23,9 @@ const ContactPage = () => {
                 <br />
                 Wenn Sie Fragen zu unseren Hotels, Reisen oder sonstigen
                 Angeboten haben, zögern Sie nicht, uns zu kontaktieren. Bevor
-                Sie uns schreiben, werfen Sie bitte einen Blick in unsere FAQ,
-                dort finden Sie vielleicht schon die Antwort auf Ihre Frage.
+                Sie uns schreiben, werfen Sie bitte einen Blick in unsere Häufig
+                gestellte Fragen, dort finden Sie vielleicht schon die Antwort
+                auf Ihre Frage.
                 <br />
                 <br />
                 Unsere Kontaktmöglichkeiten finden Sie unten: Telefon, E-Mail
@@ -46,16 +48,16 @@ const ContactPage = () => {
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
-                    stroke-width="2"
+                    strokeWidth="2"
                   >
                     <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
                       d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
                     />
                     <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
                       d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
                     />
                   </svg>
@@ -72,11 +74,11 @@ const ContactPage = () => {
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
-                    stroke-width="2"
+                    strokeWidth="2"
                   >
                     <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
                       d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
                     />
                   </svg>
@@ -93,11 +95,11 @@ const ContactPage = () => {
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
-                    stroke-width="2"
+                    strokeWidth="2"
                   >
                     <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
                       d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h24a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
                     />
                   </svg>
@@ -113,73 +115,7 @@ const ContactPage = () => {
       </section>
 
       {/* Kontaktformular Section */}
-      <section className="bg-white ">
-        <div className="max-w-[556px] px-4 py-10 mx-auto  flex flex-col ">
-          <div className="w-full flex flex-col gap-5">
-            <div className="w-full flex flex-col justify-start items-start gap-6">
-              <div className="w-full">
-                <label className=" dark:text-black text-black text-base font-normal  leading-7">
-                  Name
-                </label>
-                <input
-                  placeholder="Name"
-                  type="text"
-                  className="mt-2 w-full px-5 py-2 bg-white rounded-xl outline-1 outline-offset-[-1px] outline-black  overflow-hidden  text-[#898989] text-lg font-normal "
-                ></input>
-              </div>
-              <div className="w-full">
-                <label className="dark:text-black text-black text-base font-normal  leading-7">
-                  Email
-                </label>
-                <input
-                  placeholder="Email"
-                  type="email"
-                  className="mt-2 w-full px-5 py-2 bg-white rounded-xl outline-1 outline-offset-[-1px] outline-black  overflow-hidden  text-[#898989] text-lg font-normal "
-                ></input>
-              </div>
-              <div className="flex gap-9 mt-3">
-                <p className="text-black">Ich bitte um Rückruf:</p>
-                <label className="flex items-center gap-4">
-                  <input type="radio" className="w-7 h-7  accent-black" />
-                  <span className="justify-start text-black text-base sm:text-lg font-normal ">
-                    Ja
-                  </span>
-                </label>
-                <label className="flex items-center gap-4">
-                  <input type="radio" className="w-7 h-7  accent-black" />
-                  <span className="justify-start text-black text-base sm:text-lg font-normal ">
-                    Nein
-                  </span>
-                </label>
-              </div>
-              <div className="w-full mb-3">
-                <label className="text-black text-base font-normal  leading-7">
-                  Telefonnummer
-                </label>
-                <input
-                  placeholder="+49 160 4567890"
-                  type="tel"
-                  className="mt-2 w-full px-5 py-2 bg-white rounded-xl outline-1 outline-offset-[-1px] outline-black  overflow-hidden  text-[#898989] text-lg font-normal "
-                ></input>
-              </div>
-              <div className="w-full">
-                <label className="dark:text-black text-black text-base font-normal  leading-7">
-                  Nachricht
-                </label>
-                <textarea
-                  className="mt-2 w-full resize-none px-5 py-2 bg-white rounded-xl outline-1 outline-offset-[-1px] outline-black  overflow-hidden  text-[#898989] text-lg font-normal "
-                  placeholder=" Nachricht"
-                  cols="40"
-                  rows="10"
-                ></textarea>
-              </div>
-            </div>
-            <button className=" px-9 py-5 bg-black rounded-2xl  text-center  text-white text-xl font-normal  leading-7">
-              Anfrage absenden
-            </button>
-          </div>
-        </div>
-      </section>
+      <ContactForm />
 
       {/* FAQ Section */}
       <section className="bg-white">
@@ -217,9 +153,9 @@ const ContactPage = () => {
                         xmlns="http://www.w3.org/2000/svg"
                       >
                         <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
                           d="M20 12H4"
                         ></path>
                       </svg>
