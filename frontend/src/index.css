@@ -25,10 +25,6 @@ a:hover {
   color: rgb(11, 82, 11);
 }
 
-.my-cursor {
-  cursor: url("../src/icons/angle-down-solid.svg"), pointer;
-}
-
 /* body {
   margin: 0;
   display: flex;
@@ -93,6 +89,8 @@ button:focus-visible {
 }
 
 .hero-section {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
   height: 400px;
   position: relative;
   border-radius: 20px;
@@ -102,6 +100,21 @@ button:focus-visible {
   align-items: center;
   justify-content: flex-end;
   padding: 40px;
+}
+
+/* mobile version */
+@media (max-width: 768px) {
+  .hero-section {
+    width: 95vw;
+    margin-left: calc(50% - 47.5vw);
+    height: 250px;
+    padding: 10px;
+    border-radius: 15px;
+  }
+
+  .quote {
+    display: none;
+  }
 }
 
 .hero-background {
@@ -249,4 +262,9 @@ button:focus-visible {
 .australien {
   top: 230px;
   left: 500px;
+}
+
+.header-full-width {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
 }
