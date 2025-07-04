@@ -35,7 +35,7 @@ const TravelNews = () => {
 
   return (
     <div className="w-full max-w-[1320px] mx-auto p-4">
-      <h2 className="text-3xl font-bold text-gray-200 mb-6">
+      <h2 className="text-3xl font-bold text-gray-500 mb-6">
         Reise-Nachrichten
       </h2>
 

@@ -24,7 +24,7 @@ const SingleNews = () => {
   }, [id]);
 
   if (loading) {
-    return <div className="text-center text-white mt-10">Lädt...</div>;
+    return <div className="text-center text-gray-500 mt-10">Lädt...</div>;
   }
 
   if (!news) {
@@ -52,15 +52,15 @@ const SingleNews = () => {
         alt={news.title}
         className="w-full h-64 object-cover rounded-lg mb-6"
       /> */}
-      <h1 className="text-3xl font-bold mb-4">{news.title}</h1>
-      <p className="text-sm text-gray-100 mb-6">
+      <h1 className="text-3xl font-bold mb-4 text-gray-600">{news.title}</h1>
+      <p className="text-sm text-gray-500 mb-6">
         {new Date(news.createdAt).toLocaleDateString("de-DE", {
           day: "2-digit",
           month: "long",
           year: "numeric",
         })}
       </p>
-      <div className="space-y-4 text-gray-100">
+      <div className="space-y-4 text-gray-500 text-lg">
         {news.content.map((block, index) => {
           if (block.type === "paragraph") {
             return <p key={index}>{block.text}</p>;
@@ -70,8 +70,8 @@ const SingleNews = () => {
                 key={index}
                 src={block.url}
                 alt="Artikelbild"
-                className="w-full rounded-md"
-                nError={(e) => {
+                className="w-3/4 h-80 object-cover rounded-md mx-auto"
+                onError={(e) => {
                   e.target.onerror = null;
                   e.target.src = "/fallback.jpg";
                 }}
