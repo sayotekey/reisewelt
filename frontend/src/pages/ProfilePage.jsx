@@ -28,6 +28,8 @@ const ProfilePage = () => {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
+      // console.log("User data:", res.data);
+      
       setLocalUser(res.data);
     } catch (error) {
       console.error("Error loading user data:", error);
@@ -185,7 +187,8 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="min-h-screen w-full flex flex-row bg-gray-100">
+    <div className="min-h-screen w-full flex flex-row bg-gray-100 overflow-hidden">
+
       {/* Linkes Menü - Tabs für die Navigation */}
       <div className="flex flex-col w-56 bg-white rounded-r-3xl overflow-hidden">
         <div className="flex items-center justify-center h-20 shadow-md">
@@ -237,7 +240,7 @@ const ProfilePage = () => {
       </div>
 
       {/* Rechter Bereich - Inhalt basierend auf dem aktiven Tab */}
-      <div className="flex-1 p-6 text-gray-900">{renderContent()}</div>
+      <div className="flex-1 pt-10 p-30 text-gray-900">{renderContent()}</div>
     </div>
   );
 };

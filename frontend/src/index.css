@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@import "leaflet/dist/leaflet.css"; //europe maps
+
 
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
@@ -24,13 +26,13 @@ a:hover {
   color: rgb(11, 82, 11);
 }
 
-body {
+/* body {
   margin: 0;
   display: flex;
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
-}
+} */
 
 h1 {
   /* font-size: 3.2em; */
@@ -88,3 +90,140 @@ button:focus-visible {
 .hide-scrollbar::-webkit-scrollbar {
   display: none; 
 }
+
+.hero-section {
+
+  height: 400px;
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 40px;
+}
+
+.hero-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  transition: opacity 1s ease-in-out;
+  z-index: 0;
+  opacity: 0;
+}
+
+.hero-background.active {
+  opacity: 1;
+}
+
+.quote {
+  position: relative;
+  z-index: 1;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 400px;
+  text-align: right;
+}
+
+.travel-wrapper {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  background: #f6f7f9;
+}
+
+.top-nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.circle {
+  width: 20px;
+  height: 20px;
+  background: green;
+  border-radius: 50%;
+}
+
+.top-nav h2 {
+  margin: 0;
+}
+
+.top-nav .highlight {
+  background-color: #fcd6ae;
+  font-weight: bold;
+  padding: 0 8px;
+}
+
+.continent-links {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.continent-links a {
+  color: #006699;
+  text-decoration: none;
+  border-right: 1px solid #ccc;
+  padding-right: 10px;
+}
+
+.continent-links a:last-child {
+  border-right: none;
+}
+
+.content {
+  display: flex;
+  margin-top: 30px;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.hotels-list h4 {
+  font-weight: bold;
+}
+
+.hotels-list ul {
+  list-style: none;
+  padding: 0;
+}
+
+.hotels-list li {
+  margin: 5px 0;
+  color: #1a7dc0;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.map {
+  position: relative;
+}
+
+.map img {
+  max-width: 500px;
+}
+
+.continent-label {
+  position: absolute;
+  padding: 3px 7px;
+  background: #005978;
+  color: white;
+  font-size: 12px;
+  border-radius: 3px;
+}
+
+.europa { top: 80px; left: 310px; background: orange; color: black; }
+.afrika { top: 170px; left: 330px; }
+.nordamerika { top: 80px; left: 100px; }
+.südamerika { top: 210px; left: 150px; }
+.karibik { top: 140px; left: 200px; }
+.asien { top: 90px; left: 440px; }
+.australien { top: 230px; left: 500px; }

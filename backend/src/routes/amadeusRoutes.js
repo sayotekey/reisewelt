@@ -2,7 +2,6 @@ import express from 'express';
 import { getAccessToken, fetchFromAmadeus } from "../api/amadeusService.js";
 
 const router = express.Router();
-// const cityCodes = ["PAR", "BER", "ROM", "MAD", "VIE", "AMS", "BRU", "CPH", "STO", "LON"];
 
 const cityNameToCode = {
     Amsterdam: "AMS",
@@ -21,6 +20,7 @@ const cityNameToCode = {
     Innsbruck: "INN",
     Kopenhagen: "CPH",
     Köln: "CGN",
+    Leipzig: "LEJ",
     Lissabon: "LIS",
     London: "LON",
     Lyon: "LYS",
@@ -46,6 +46,10 @@ const cityNameToCode = {
 };
 
 router.get("/combined", async (req, res) => {
+
+    const finalListOfHotelData = [];
+    const invalidListOfHotels = [];
+
     try {
         const { cityName } = req.query; // Städtenamen auslesen
         console.log("Received cityName:", cityName);
@@ -55,50 +59,62 @@ router.get("/combined", async (req, res) => {
         if (!cityCode) {
             return res.status(400).json({ message: "Unbekannter Städtename" });
         }
-        // edit: im Frontend=> später Logik für required cityCode hinzufügen
-        // Umwandlung Input in cityCode
-
-
-        const token = await getAccessToken(); // Ensure having the access token before making the request
+        const token = await getAccessToken(); // access token holen
 
         // Anfrage an verschiedene Amadeus-Endpunkte
-        const [hotelsbyCity, hotelIds, hotelOffers] = await Promise.all([
-            fetchFromAmadeus(`/v1/reference-data/locations/hotels/by-city?cityCode=${cityCode}`, token), // alle Hotel by Citycode
-            // fetchFromAmadeus(`/v1/activity/activities/by-city?cityCode=${cityCode}`, token),
-            // fetchFromAmadeus(`/v1/activity/activities/by-city?cityCode=${cityCode}`, token)
-        ]);
+        const hotelsbyCity = await fetchFromAmadeus(`/v1/reference-data/locations/hotels/by-city?cityCode=${cityCode}`, token); // alle Hotels by Citycode
 
-        const validListOfHotelsByCityCode = [];
+        // console.log("hotelbyCity-Length", hotelsbyCity.data.length); // Ausgabe im Terminal zur Kontrolle
 
-        for (let i = 0; i < hotelsbyCity.data.length; i++) {
-            if (validListOfHotelsByCityCode.length >= 30) break; // Entfernen von ungültigen Einträgen
-            const hotel = hotelsbyCity.data[i];
-            // Überprüfen, ob hotelId vorhanden ist
-            if (hotel.hotelId) {
-                validListOfHotelsByCityCode.push({
-                    name: hotel.name,
-                    hotelId: hotel.hotelId,
-                    city: hotel.iataCode,
-                    country: hotel.address.countryCode,
-                    geoCode: hotel.geoCode
-                });
+        const hotelIdList = hotelsbyCity.data.map(hotel => ({
+            hotelIds: hotel.hotelId // holt aus Amadeus-Anfrage Nr. 1 alle HotelIds für die spätere Verwendung (=> 2.Anfrage fuer Offers)
+        }))
+        console.log("hotelIdList-Length", hotelIdList.length);
+        console.log("hotelIdList", hotelIdList.slice(0, 2));
+
+        for (let i = 0; i < hotelIdList.length; i++) {
+            console.log("Frage Hotel-ID an:", hotelIdList[i]); // Ausgabe im Terminal zur Kontrolle
+            const result = await fetchFromAmadeus(`/v3/shopping/hotel-offers?hotelIds=${hotelIdList[i].hotelIds}`, token);
+
+            // Prüfen, ob es Angebote mit available: true gibt
+            if (result && result.data && Array.isArray(result.data) && result.data.length > 0) {
+                finalListOfHotelData.push(...result.data);
+                console.log("Angebote gefunden für Hotel-ID:", hotelIdList[i].hotelIds);
+                if (finalListOfHotelData.length >= 3) {
+                    break; // Schleife beenden, sobald 3 Einträge gefunden wurden
+                }
+
+            } else {
+                console.log("No offers found or error for hotelId:", hotelIdList[i].hotelIds);
             }
-        };
-
-        // // Daten zusammenfassen
-        // const result = {
-        //     hotelList: validListOfHotelsByCityCode,
-        //     hotelIdsList: hotelIds.data,
-        //     hotelOffersList: hotelOffers.data // ??
-
-        // };
-
-        res.json(validListOfHotelsByCityCode);
-
-    } catch (error) {
+        }
+        // Send the collected hotel data as the response after the loop
+        res.json(finalListOfHotelData);
+    }
+    catch (error) {
         console.error("Error in searchbar route:", error);
         res.status(500).json({ message: "Internal server error" });
-
     }
-});
+}
+);
+
+// for (let i = 0; i < Math.min(hotelsbyCity.data.length, 30); i++) {
+//     finalListOfHotelData.push(hotelsbyCity.data[i]);
+
+// if (Array.isArray(hotelsbyCity.data)) {
+//     for (let i = 0; i < Math.min(hotelsbyCity.data.length, 30); i++) {
+//         const result = await fetchFromAmadeus(`/v3/shopping/hotel-offers?hotelIds=${hotelsbyCity.data[i].hotelId}`, token);
+//         finalListOfHotelData.push(result);
+//         // Optionally log errors if present
+//         if (result?.request?.data?.errors) {
+//             console.log(result.request.data.errors);
+//         }
+//     }
+// } else {
+//     return res.status(404).json({ message: "No hotels found for this city." });
+// }
+
+// // Send the collected hotel data as the response
+// res.json({ hotelOffers: finalListOfHotelData });
+
 export default router;

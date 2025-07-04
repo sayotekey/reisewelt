@@ -1,7 +1,6 @@
-const validateRegister = (values, type) => {
+const validateRegisterPassword = (values, type) => {
   const errors = {};
 
-  
   if (type === "register") {
     // Name validation =>Pflichtfeld, mindestens 2 Zeichen, nur lateinische Buchstaben, Leerzeichen oder Bindestriche
     if (!values.name || values.name.trim() === "") {
@@ -61,7 +60,10 @@ const validateRegister = (values, type) => {
     }
   }
 
-  return errors;
+  return {
+    isValid: Object.keys(errors).length === 0,
+    errors,
+  };
 };
 
-export default validateRegister;
+export default validateRegisterPassword;
