@@ -183,7 +183,7 @@ export default function SearchForm() {
               tabIndex={-1}
               aria-label="Eingabe löschen"
             >
-              <div className="absolute top-3 right-0 w-10 h-10 flex justify-center">
+              <div className="absolute top-3 right-2 w-10 h-10 flex justify-center">
                 <img src={xButtonDelete} alt="x-icon" width={15} />
               </div>
             </button>
@@ -213,7 +213,7 @@ export default function SearchForm() {
             onChange={(update) => {
               setDateRange(update);
             }}
-            className="w-full p-2 rounded border border-gray-800 cursor-pointer"
+            className="p-2 rounded border border-gray-800 cursor-pointer"
             placeholderText="Datum auswählen"
             dateFormat="dd.MM.yyyy"
             isClearable
@@ -231,7 +231,7 @@ export default function SearchForm() {
           </div>
 
           <div
-            className="w-full p-2 rounded border border-gray-800 pl-4 bg-white cursor-pointer"
+            className="w-full p-2 rounded border border-gray-800 pl-4 bg-white cursor-pointer hover:bg-blue-200"
             onClick={() => setShowDropdown(!showDropdown)}
           >
             {adults} Erwachsene, {children} Kinder (0 - 17 Jahre)
@@ -289,7 +289,7 @@ export default function SearchForm() {
                     <div className="pt-3 pb-2 w-full">
                       <p className="pb-3">Alter bei Rückreise:</p>
                       {/* Für jedes Kind ein Dropdown */}
-                      <div className="grid grid-cols-2 gap-2">
+                      <div className="grid grid-cols-2 gap-7">
                         {Array.from({ length: children }).map((_, idx) => (
                           <div
                             key={idx}
@@ -366,7 +366,6 @@ export default function SearchForm() {
         <h2 className="text-lg font-semibold mb-4">
           Gefundene Hotels in {myCity}:
         </h2>
-        {/* <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"> */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-6">
           {hotels.map((hotel) => (
             <div
@@ -382,7 +381,7 @@ export default function SearchForm() {
                     src={wishlistHeartEmpty}
                     alt="icon: heart"
                     className="h-5 w-5 z-10"
-                    // onClick={handleAddToWishlist}
+                    // onClick={handleAddToWishlist} => kommt noch !!
                   />
                 </div>
                 <img
