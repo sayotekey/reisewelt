@@ -42,7 +42,7 @@ const TravelNews = () => {
       <div className="relative">
         <button
           onClick={() => scroll("left")}
-          className="absolute -left-11 top-1/2 -translate-y-1/2 z-10 text-white p-2 rounded-full shadow hover:bg-fuchsia-400 transition hidden md:block"
+          className="absolute -left-11 top-1/2 -translate-y-1/2 z-10 text-gray-500 p-2 rounded-full shadow hover:bg-fuchsia-400 transition hidden md:block"
         >
           <FaChevronLeft size={20} />
         </button>
@@ -63,7 +63,7 @@ const TravelNews = () => {
 
         <button
           onClick={() => scroll("right")}
-          className="absolute -right-11 top-1/2 -translate-y-1/2 z-10 text-white p-2 rounded-full shadow  hover:bg-fuchsia-400  transition hidden md:block"
+          className="absolute -right-11 top-1/2 -translate-y-1/2 z-10 text-gray-500 p-2 rounded-full shadow  hover:bg-fuchsia-400  transition hidden md:block"
         >
           <FaChevronRight size={20} />
         </button>
