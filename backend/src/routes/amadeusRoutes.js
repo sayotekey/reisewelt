@@ -82,9 +82,9 @@ router.get("/combined", async (req, res) => {
             if (result && result.data && Array.isArray(result.data) && result.data.length > 0) {
                 finalListOfHotelData.push(...result.data);
                 console.log("Angebote gefunden für Hotel-ID:", hotelIdList[i].hotelIds);
-                //     if (finalListOfHotelData.length >= 4) {
-                //         break; // Schleife beenden, sobald 3 Einträge gefunden wurden
-                //     }
+                if (finalListOfHotelData.length >= 4) {
+                    break; // Schleife beenden, sobald 3 Einträge gefunden wurden
+                }
             } else {
                 console.log("No offers found or error for hotelId:", hotelIdList[i].hotelIds);
             }
