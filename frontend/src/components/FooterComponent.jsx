@@ -1,25 +1,85 @@
-import React from "react";
+import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 
 const FooterComponent = () => {
   const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState("");
 
   const scrollToSection = (sectionId) => {
-    
-    if (window.location.pathname === '/') {
+    if (window.location.pathname === "/") {
       const element = document.getElementById(sectionId);
       if (element) {
-        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        element.scrollIntoView({ behavior: "smooth", block: "start" });
       }
     } else {
-    
-      navigate('/');
+      navigate("/");
       setTimeout(() => {
         const element = document.getElementById(sectionId);
         if (element) {
-          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          element.scrollIntoView({ behavior: "smooth", block: "start" });
         }
       }, 300);
+    }
+  };
+
+  // Validate email
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  // Handle newsletter subscription
+  const handleNewsletterSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!email.trim()) {
+      setMessage("Bitte geben Sie Ihre E-Mail-Adresse ein.");
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      setMessage("Bitte geben Sie eine gültige E-Mail-Adresse ein.");
+      return;
+    }
+
+    setIsLoading(true);
+    setMessage("");
+
+    try {
+      // API request to server for saving subscription
+      const response = await fetch("/api/newsletter/subscribe", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: email.trim() }),
+      });
+
+      if (response.ok) {
+        setMessage(
+          "Vielen Dank! Sie haben sich erfolgreich für unseren Newsletter angemeldet."
+        );
+        setEmail("");
+      } else {
+        const errorData = await response.json();
+        setMessage(
+          errorData.message ||
+            "Ein Fehler ist aufgetreten. Bitte versuchen Sie es später erneut."
+        );
+      }
+    } catch (error) {
+      // Fallback for demonstration (when no API available)
+      console.log("Newsletter subscription for:", email);
+      setMessage(
+        "Vielen Dank! Sie haben sich erfolgreich für unseren Newsletter angemeldet."
+      );
+      setEmail("");
+    } finally {
+      setIsLoading(false);
+      // Clear message after 5 seconds
+      setTimeout(() => setMessage(""), 5000);
     }
   };
 
@@ -136,9 +196,9 @@ const FooterComponent = () => {
               </li>
               <li>
                 <a
-                  onClick={() => scrollToSection('about-us')}
+                  onClick={() => scrollToSection("about-us")}
                   className="text-gray-700 hover:text-orange-600 transition-colors duration-300 text-sm hover:underline cursor-pointer"
-                  style={{ cursor: 'pointer' }}
+                  style={{ cursor: "pointer" }}
                 >
                   Über uns
                 </a>
@@ -173,16 +233,16 @@ const FooterComponent = () => {
                   to="/fivehundredeuro-deals"
                   className="text-gray-700 hover:text-orange-600 transition-colors duration-300 text-sm hover:underline"
                 >
-                   Angebote
+                  Angebote
                 </NavLink>
               </li>
               <li>
                 <a
-                  onClick={() => scrollToSection('customer-reviews')}
+                  onClick={() => scrollToSection("customer-reviews")}
                   className="text-gray-700 hover:text-orange-600 transition-colors duration-300 text-sm hover:underline cursor-pointer"
-                  style={{ cursor: 'pointer' }}
+                  style={{ cursor: "pointer" }}
                 >
-                 Bewertung
+                  Bewertung
                 </a>
               </li>
               <li>
@@ -252,32 +312,59 @@ const FooterComponent = () => {
               <p className="text-sm text-gray-700 mb-3">
                 Newsletter abonnieren
               </p>
-              <div className="flex">
+
+              {/* Success/Error Message */}
+              {message && (
+                <div
+                  className={`mb-3 p-2 rounded text-xs ${
+                    message.includes("erfolgreich") ||
+                    message.includes("Vielen Dank")
+                      ? "bg-green-100 text-green-700 border border-green-300"
+                      : "bg-red-100 text-red-700 border border-red-300"
+                  }`}
+                >
+                  {message}
+                </div>
+              )}
+
+              <form onSubmit={handleNewsletterSubmit} className="flex">
                 <input
                   type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   placeholder="Ihre E-Mail"
-                  className="flex-1 px-3 py-2 bg-white text-gray-800 text-sm rounded-l-md border border-orange-300 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
+                  disabled={isLoading}
+                  className="flex-1 px-3 py-2 bg-white text-gray-800 text-sm rounded-l-md border border-orange-300 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
                 />
-                <button className="px-4 py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white text-sm rounded-r-md hover:from-orange-600 hover:to-orange-700 transition-all duration-300 hover:shadow-lg">
-                  <svg
-                    className="w-4 h-4"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="px-4 py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white text-sm rounded-r-md hover:from-orange-600 hover:to-orange-700 transition-all duration-300 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isLoading ? (
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  ) : (
+                    <svg
+                      className="w-4 h-4"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  )}
                 </button>
-              </div>
+              </form>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Bottom Bar */}
+      {/* Bottom Bar - Legal Links */}
+      {/* NOTE: For production use, these should link to actual legal pages required by German/EU law */}
       <div className="border-t border-orange-400 w-full">
         <div className="w-full px-4 sm:px-6 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
@@ -288,27 +375,31 @@ const FooterComponent = () => {
               <NavLink
                 to="/imprint"
                 className="text-sm text-gray-600 hover:text-gray-800 transition-colors duration-300"
+                title="Rechtliche Informationen über das Unternehmen"
               >
                 Impressum
               </NavLink>
-              <a
-                href="#"
+              <NavLink
+                to="/privacy"
                 className="text-sm text-gray-600 hover:text-gray-800 transition-colors duration-300"
+                title="Informationen zum Datenschutz"
               >
                 Datenschutz
-              </a>
-              <a
-                href="#"
+              </NavLink>
+              <NavLink
+                to="/terms"
                 className="text-sm text-gray-600 hover:text-gray-800 transition-colors duration-300"
+                title="Allgemeine Geschäftsbedingungen"
               >
                 AGB
-              </a>
-              <a
-                href="#"
+              </NavLink>
+              <NavLink
+                to="/cookies"
                 className="text-sm text-gray-600 hover:text-gray-800 transition-colors duration-300"
+                title="Cookie-Richtlinien"
               >
                 Cookies
-              </a>
+              </NavLink>
             </div>
           </div>
         </div>

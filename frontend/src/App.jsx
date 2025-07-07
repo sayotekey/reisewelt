@@ -14,6 +14,11 @@ import LastMinuteDeals from "./pages/LastMinuteDeals.jsx";
 import FivehundredEuroDeals from "./pages/FivehundredEuroDeals.jsx";
 import SingleNews from "./pages/SingleNews.jsx";
 import AllNews from "./pages/AllNews.jsx";
+// Legal pages
+import Privacy from "./pages/Privacy.jsx";
+import Imprint from "./pages/Imprint.jsx";
+import Terms from "./pages/Terms.jsx";
+import Cookies from "./pages/Cookies.jsx";
 
 function App() {
   return (
@@ -31,12 +36,17 @@ function App() {
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/lastminute-deals" element={<LastMinuteDeals />} />
           <Route path="/news" element={<AllNews />} />
+          <Route path="/news/:id" element={<SingleNews />} />
           <Route
             path="/fivehundredeuro-deals"
             element={<FivehundredEuroDeals />}
           />
+          {/* Legal pages */}
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/imprint" element={<Imprint />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/cookies" element={<Cookies />} />
           <Route path="*" element={<ErrorPage />} />
-          <Route path="/news/:id" element={<SingleNews />} />
         </Routes>
       </div>
       <FooterComponent />
