@@ -19,10 +19,12 @@ import Privacy from "./pages/Privacy.jsx";
 import Imprint from "./pages/Imprint.jsx";
 import Terms from "./pages/Terms.jsx";
 import Cookies from "./pages/Cookies.jsx";
+// Theme context
+import { ThemeProvider } from "./context/ThemeContext.jsx";
 
 function App() {
   return (
-    <>
+    <ThemeProvider>
       {/* // <BrowserRouter>/ */}
       <div className="main-content">
         <HeaderComponent />
@@ -51,7 +53,7 @@ function App() {
       </div>
       <FooterComponent />
       {/* // </BrowserRouter> */}
-    </>
+    </ThemeProvider>
   );
 }
 

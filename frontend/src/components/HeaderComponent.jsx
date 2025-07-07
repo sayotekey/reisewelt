@@ -7,6 +7,7 @@ import france from "../images/france.png";
 import turkey from "../images/turkey.png";
 import { useAuth } from "../context/AuthContext.jsx";
 import { logoutButton } from "../utils/logout.js";
+import ThemeToggle from "./ThemeToggle.jsx";
 
 import euroSignDark from "../icons/euro-sign-solid-black.svg";
 // import euroSign from "../icons/euro-sign-solid-white.svg";
@@ -95,7 +96,7 @@ const HeaderComponent = () => {
 
   //
   return (
-    <header className="header-full-width w-full sticky top-0 z-50 bg-purple-100 border-b border-gray-200 shadow-sm">
+    <header className="header-full-width w-full fixed top-0 left-0 right-0 z-50 bg-purple-100 border-b border-gray-200 shadow-sm">
       <div className="w-full px-6 sm:px-8 lg:px-12">
         <div className="flex items-center justify-between h-18">
           {/* Logo - слева */}
@@ -241,26 +242,12 @@ const HeaderComponent = () => {
               )}
             </div>
 
-            {/* Переключатель темы */}
-            <button className="p-3 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200">
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
-                />
-              </svg>
-            </button>
+            {/* Theme Toggle Button */}
+            <ThemeToggle />
           </nav>
 
           {/* Sign in / Logout / Profile - справа */}
-          <div className="flex items-center">
+          <div className="flex items-center space-x-3">
             {user ? (
               <div className="flex items-center space-x-3">
                 <NavLink

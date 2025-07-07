@@ -84,7 +84,12 @@ const FooterComponent = () => {
   };
 
   return (
-    <footer className="bg-gradient-to-br from-orange-200 via-orange-200 to-peach-200 text-gray-800 w-full overflow-hidden">
+    <footer
+      className="footer-container w-full overflow-hidden transition-all duration-700 ease-in-out"
+      style={{
+        color: "var(--text-color)",
+      }}
+    >
       {/* Main Footer Content */}
       <div className="w-full px-4 sm:px-6 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -103,8 +108,12 @@ const FooterComponent = () => {
                 Reisewelt
               </h3>
             </div>
-            <p className="text-gray-700 text-sm leading-relaxed">
-              Entdecken Sie die Welt mit uns.<br />
+            <p
+              className="text-sm leading-relaxed transition-colors duration-300"
+              style={{ color: "var(--text-light)" }}
+            >
+              Entdecken Sie die Welt mit uns.
+              <br />
               Ihre Traumreise wartet.
             </p>
             <div className="flex space-x-4">
@@ -135,7 +144,7 @@ const FooterComponent = () => {
                   <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z" />
                 </svg>
               </a>
-      
+
               <a
                 href="#"
                 className="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center hover:bg-red-600 transition-colors duration-300 group"
@@ -154,7 +163,10 @@ const FooterComponent = () => {
 
           {/* Quick Links */}
           <div className="space-y-4">
-            <h4 className="text-lg font-semibold text-gray-800">
+            <h4
+              className="text-lg font-semibold transition-colors duration-300"
+              style={{ color: "var(--text-color)" }}
+            >
               Schnelle Links
             </h4>
             <ul className="space-y-2">
@@ -162,44 +174,35 @@ const FooterComponent = () => {
                 <NavLink
                   to="/"
                   onClick={() => {
-                    // in the top of our site 
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    // in the top of our site
+                    window.scrollTo({ top: 0, behavior: "smooth" });
                   }}
-                  className="text-gray-700 hover:text-orange-600 transition-colors duration-300 text-sm hover:underline"
+                  className="footer-link text-sm"
                 >
                   Startseite
                 </NavLink>
               </li>
               <li>
-                <NavLink
-                  to="/contact"
-                  className="text-gray-700 hover:text-orange-600 transition-colors duration-300 text-sm hover:underline"
-                >
+                <NavLink to="/contact" className="footer-link text-sm">
                   Kontakt
                 </NavLink>
               </li>
               <li>
-                <NavLink
-                  to="/news"
-                  className="text-gray-700 hover:text-orange-600 transition-colors duration-300 text-sm hover:underline"
-                >
+                <NavLink to="/news" className="footer-link text-sm">
                   Reise News
                 </NavLink>
               </li>
               <li>
                 <a
                   onClick={() => scrollToSection("about-us")}
-                  className="text-gray-700 hover:text-orange-600 transition-colors duration-300 text-sm hover:underline cursor-pointer"
+                  className="footer-link text-sm cursor-pointer"
                   style={{ cursor: "pointer" }}
                 >
                   Über uns
                 </a>
               </li>
               <li>
-                <NavLink
-                  to="/login"
-                  className="text-gray-700 hover:text-orange-600 transition-colors duration-300 text-sm hover:underline"
-                >
+                <NavLink to="/login" className="footer-link text-sm">
                   Anmelden
                 </NavLink>
               </li>
@@ -208,22 +211,22 @@ const FooterComponent = () => {
 
           {/* Services */}
           <div className="space-y-4">
-            <h4 className="text-lg font-semibold text-gray-800">
+            <h4
+              className="text-lg font-semibold transition-colors duration-300"
+              style={{ color: "var(--text-color)" }}
+            >
               Angebote & Services
             </h4>
             <ul className="space-y-2">
               <li>
-                <NavLink
-                  to="/lastminute-deals"
-                  className="text-gray-700 hover:text-orange-600 transition-colors duration-300 text-sm hover:underline"
-                >
+                <NavLink to="/lastminute-deals" className="footer-link text-sm">
                   Last-Minute Deals
                 </NavLink>
               </li>
               <li>
                 <NavLink
                   to="/fivehundredeuro-deals"
-                  className="text-gray-700 hover:text-orange-600 transition-colors duration-300 text-sm hover:underline"
+                  className="footer-link text-sm"
                 >
                   Angebote
                 </NavLink>
@@ -231,25 +234,19 @@ const FooterComponent = () => {
               <li>
                 <a
                   onClick={() => scrollToSection("customer-reviews")}
-                  className="text-gray-700 hover:text-orange-600 transition-colors duration-300 text-sm hover:underline cursor-pointer"
+                  className="footer-link text-sm cursor-pointer"
                   style={{ cursor: "pointer" }}
                 >
                   Bewertung
                 </a>
               </li>
               <li>
-                <NavLink
-                  to="/register"
-                  className="text-gray-700 hover:text-orange-600 transition-colors duration-300 text-sm hover:underline"
-                >
+                <NavLink to="/register" className="footer-link text-sm">
                   Registrieren
                 </NavLink>
               </li>
               <li>
-                <NavLink
-                  to="/forgot-password"
-                  className="text-gray-700 hover:text-orange-600 transition-colors duration-300 text-sm hover:underline"
-                >
+                <NavLink to="/forgot-password" className="footer-link text-sm">
                   Passwort vergessen
                 </NavLink>
               </li>
@@ -258,11 +255,14 @@ const FooterComponent = () => {
 
           {/* Contact & Newsletter */}
           <div className="space-y-4">
-            <h4 className="text-lg font-semibold text-gray-800">
+            <h4
+              className="text-lg font-semibold transition-colors duration-300"
+              style={{ color: "var(--text-color)" }}
+            >
               Kontakt & Newsletter
             </h4>
             <div className="space-y-3">
-              <div className="flex items-center space-x-2 text-gray-700 text-sm">
+              <div className="footer-contact-item flex items-center space-x-2 text-sm">
                 <svg
                   className="w-4 h-4 text-orange-600"
                   fill="currentColor"
@@ -273,7 +273,7 @@ const FooterComponent = () => {
                 </svg>
                 <span>info@reisewelt.de</span>
               </div>
-              <div className="flex items-center space-x-2 text-gray-700 text-sm">
+              <div className="footer-contact-item flex items-center space-x-2 text-sm">
                 <svg
                   className="w-4 h-4 text-orange-600"
                   fill="currentColor"
@@ -287,7 +287,7 @@ const FooterComponent = () => {
                 </svg>
                 <span>Hamburg, Deutschland</span>
               </div>
-              <div className="flex items-center space-x-2 text-gray-700 text-sm">
+              <div className="footer-contact-item flex items-center space-x-2 text-sm">
                 <svg
                   className="w-4 h-4 text-orange-600"
                   fill="currentColor"
@@ -301,7 +301,10 @@ const FooterComponent = () => {
 
             {/* Newsletter Signup */}
             <div className="mt-6">
-              <p className="text-sm text-gray-700 mb-3">
+              <p
+                className="text-sm mb-3 transition-colors duration-300"
+                style={{ color: "var(--text-light)" }}
+              >
                 Newsletter abonnieren
               </p>
 
@@ -326,7 +329,7 @@ const FooterComponent = () => {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Ihre E-Mail"
                   disabled={isLoading}
-                  className="flex-1 px-3 py-2 bg-white text-gray-800 text-sm rounded-l-md border border-orange-300 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                  className="footer-newsletter-input flex-1 px-3 py-2 text-sm rounded-l-md focus:outline-none disabled:cursor-not-allowed"
                 />
                 <button
                   type="submit"
@@ -360,34 +363,37 @@ const FooterComponent = () => {
       <div className="border-t border-orange-400 w-full">
         <div className="w-full px-4 sm:px-6 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <div className="text-sm text-gray-600">
+            <div
+              className="text-sm transition-colors duration-300"
+              style={{ color: "var(--text-light)" }}
+            >
               © 2025 Reisewelt. Alle Rechte vorbehalten.
             </div>
             <div className="flex space-x-6">
               <NavLink
                 to="/imprint"
-                className="text-sm text-gray-600 hover:text-gray-800 transition-colors duration-300"
+                className="footer-link text-sm transition-colors duration-300"
                 title="Rechtliche Informationen über das Unternehmen"
               >
                 Impressum
               </NavLink>
               <NavLink
                 to="/privacy"
-                className="text-sm text-gray-600 hover:text-gray-800 transition-colors duration-300"
+                className="footer-link text-sm transition-colors duration-300"
                 title="Informationen zum Datenschutz"
               >
                 Datenschutz
               </NavLink>
               <NavLink
                 to="/terms"
-                className="text-sm text-gray-600 hover:text-gray-800 transition-colors duration-300"
+                className="footer-link text-sm transition-colors duration-300"
                 title="Allgemeine Geschäftsbedingungen"
               >
                 AGB
               </NavLink>
               <NavLink
                 to="/cookies"
-                className="text-sm text-gray-600 hover:text-gray-800 transition-colors duration-300"
+                className="footer-link text-sm transition-colors duration-300"
                 title="Cookie-Richtlinien"
               >
                 Cookies
