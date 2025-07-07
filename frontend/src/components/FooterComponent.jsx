@@ -24,9 +24,9 @@ const FooterComponent = () => {
   };
 
   return (
-    <footer className="bg-gradient-to-br from-orange-200 via-orange-200 to-peach-200 text-gray-800 w-full">
+    <footer className="bg-gradient-to-br from-orange-200 via-orange-200 to-peach-200 text-gray-800 w-full overflow-hidden">
       {/* Main Footer Content */}
-      <div className="w-full px-6 py-12">
+      <div className="w-full px-4 sm:px-6 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company Info */}
           <div className="space-y-4">
@@ -233,7 +233,7 @@ const FooterComponent = () => {
                     clipRule="evenodd"
                   />
                 </svg>
-                <span>Berlin, Deutschland</span>
+                <span>Hamburg, Deutschland</span>
               </div>
               <div className="flex items-center space-x-2 text-gray-700 text-sm">
                 <svg
@@ -279,7 +279,7 @@ const FooterComponent = () => {
 
       {/* Bottom Bar */}
       <div className="border-t border-orange-400 w-full">
-        <div className="w-full px-6 py-6">
+        <div className="w-full px-4 sm:px-6 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="text-sm text-gray-600">
               © 2025 Reisewelt. Alle Rechte vorbehalten.

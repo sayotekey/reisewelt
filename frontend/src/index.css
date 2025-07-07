@@ -1,6 +1,10 @@
 @import "tailwindcss";
 @import "leaflet/dist/leaflet.css"; /* europe maps*/
 
+html {
+  overflow-x: hidden; /*scroll */
+}
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -20,6 +24,7 @@ body {
   margin: 0;
   min-height: 100vh;
   background-color: #f1fafa; /* light background */
+  overflow-x: hidden; /*scroll */
 }
 
 a {
