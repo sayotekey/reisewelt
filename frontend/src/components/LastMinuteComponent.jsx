@@ -8,7 +8,7 @@ const LastMinuteComponent = () => {
   const navigate = useNavigate();
 
   return (
-    <div>
+    <div className="my-10 ">
       <h2 className=" px-7 text-left text-2xl mt-10">
         Jetzt buchen und bis zu 50% sparen!
       </h2>

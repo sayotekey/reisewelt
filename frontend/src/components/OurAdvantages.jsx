@@ -30,8 +30,8 @@ const advantages = [
 
 const OurAdvantages = () => {
   return (
-    <section className="py-8 bg-white text-center">
-      <h2 className="text-3xl text-blue-400 font-bold mb-12">Warum mit uns reisen</h2>
+    <section className="py-10 m-10 bg-white text-center">
+      <h2 className="text-3xl text-blue-400  mb-20">Unser Versprechen an unsere Kunden</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 max-w-6xl mx-auto">
         {advantages.map((item, index) => (
           <div key={index} className="flex flex-col items-center px-4">
