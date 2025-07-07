@@ -89,7 +89,7 @@ const FooterComponent = () => {
       <div className="w-full px-4 sm:px-6 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company Info */}
-          <div className="space-y-4">
+          <div className="space-y-4 pl-6">
             <div className="flex items-center space-x-2">
               <img
                 src="/logo.png"
@@ -104,8 +104,8 @@ const FooterComponent = () => {
               </h3>
             </div>
             <p className="text-gray-700 text-sm leading-relaxed">
-              Entdecken Sie die Welt mit uns. Ihre Traumreise wartet - von
-              exotischen Stränden bis zu aufregenden Städtetrips.
+              Entdecken Sie die Welt mit uns.<br />
+              Ihre Traumreise wartet.
             </p>
             <div className="flex space-x-4">
               {/* Social Media Icons */}
@@ -135,19 +135,7 @@ const FooterComponent = () => {
                   <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z" />
                 </svg>
               </a>
-              <a
-                href="#"
-                className="w-10 h-10 bg-red-400 rounded-full flex items-center justify-center hover:bg-red-500 transition-colors duration-300 group"
-                aria-label="Instagram"
-              >
-                <svg
-                  className="w-5 h-5 group-hover:scale-110 transition-transform text-white"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 6.62 5.367 11.987 11.988 11.987 6.62 0 11.987-5.367 11.987-11.987C24.014 5.367 18.637.001 12.017.001zM8.449 16.988c-1.297 0-2.448-.49-3.323-1.297C4.251 14.97 3.954 13.7 3.954 12.017s.297-2.953 1.172-3.674c.875-.807 2.026-1.297 3.323-1.297 1.297 0 2.448.49 3.323 1.297.875.721 1.172 1.991 1.172 3.674s-.297 2.953-1.172 3.674c-.875.807-2.026 1.297-3.323 1.297zm7.009-9.679H13.25c-.414 0-.75-.336-.75-.75s.336-.75.75-.75h2.208c.414 0 .75.336.75.75s-.336.75-.75.75z" />
-                </svg>
-              </a>
+      
               <a
                 href="#"
                 className="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center hover:bg-red-600 transition-colors duration-300 group"
