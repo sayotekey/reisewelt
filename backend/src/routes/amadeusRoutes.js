@@ -4,33 +4,46 @@ import { getAccessToken, fetchFromAmadeus } from "../api/amadeusService.js";
 const router = express.Router();
 
 const cityNameToCode = {
+    Aberdeen: "ABZ",
+    Algeciras: "AEI",
     Amsterdam: "AMS",
     Antwerpen: "ANR",
     Barcelona: "BCN",
     Berlin: "BER",
     Bologna: "BLQ",
     Brüssel: "BRU",
-    Düsseldorf: "DUS",
+    Coruna: "LCG",
     Dublin: "DUB",
+    Dundee: "DND",
+    Düsseldorf: "DUS",
     Edinburgh: "EDI",
     Frankfurt: "FRA",
     Genf: "GVA",
+    Glasgow: "GLA",
+    Granada: "GRX",
     Graz: "GRZ",
     Hamburg: "HAM",
     Innsbruck: "INN",
+    Inverness: "INV",
     Kopenhagen: "CPH",
+    Klagenfurt: "KLU",
     Köln: "CGN",
     Leipzig: "LEJ",
+    Linz: "LNZ",
     Lissabon: "LIS",
     London: "LON",
     Lyon: "LYS",
     Madrid: "MAD",
+    Malaga_Costa_del_Sol: "AGP",
+    Mailand_Malpensa: "MXP",
+    Mailand_Linate: "LIN",
     Marseille: "MRS",
     München: "MUC",
     Nizza: "NCE",
     Oslo: "OSL",
     Palma: "PMI",
     Paris: "PAR",
+    Pisa: "PSA",
     Porto: "OPO",
     Rom: "ROM",
     Salzburg: "SZG",
@@ -48,7 +61,6 @@ const cityNameToCode = {
 router.get("/combined", async (req, res) => {
 
     const finalListOfHotelData = [];
-    const invalidListOfHotels = [];
 
     try {
         const { cityName } = req.query; // Städtenamen auslesen
@@ -66,13 +78,10 @@ router.get("/combined", async (req, res) => {
 
         const hotelsbyCity = await fetchFromAmadeus(`/v1/reference-data/locations/hotels/by-city?cityCode=${cityCode}`, token); // alle Hotels by Citycode
 
-        // console.log("hotelbyCity-Length", hotelsbyCity.data.length); // Ausgabe im Terminal zur Kontrolle
-
         const hotelIdList = hotelsbyCity.data.map(hotel => ({
             hotelIds: hotel.hotelId // holt aus Amadeus-Anfrage Nr. 1 alle HotelIds für die spätere Verwendung (=> 2.Anfrage fuer Offers)
         }))
         console.log("hotelIdList-Length", hotelIdList.length);
-        //  console.log("hotelIdList", hotelIdList.slice(0, 2));
 
         for (let i = 0; i < hotelIdList.length; i++) {
             console.log("Frage Hotel-ID an:", hotelIdList[i]); // Ausgabe im Terminal zur Kontrolle
