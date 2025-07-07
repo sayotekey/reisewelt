@@ -75,10 +75,10 @@ export default function CustomerReviews() {
   };
 
   return (
-    <div id="customer-reviews" className="py-10">
+    <div id="customer-reviews" className="py-15">
       <div className="max-w-[1360px] mx-auto px-4 relative">
         <div className="flex justify-between items-center mb-6 relative">
-          <h2 className="text-2xl font-semibold text-white text-center w-full">
+          <h2 className="text-2xl font-semibold text-gray-600 text-center w-full">
             Das sagen unsere Kunden
           </h2>
           <button

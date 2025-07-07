@@ -161,6 +161,10 @@ const FooterComponent = () => {
               <li>
                 <NavLink
                   to="/"
+                  onClick={() => {
+                    // in the top of our site 
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
                   className="text-gray-700 hover:text-orange-600 transition-colors duration-300 text-sm hover:underline"
                 >
                   Startseite

@@ -33,7 +33,7 @@ a {
   text-decoration: inherit;
 }
 a:hover {
-  color: rgb(11, 82, 11);
+  color: rgb(255, 118, 38);
 }
 
 /* body {
@@ -281,4 +281,16 @@ button:focus-visible {
 .header-full-width {
   width: 100vw;
   margin-left: calc(50% - 50vw);
+}
+
+::-webkit-scrollbar {
+  width: 20px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(45deg, #ff7626, #ff9a56); 
+  border-radius: 15px;
+}
+html {
+  scrollbar-color: #ff7626 #f1f1f1;
 }
