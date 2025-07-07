@@ -282,3 +282,15 @@ button:focus-visible {
   width: 100vw;
   margin-left: calc(50% - 50vw);
 }
+
+::-webkit-scrollbar {
+  width: 20px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(45deg, #ff7626, #ff9a56); 
+  border-radius: 15px;
+}
+html {
+  scrollbar-color: #ff7626 #f1f1f1;
+}
