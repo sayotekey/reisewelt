@@ -1,4 +1,5 @@
 import { useState } from "react";
+import axios from "axios";
 import validateContactForm from "../../utils/validateContactForm";
 
 const ContactForm = () => {
@@ -11,6 +12,8 @@ const ContactForm = () => {
   });
 
   const [errors, setErrors] = useState({});
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -18,7 +21,7 @@ const ContactForm = () => {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const validationErrors = validateContactForm(formData);
@@ -26,8 +29,26 @@ const ContactForm = () => {
       setErrors(validationErrors);
     } else {
       setErrors({});
-      console.log("Form data ", formData);
-      // Backend-Logik
+      setSuccessMessage("");
+      setErrorMessage("");
+
+      try {
+        await axios.post("http://localhost:3000/api/contact", formData);
+
+        setSuccessMessage("Kontaktformular erfolgreich gesendet");
+
+        setFormData({
+          name: "",
+          email: "",
+          callback: "",
+          phone: "",
+          message: "",
+        });
+      } catch (error) {
+        setErrorMessage(
+          "Fehler beim Senden des Kontaktformulars. Bitte versuchen Sie es später erneut."
+        );
+      }
     }
   };
 
@@ -155,6 +176,12 @@ const ContactForm = () => {
           >
             Anfrage absenden
           </button>
+          {successMessage && (
+            <p className="text-green-500 text-sm">{successMessage}</p>
+          )}
+          {errorMessage && (
+            <p className="text-red-500 text-sm">{errorMessage}</p>
+          )}
         </form>
       </div>
     </section>
