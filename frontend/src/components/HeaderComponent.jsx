@@ -92,7 +92,7 @@ const HeaderComponent = () => {
     return () =>
       document.removeEventListener("mousedown", handleClickOutsideCurrency);
   }, []);
-  // console.log(currencyDark, currencyDark.length);
+  // console.loog(currencyDark, currencyDark.length);
 
   //
   return (
