@@ -1,4 +1,5 @@
 import { useState } from "react";
+import validateContactForm from "../../utils/validateContactForm";
 
 const ContactForm = () => {
   const [formData, setFormData] = useState({
@@ -9,6 +10,8 @@ const ContactForm = () => {
     message: "",
   });
 
+  const [errors, setErrors] = useState({});
+
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -18,9 +21,14 @@ const ContactForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    console.log("Form data ", formData);
-
-    // Backend-Logik
+    const validationErrors = validateContactForm(formData);
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+    } else {
+      setErrors({});
+      console.log("Form data ", formData);
+      // Backend-Logik
+    }
   };
 
   return (
@@ -43,7 +51,9 @@ const ContactForm = () => {
             onChange={handleChange}
             required
             className="mt-2 w-full px-5 py-2 bg-white rounded-xl outline-1 outline-offset-[-1px] outline-black  overflow-hidden  text-[#898989] text-lg font-normal "
-          ></input>
+          />
+
+          {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
 
           {/*Email*/}
           <label className="dark:text-black text-black text-base font-normal  leading-7">
@@ -57,7 +67,11 @@ const ContactForm = () => {
             onChange={handleChange}
             required
             className="mt-2 w-full px-5 py-2 bg-white rounded-xl outline-1 outline-offset-[-1px] outline-black  overflow-hidden  text-[#898989] text-lg font-normal "
-          ></input>
+          />
+
+          {errors.email && (
+            <p className="text-red-500 text-sm">{errors.email}</p>
+          )}
 
           {/*Rückruf*/}
           <div className="flex gap-9 mt-3">
@@ -72,6 +86,7 @@ const ContactForm = () => {
                 required
                 className="w-7 h-7  accent-black"
               />
+
               <span className="justify-start text-black text-base sm:text-lg font-normal ">
                 Ja
               </span>
@@ -111,6 +126,9 @@ const ContactForm = () => {
                   : ""
               }`}
             />
+            {errors.phone && (
+              <p className="text-red-500 text-sm">{errors.phone}</p>
+            )}
           </div>
 
           {/*Nachricht*/}
@@ -126,6 +144,10 @@ const ContactForm = () => {
             rows="10"
             className="mt-2 w-full resize-none px-5 py-2 bg-white rounded-xl outline-1 outline-offset-[-1px] outline-black  overflow-hidden  text-[#898989] text-lg font-normal "
           ></textarea>
+
+          {errors.message && (
+            <p className="text-red-500 text-sm">{errors.message}</p>
+          )}
 
           <button
             type="submit"
