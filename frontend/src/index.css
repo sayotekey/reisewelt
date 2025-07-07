@@ -74,7 +74,7 @@ button:focus-visible {
     background-color: #ffffff;
   }
   body {
-    background-color: #ffffff; 
+    background-color: #ffffff;
   }
   a:hover {
     color: #747bff;
@@ -288,9 +288,9 @@ button:focus-visible {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(45deg, #ff7626, #ff9a56); 
+  background: linear-gradient(45deg, #ff7626, #ff9a56);
   border-radius: 15px;
 }
 html {
-  scrollbar-color: #ff7626 #f1f1f1;
+  scrollbar-color: #c58ef1 #f1f1f1;
 }
