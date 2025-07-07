@@ -115,17 +115,6 @@ export default function SearchForm() {
       setHotels(response.data);
       setLoading(false); // <-- Spinner ausblenden
 
-      // Wenn keine Hotels gefunden wurden nach 5 Sekunden erneut versuchen
-      if (Array.isArray(response.data) && response.data.length < 4) {
-        console.log("Noch keine Daten gefunden");
-
-        setTimeout(() => {
-          getCombinedData(myCity);
-        }, 2000);
-      } else {
-        console.log("Ersten 4 Datenobjekte erhalten:", response.data);
-      }
-
       // Lesen die zuletzt gespeicherten Suchen aus localStorage
       const previousSearches =
         JSON.parse(localStorage.getItem("lastSearches")) || [];
