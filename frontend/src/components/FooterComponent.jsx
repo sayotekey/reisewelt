@@ -1,7 +1,28 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 const FooterComponent = () => {
+  const navigate = useNavigate();
+
+  const scrollToSection = (sectionId) => {
+    
+    if (window.location.pathname === '/') {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    } else {
+    
+      navigate('/');
+      setTimeout(() => {
+        const element = document.getElementById(sectionId);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 300);
+    }
+  };
+
   return (
     <footer className="bg-gradient-to-br from-orange-200 via-orange-200 to-peach-200 text-gray-800 w-full">
       {/* Main Footer Content */}
@@ -99,26 +120,10 @@ const FooterComponent = () => {
               </li>
               <li>
                 <NavLink
-                  to="/about"
+                  to="/contact"
                   className="text-gray-700 hover:text-orange-600 transition-colors duration-300 text-sm hover:underline"
                 >
-                  Über uns
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  to="/setting"
-                  className="text-gray-700 hover:text-orange-600 transition-colors duration-300 text-sm hover:underline"
-                >
-                  Einstellungen
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  to="/hotels"
-                  className="text-gray-700 hover:text-orange-600 transition-colors duration-300 text-sm hover:underline"
-                >
-                  Hotels
+                  Kontakt
                 </NavLink>
               </li>
               <li>
@@ -129,52 +134,72 @@ const FooterComponent = () => {
                   Reise News
                 </NavLink>
               </li>
+              <li>
+                <a
+                  onClick={() => scrollToSection('about-us')}
+                  className="text-gray-700 hover:text-orange-600 transition-colors duration-300 text-sm hover:underline cursor-pointer"
+                  style={{ cursor: 'pointer' }}
+                >
+                  Über uns
+                </a>
+              </li>
+              <li>
+                <NavLink
+                  to="/login"
+                  className="text-gray-700 hover:text-orange-600 transition-colors duration-300 text-sm hover:underline"
+                >
+                  Anmelden
+                </NavLink>
+              </li>
             </ul>
           </div>
 
           {/* Services */}
           <div className="space-y-4">
-            <h4 className="text-lg font-semibold text-gray-800">Services</h4>
+            <h4 className="text-lg font-semibold text-gray-800">
+              Angebote & Services
+            </h4>
             <ul className="space-y-2">
               <li>
-                <a
-                  href="#"
+                <NavLink
+                  to="/lastminute-deals"
                   className="text-gray-700 hover:text-orange-600 transition-colors duration-300 text-sm hover:underline"
                 >
-                  Hotelsuche
-                </a>
+                  Last-Minute Deals
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to="/fivehundredeuro-deals"
+                  className="text-gray-700 hover:text-orange-600 transition-colors duration-300 text-sm hover:underline"
+                >
+                   Angebote
+                </NavLink>
               </li>
               <li>
                 <a
-                  href="#"
-                  className="text-gray-700 hover:text-orange-600 transition-colors duration-300 text-sm hover:underline"
+                  onClick={() => scrollToSection('customer-reviews')}
+                  className="text-gray-700 hover:text-orange-600 transition-colors duration-300 text-sm hover:underline cursor-pointer"
+                  style={{ cursor: 'pointer' }}
                 >
-                  Flugbuchung
+                 Bewertung
                 </a>
               </li>
               <li>
-                <a
-                  href="#"
+                <NavLink
+                  to="/register"
                   className="text-gray-700 hover:text-orange-600 transition-colors duration-300 text-sm hover:underline"
                 >
-                  Mietwagen
-                </a>
+                  Registrieren
+                </NavLink>
               </li>
               <li>
-                <a
-                  href="#"
+                <NavLink
+                  to="/forgot-password"
                   className="text-gray-700 hover:text-orange-600 transition-colors duration-300 text-sm hover:underline"
                 >
-                  Reiseversicherung
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-gray-700 hover:text-orange-600 transition-colors duration-300 text-sm hover:underline"
-                >
-                  24/7 Support
-                </a>
+                  Passwort vergessen
+                </NavLink>
               </li>
             </ul>
           </div>

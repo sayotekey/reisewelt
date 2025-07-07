@@ -75,7 +75,7 @@ export default function CustomerReviews() {
   };
 
   return (
-    <div className="py-10">
+    <div id="customer-reviews" className="py-10">
       <div className="max-w-[1360px] mx-auto px-4 relative">
         <div className="flex justify-between items-center mb-6 relative">
           <h2 className="text-2xl font-semibold text-white text-center w-full">
