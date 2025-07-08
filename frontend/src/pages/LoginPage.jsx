@@ -72,10 +72,10 @@ const LoginPage = () => {
                   z-0"
         ></div>
         <div className="w-full mx-auto px-20 flex-col items-center space-y-6">
-          <h1 className="text-white font-bold text-4xl font-sans">
+          <h1 className="text-black font-bold text-4xl font-sans">
             Herzlich willkommen bei ReiseWelt
           </h1>
-          <p className="text-white mt-1">
+          <p className="text-black mt-1">
             Hier finden Sie Ihr persönliches Kundenkonto. Einfach registrieren
             oder einloggen - und los geht's! Verwalten Sie Ihre Buchungen,
             persönliche Daten und mehr - alles übersichtlich an einem Ort.
