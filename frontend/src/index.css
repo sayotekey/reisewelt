@@ -323,7 +323,7 @@ button:focus-visible {
   border-radius: 15px;
 }
 html {
-  scrollbar-color: #c58ef1 #f1f1f1;
+  scrollbar-color: #26073fb9 #f1f1f1;
 }
 
 /* Theme toggle button styles */
@@ -485,7 +485,7 @@ html {
 /* Light theme footer - Original orange gradient */
 [data-theme="light"] .footer-container,
 :root .footer-container {
-  background: linear-gradient(135deg, #fed7aa 0%, #fed7aa 50%, #fecaca 100%);
+  background: linear-gradient(135deg, #a8d5e2 0%, #a2cedaa9 50%, #a8d5e2 100%);
   border-top: 2px solid #ccc;
 }
 
