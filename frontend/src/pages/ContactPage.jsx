@@ -1,5 +1,6 @@
 import faqData from "../data/faqData";
 import ContactForm from "../components/Contact/ContactForm";
+import FaqComponent from "../components/Contact/FaqComponent";
 
 const ContactPage = () => {
   return (
@@ -118,64 +119,7 @@ const ContactPage = () => {
       <ContactForm />
 
       {/* FAQ Section */}
-      <section className="bg-white">
-        <div className="container px-6 py-12 mx-auto">
-          <h2 className="text-2xl font-semibold text-center text-gray-800 lg:text-3xl dark:text-black">
-            Häufig gestellte Fragen
-          </h2>
-
-          <div className="mt-8 xl:mt-16 lg:flex lg:-mx-12">
-            {/* Links Kolumn - Kategorien */}
-            <div className="lg:mx-12">
-              {faqData.map((category) => (
-                <a
-                  key={category.category}
-                  href="#"
-                  className="block text-black hover:underline mb-2"
-                >
-                  {category.title}
-                </a>
-              ))}
-            </div>
-
-            {/* Rechts Kategory - Fragen und Antworten */}
-            <div className="flex-1 mt-8 lg:mx-12 lg:mt-0">
-              {faqData
-                .flatMap(({ questions }) => questions)
-                .map(({ id, question, answer }) => (
-                  <div key={id} className="mb-8">
-                    <button className="flex items-center focus:outline-none">
-                      <svg
-                        className="flex-shrink-0 w-6 h-6 text-black"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M20 12H4"
-                        ></path>
-                      </svg>
-
-                      <h2 className="mx-4 text-xl text-black dark:text-black">
-                        {question}
-                      </h2>
-                    </button>
-
-                    <div className="flex mt-4 md:mx-10">
-                      <p className="max-w-3xl px-4 text-black">{answer}</p>
-                    </div>
-
-                    <hr className="my-8 border-gray-200 dark:border-gray-700" />
-                  </div>
-                ))}
-            </div>
-          </div>
-        </div>
-      </section>
+      <FaqComponent faqData={faqData} />
     </>
   );
 };
