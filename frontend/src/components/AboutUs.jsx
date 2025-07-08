@@ -3,7 +3,7 @@ import aboutImage from "../images/aboutUs.png";
 
 const AboutUs = () => {
   return (
-    <section id="about-us" className=" py-10 w-full bg-white text-gray-800">
+    <section id="about-us" className="  w-full bg-white text-gray-800">
       <div className="relative w-full h-[40vh] md:h-[70vh] lg:h-[60vh] overflow-hidden">
         <img
           src={aboutImage}
