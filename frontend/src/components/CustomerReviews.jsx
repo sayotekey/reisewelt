@@ -77,21 +77,33 @@ export default function CustomerReviews() {
   };
 
   return (
-    <div id="customer-reviews" className="py-15 mt-16" style={{ backgroundColor: isDark ? '#1a1a1a' : '#ffffff' }}>
+    <div
+      id="customer-reviews"
+      className="py-15 mt-16"
+      style={{ backgroundColor: isDark ? "#242424" : "#ffffff" }}
+    >
       <div className="max-w-[1360px] mx-auto px-4 relative">
         <div className="flex justify-between items-center mb-6 relative">
-          <h2 
-            className="text-2xl font-semibold text-center w-full"
-            style={{ color: isDark ? 'rgba(255, 255, 255, 0.87)' : '#213547' }}
+          <h2
+            className="text-3xl font-bold text-center w-full mb-10 transition-all duration-500 hover:scale-105"
+            style={{
+              color: "var(--accent-color)",
+              textShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
+            }}
           >
             Das sagen unsere Kunden
           </h2>
           <button
             onClick={handleReviewClick}
-            className="absolute right-6 p-2 rounded-md font-semibold hover:opacity-80 transition-opacity"
-            style={{ 
-              backgroundColor: isDark ? '#333' : '#fef3c7',
-              color: isDark ? '#ff7626' : '#1d4ed8'
+            className="absolute right-6 px-6 py-3 rounded-lg font-bold text-sm hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-lg"
+            style={{
+              background: isDark
+                ? "linear-gradient(135deg, #ff7626, #ff5722)"
+                : "linear-gradient(135deg, #0ea5e9, #0284c7)",
+              color: "#ffffff",
+              boxShadow: isDark
+                ? "0 4px 20px rgba(255, 118, 38, 0.3)"
+                : "0 4px 20px rgba(14, 165, 233, 0.3)",
             }}
           >
             {successMessage}
@@ -103,15 +115,17 @@ export default function CustomerReviews() {
           <form
             onSubmit={handleSubmit}
             className="p-4 rounded shadow mb-6"
-            style={{ 
-              backgroundColor: isDark ? '#242424' : '#ffffff',
-              color: isDark ? 'rgba(255, 255, 255, 0.87)' : '#000000'
+            style={{
+              backgroundColor: isDark ? "#242424" : "#ffffff",
+              color: isDark ? "rgba(255, 255, 255, 0.87)" : "#000000",
             }}
           >
             <label className="block mb-2">
-              <span 
+              <span
                 className="font-medium"
-                style={{ color: isDark ? 'rgba(255, 255, 255, 0.87)' : '#374151' }}
+                style={{
+                  color: isDark ? "rgba(255, 255, 255, 0.87)" : "#374151",
+                }}
               >
                 Ihr Feedback:
               </span>
@@ -120,18 +134,20 @@ export default function CustomerReviews() {
                 onChange={(e) => setText(e.target.value)}
                 required
                 className="w-full border rounded p-2 mt-1"
-                style={{ 
-                  backgroundColor: isDark ? '#1a1a1a' : '#ffffff',
-                  color: isDark ? 'rgba(255, 255, 255, 0.87)' : '#000000',
-                  borderColor: isDark ? '#444' : '#d1d5db'
+                style={{
+                  backgroundColor: isDark ? "#1a1a1a" : "#ffffff",
+                  color: isDark ? "rgba(255, 255, 255, 0.87)" : "#000000",
+                  borderColor: isDark ? "#444" : "#d1d5db",
                 }}
                 rows="4"
               />
             </label>
             <label className="block mb-4">
-              <span 
+              <span
                 className="font-medium"
-                style={{ color: isDark ? 'rgba(255, 255, 255, 0.87)' : '#374151' }}
+                style={{
+                  color: isDark ? "rgba(255, 255, 255, 0.87)" : "#374151",
+                }}
               >
                 Bewertung:
               </span>
@@ -139,10 +155,10 @@ export default function CustomerReviews() {
                 value={rating}
                 onChange={(e) => setRating(Number(e.target.value))}
                 className="border rounded p-2 mt-1 ml-2"
-                style={{ 
-                  backgroundColor: isDark ? '#1a1a1a' : '#ffffff',
-                  color: isDark ? 'rgba(255, 255, 255, 0.87)' : '#000000',
-                  borderColor: isDark ? '#444' : '#d1d5db'
+                style={{
+                  backgroundColor: isDark ? "#1a1a1a" : "#ffffff",
+                  color: isDark ? "rgba(255, 255, 255, 0.87)" : "#000000",
+                  borderColor: isDark ? "#444" : "#d1d5db",
                 }}
               >
                 {[5, 4, 3, 2, 1].map((r) => (
@@ -155,9 +171,9 @@ export default function CustomerReviews() {
             <button
               type="submit"
               className="px-4 py-2 rounded font-semibold hover:opacity-90 transition-opacity"
-              style={{ 
-                backgroundColor: isDark ? '#ff7626' : '#2563eb',
-                color: '#ffffff'
+              style={{
+                backgroundColor: isDark ? "#ff7626" : "#2563eb",
+                color: "#ffffff",
               }}
             >
               Absenden
@@ -171,9 +187,9 @@ export default function CustomerReviews() {
           <button
             onClick={scrollLeft}
             className="absolute -left-11 top-1/2 transform -translate-y-1/2 rounded-full p-2 shadow z-20 transition-colors hover:opacity-80"
-            style={{ 
-              backgroundColor: isDark ? '#333' : '#d1d5db',
-              color: isDark ? 'rgba(255, 255, 255, 0.87)' : '#000000'
+            style={{
+              backgroundColor: isDark ? "#333" : "#d1d5db",
+              color: isDark ? "rgba(255, 255, 255, 0.87)" : "#000000",
             }}
           >
             <ArrowLeft size={20} />
@@ -188,31 +204,36 @@ export default function CustomerReviews() {
               <div
                 key={review._id}
                 className="rounded-xl shadow-md p-5 w-[300px] flex-shrink-0"
-                style={{ 
-                  backgroundColor: isDark ? '#242424' : '#ffffff',
-                  color: isDark ? 'rgba(255, 255, 255, 0.87)' : '#000000'
+                style={{
+                  backgroundColor: isDark ? "#242424" : "#ffffff",
+                  color: isDark ? "rgba(255, 255, 255, 0.87)" : "#000000",
+                  border: isDark ? "1px solid #444" : "1px solid #e5e7eb",
                 }}
               >
                 <div className="flex items-center mb-2">
                   <div
                     className="w-10 h-10 rounded-full flex items-center justify-center font-bold mr-3"
-                    style={{ 
+                    style={{
                       backgroundColor: getRandomColor(review.text),
-                      color: '#ffffff'
+                      color: "#ffffff",
                     }}
                   >
                     {review.name ? review.name[0].toUpperCase() : "U"}
                   </div>
                   <div>
-                    <p 
+                    <p
                       className="font-semibold"
-                      style={{ color: isDark ? 'rgba(255, 255, 255, 0.87)' : '#111827' }}
+                      style={{
+                        color: isDark ? "rgba(255, 255, 255, 0.87)" : "#111827",
+                      }}
                     >
                       {review.name || "Unbekannt"}
                     </p>
-                    <p 
+                    <p
                       className="text-sm"
-                      style={{ color: isDark ? 'rgba(255, 255, 255, 0.6)' : '#6b7280' }}
+                      style={{
+                        color: isDark ? "rgba(255, 255, 255, 0.6)" : "#6b7280",
+                      }}
                     >
                       {new Date(review.createdAt).toLocaleDateString()}
                     </p>
@@ -222,9 +243,11 @@ export default function CustomerReviews() {
                   {"★".repeat(review.rating)}
                   {"☆".repeat(5 - review.rating)}
                 </div>
-                <p 
+                <p
                   className="text-sm"
-                  style={{ color: isDark ? 'rgba(255, 255, 255, 0.6)' : '#374151' }}
+                  style={{
+                    color: isDark ? "rgba(255, 255, 255, 0.6)" : "#374151",
+                  }}
                 >
                   {review.text.length > 180
                     ? review.text.slice(0, 180) + "..."
@@ -238,9 +261,9 @@ export default function CustomerReviews() {
           <button
             onClick={scrollRight}
             className="absolute -right-11 top-1/2 transform -translate-y-1/2 rounded-full p-2 shadow z-20 transition-colors hover:opacity-80"
-            style={{ 
-              backgroundColor: isDark ? '#333' : '#d1d5db',
-              color: isDark ? 'rgba(255, 255, 255, 0.87)' : '#000000'
+            style={{
+              backgroundColor: isDark ? "#333" : "#d1d5db",
+              color: isDark ? "rgba(255, 255, 255, 0.87)" : "#000000",
             }}
           >
             <ArrowRight size={20} />

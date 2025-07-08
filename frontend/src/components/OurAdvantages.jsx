@@ -39,7 +39,7 @@ const OurAdvantages = () => {
       }}
     >
       <h2 
-        className="text-4xl font-bold mb-16 transition-all duration-500 hover:scale-105"
+        className="text-3xl font-bold mb-10 transition-all duration-500 hover:scale-105"
         style={{ 
           color: 'var(--accent-color)',
           textShadow: '0 2px 10px rgba(0, 0, 0, 0.1)'
