@@ -53,17 +53,15 @@ const ContactForm = () => {
   };
 
   return (
-    <section className="bg-white ">
-      <h2 className="text-2xl font-semibold capitalize lg:text-3xl text-black">
+    <section className="container max-w-xl px-6 py-10 mx-auto">
+      <h2 className="text-xl font-semibold text-center text-black lg:text-2xl mb-6">
         Füllen Sie das Kontaktformular aus - wir melden uns schnellstmöglich bei
         Ihnen
       </h2>
-      <div className="max-w-[556px] px-4 py-10 mx-auto  flex flex-col ">
-        <form className="w-full flex flex-col gap-5" onSubmit={handleSubmit}>
+      <div className="px-6 py-8 bg-white rounded-md shadow-md">
+        <form className="w-full flex flex-col gap-2" onSubmit={handleSubmit}>
           {/*Name*/}
-          <label className=" dark:text-black text-black text-base font-normal  leading-7">
-            Name
-          </label>
+          <label className="text-gray-900">Name</label>
           <input
             name="name"
             type="text"
@@ -71,15 +69,13 @@ const ContactForm = () => {
             value={formData.name}
             onChange={handleChange}
             required
-            className="mt-2 w-full px-5 py-2 bg-white rounded-xl outline-1 outline-offset-[-1px] outline-black  overflow-hidden  text-[#898989] text-lg font-normal "
+            className="w-full px-5 py-2 bg-white rounded-lg outline-1 outline-offset-[-1px] outline-black  overflow-hidden  text-[#898989] text-lg font-normal "
           />
 
           {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
 
           {/*Email*/}
-          <label className="dark:text-black text-black text-base font-normal  leading-7">
-            Email
-          </label>
+          <label className="text-gray-900">Email</label>
           <input
             name="email"
             placeholder="Email"
@@ -87,7 +83,7 @@ const ContactForm = () => {
             value={formData.email}
             onChange={handleChange}
             required
-            className="mt-2 w-full px-5 py-2 bg-white rounded-xl outline-1 outline-offset-[-1px] outline-black  overflow-hidden  text-[#898989] text-lg font-normal "
+            className="w-full px-5 py-2 bg-white rounded-lg outline-1 outline-offset-[-1px] outline-black  overflow-hidden  text-[#898989] text-lg font-normal "
           />
 
           {errors.email && (
@@ -95,9 +91,9 @@ const ContactForm = () => {
           )}
 
           {/*Rückruf*/}
-          <div className="flex gap-9 mt-3">
-            <p className="text-black">Ich bitte um Rückruf:</p>
-            <label className="flex items-center gap-4">
+          <div className="flex items-center gap-10 mt-2">
+            <p className="text-gray-900">Ich bitte um Rückruf:</p>
+            <label className="text-gray-900 flex items-center gap-2">
               <input
                 type="radio"
                 name="callback"
@@ -105,14 +101,14 @@ const ContactForm = () => {
                 checked={formData.callback === "ja"}
                 onChange={handleChange}
                 required
-                className="w-7 h-7  accent-black"
+                className="w-5 h-5  accent-gray-900"
               />
 
-              <span className="justify-start text-black text-base sm:text-lg font-normal ">
+              <span className="text-gray-900 text-base sm:text-lg font-normal ">
                 Ja
               </span>
             </label>
-            <label className="flex items-center gap-4">
+            <label className="text-gray-900 flex items-center gap-2">
               <input
                 type="radio"
                 name="callback"
@@ -120,9 +116,9 @@ const ContactForm = () => {
                 checked={formData.callback === "nein"}
                 onChange={handleChange}
                 required
-                className="w-7 h-7  accent-black"
+                className="w-5 h-5  accent-gray-900"
               />
-              <span className="justify-start text-black text-base sm:text-lg font-normal ">
+              <span className="text-gray-900 text-base sm:text-lg font-normal ">
                 Nein
               </span>
             </label>
@@ -130,9 +126,7 @@ const ContactForm = () => {
 
           {/*Telefonnummer*/}
           <div className="w-full mb-3">
-            <label className="text-black text-base font-normal  leading-7">
-              Telefonnummer
-            </label>
+            <label className="text-gray-900">Telefonnummer</label>
             <input
               name="phone"
               type="tel"
@@ -141,7 +135,7 @@ const ContactForm = () => {
               onChange={handleChange}
               required={formData.callback === "ja"}
               disabled={formData.callback !== "ja"}
-              className={`mt-2 w-full px-5 py-2 bg-white rounded-xl outline-1 outline-black text-lg text-black ${
+              className={`mt-2 w-full px-5 py-2 bg-white rounded-lg outline-1 outline-black text-lg text-black ${
                 formData.callback !== "ja"
                   ? "opacity-50 cursor-not-allowed"
                   : ""
@@ -153,17 +147,15 @@ const ContactForm = () => {
           </div>
 
           {/*Nachricht*/}
-          <label className="dark:text-black text-black text-base font-normal  leading-7">
-            Nachricht
-          </label>
+          <label className="text-gray-900">Nachricht</label>
           <textarea
             name="message"
             placeholder=" Nachricht"
             value={formData.message}
             onChange={handleChange}
             cols="40"
-            rows="10"
-            className="mt-2 w-full resize-none px-5 py-2 bg-white rounded-xl outline-1 outline-offset-[-1px] outline-black  overflow-hidden  text-[#898989] text-lg font-normal "
+            rows="5"
+            className="w-full resize-none px-5 py-2 bg-white rounded-lg outline-1 outline-offset-[-1px] outline-black  overflow-hidden  text-[#898989] text-lg font-normal "
           ></textarea>
 
           {errors.message && (
@@ -172,7 +164,7 @@ const ContactForm = () => {
 
           <button
             type="submit"
-            className=" px-9 py-5 bg-black rounded-2xl  text-center  text-white text-xl font-normal  leading-7"
+            className=" px-9 py-2 bg-black rounded-lg  text-center  text-white text-xl font-normal"
           >
             Anfrage absenden
           </button>
