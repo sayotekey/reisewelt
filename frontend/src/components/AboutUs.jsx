@@ -1,9 +1,20 @@
 import React from "react";
 import aboutImage from "../images/aboutUs.png";
+import { useTheme } from "../context/ThemeContext"; //1.import use theme 
 
 const AboutUs = () => {
+  const { isDark } = useTheme();//2. use isDark from useTheme hook to get the current theme
+  
+
   return (
-    <section id="about-us" className="  w-full bg-white text-gray-800">
+    <section 
+      id="about-us" 
+      className="w-full"
+      style={{
+        backgroundColor: 'var(bg-secondary)',
+        color: 'var(--text-color)'
+      }}
+    >
       <div className="relative w-full h-[40vh] md:h-[70vh] lg:h-[60vh] overflow-hidden">
         <img
           src={aboutImage}
