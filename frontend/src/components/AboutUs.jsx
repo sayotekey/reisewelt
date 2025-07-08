@@ -3,9 +3,9 @@ import aboutImage from "../images/aboutUs.png";
 import { useTheme } from "../context/ThemeContext"; //1.import use theme 
 
 const AboutUs = () => {
-  const { isDark } = useTheme();
+  const { isDark } = useTheme();//2. use isDark from useTheme hook to get the current theme
   
-  //2. use isDark from useTheme hook to get the current theme
+
   return (
     <section 
       id="about-us" 
