@@ -77,7 +77,7 @@ export default function CustomerReviews() {
   };
 
   return (
-    <div id="customer-reviews" className="py-15" style={{ backgroundColor: isDark ? '#1a1a1a' : '#ffffff' }}>
+    <div id="customer-reviews" className="py-15 mt-16" style={{ backgroundColor: isDark ? '#1a1a1a' : '#ffffff' }}>
       <div className="max-w-[1360px] mx-auto px-4 relative">
         <div className="flex justify-between items-center mb-6 relative">
           <h2 

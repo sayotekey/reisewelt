@@ -12,7 +12,7 @@ html {
 
   /* Colour variables for light theme (default) */
   --bg-color: #ffffff;
-  --bg-secondary: #f1fafa;
+  --bg-secondary: #ffffff;
   --text-color: #213547;
   --text-light: rgba(33, 53, 71, 0.87);
   --accent-color: #ff7626;
@@ -362,7 +362,6 @@ html {
 
 /* OurAdvantages component enhanced styles */
 .our-advantages-section {
-  background: linear-gradient(135deg, var(--bg-color) 0%, var(--bg-secondary) 100%);
   position: relative;
   overflow: hidden;
 }

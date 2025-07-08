@@ -31,11 +31,11 @@ const advantages = [
 const OurAdvantages = () => {
   return (
     <section 
-      className="our-advantages-section py-16 m-10 text-center rounded-3xl transition-all duration-700 ease-in-out" 
+      className="our-advantages-section py-8 m-10 text-center rounded-3xl transition-all duration-700 ease-in-out" 
       style={{ 
-        backgroundColor: 'var(--bg-color)', 
+        backgroundColor: 'var(--bg-secondary)', 
         color: 'var(--text-color)',
-        boxShadow: '0 15px 50px rgba(0, 0, 0, 0.1)'
+      
       }}
     >
       <h2 
