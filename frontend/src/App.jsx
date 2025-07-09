@@ -14,17 +14,17 @@ import LastMinuteDeals from "./pages/LastMinuteDeals.jsx";
 import FivehundredEuroDeals from "./pages/FivehundredEuroDeals.jsx";
 import SingleNews from "./pages/SingleNews.jsx";
 import AllNews from "./pages/AllNews.jsx";
-// Legal pages
-import Privacy from "./pages/Privacy.jsx";
-import Imprint from "./pages/Imprint.jsx";
-import Terms from "./pages/Terms.jsx";
-import Cookies from "./pages/Cookies.jsx";
-// Theme context
-import { ThemeProvider } from "./context/ThemeContext.jsx";
+import Privacy from "./pages/Privacy.jsx";// Legal pages
+import Imprint from "./pages/Imprint.jsx";// Legal pages
+import Terms from "./pages/Terms.jsx";// Legal pages
+import Cookies from "./pages/Cookies.jsx";// Legal pages
+import { ThemeProvider } from "./context/ThemeContext.jsx";// Theme context
+import { I18nProvider } from "./context/I18nContext.jsx";//translation context
 
 function App() {
   return (
     <ThemeProvider>
+      <I18nProvider>
       {/* // <BrowserRouter>/ */}
       <div className="main-content">
         <HeaderComponent />
@@ -53,6 +53,7 @@ function App() {
       </div>
       <FooterComponent />
       {/* // </BrowserRouter> */}
+      </I18nProvider>
     </ThemeProvider>
   );
 }

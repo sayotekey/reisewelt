@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FaCalendarAlt } from "react-icons/fa";
 import "react-datepicker/dist/react-datepicker.css";
 import axios from "axios";
+import { useTranslate } from "../locales/index.js"; // Import the translation context
 
 import validCities from "../utils/validCities.js";
 
@@ -21,6 +22,7 @@ import search from "../icons/search.gif";
 import gptExample from "../images/ChatGPT.png";
 
 export default function SearchForm() {
+  const { t } = useTranslate();
   const [adults, setAdults] = useState(2);
   const [children, setChildren] = useState(0);
   const [childrenAges, setChildrenAges] = useState([]);
@@ -147,12 +149,12 @@ export default function SearchForm() {
               className="h-4"
             />
             <label className="font-semibold flex items-center gap-2">
-              Wohin möchtest du reisen?
+              {t("search.whereTravel") || "Wohin möchtest du reisen?"}{" "}
             </label>
           </div>
           <input
             type="text"
-            placeholder="Reiseziel eingeben"
+            placeholder={t("search.enterDestination") || "Reiseziel eingeben"}
             className="w-full p-2 rounded border border-gray-800"
             value={myCity}
             onChange={handleInputChange}
@@ -196,7 +198,7 @@ export default function SearchForm() {
           </label>
           <input
             type="text"
-            placeholder="  +  Flug hinzufügen"
+            placeholder={t("search.addFlight") || "  +  Flug hinzufügen"}
             className="w-full p-2 hover:cursor-pointer border rounded border-dashed border-gray-600 text-gray-600 placeholder-gray-600"
           />
         </div>
@@ -204,7 +206,7 @@ export default function SearchForm() {
         <div>
           <label className="font-semibold mb-1 flex items-center gap-2">
             <FaCalendarAlt className="text-black" />
-            Wann reisen?
+            {t("search.whenTravel") || "Wann reisen?"}{" "}
           </label>
           <DatePicker
             selectsRange
@@ -214,7 +216,7 @@ export default function SearchForm() {
               setDateRange(update);
             }}
             className="p-2 rounded border border-gray-800 cursor-pointer"
-            placeholderText="Datum auswählen"
+            placeholderText={t("search.selectDate") || "Datum auswählen"}
             dateFormat="dd.MM.yyyy"
             isClearable
           />
@@ -227,14 +229,15 @@ export default function SearchForm() {
               alt="icon: group of 3 people"
               className="h-5 pr-2"
             />
-            <label className="font-semibold">Wie viele Personen reisen?</label>
+            {t("search.howManyPeople") || "Wie viele Personen reisen?"}{" "}
           </div>
 
           <div
             className="w-full p-2 rounded border border-gray-800 pl-4 bg-white cursor-pointer hover:bg-blue-200"
             onClick={() => setShowDropdown(!showDropdown)}
           >
-            {adults} Erwachsene, {children} Kinder (0 - 17 Jahre)
+            {adults} {t("search.adults") || "Erwachsene"}, {children}{" "}
+            {t("search.children") || "Kinder (0 - 17 Jahre)"}{" "}
           </div>
 
           <AnimatePresence>
@@ -246,7 +249,7 @@ export default function SearchForm() {
                 className="absolute z-15 bg-white border border-gray-800 rounded p-4 mt-2 w-full shadow-md"
               >
                 <div className="flex justify-between items-center mb-3">
-                  <span>Erwachsene</span>
+                  <span>{t("search.adults") || "Erwachsene"}</span>{" "}
                   <div className="flex gap-2 items-center">
                     <button
                       className="px-2 py-1 border rounded bg-gray-200 text-gray-700 min-w-[33%] border-transparent font-bold text-lg hover:bg-gray-200 flex items-center justify-center"
@@ -264,7 +267,7 @@ export default function SearchForm() {
                   </div>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span>Kinder (0 - 17 Jahre)</span>
+                  <span>{t("search.children") || "Kinder (0 - 17 Jahre)"}</span>{" "}
                   <div className="flex gap-2 items-center">
                     <button
                       className="px-2 py-1 border rounded bg-gray-200 text-gray-700 min-w-[33%] border-transparent font-bold text-lg hover:bg-gray-200 flex items-center justify-center"
@@ -351,7 +354,7 @@ export default function SearchForm() {
           }}
           className="bg-purple-600 text-white px-6 py-2 rounded hover:bg-purple-700 transition"
         >
-          Suchen
+          {t("search.searchButton") || "Suchen"}{" "}
         </button>
       </div>
       {/* Error Message */}
@@ -364,7 +367,7 @@ export default function SearchForm() {
       )}
       <div className="mt-6">
         <h2 className="text-lg font-semibold mb-4">
-          Gefundene Hotels in {myCity}:
+          {t("search.foundHotels") || "Gefundene Hotels in"} {myCity}:
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-6">
           {hotels.map((hotel) => (
