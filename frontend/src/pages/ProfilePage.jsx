@@ -6,7 +6,7 @@ import FavoriteHotels from "../components/Profile/FavoriteHotels";
 import MyBookings from "../components/Profile/MyBookings";
 import MyReviews from "../components/Profile/MyReviews";
 import ChangePasswordForm from "../components/Profile/ChangePasswordForm";
-import { useAuth } from "../context/AuthContext.jsx";
+import { useAuth } from "../context/useAuth.js";
 import { logoutButton } from "../utils/logout.js";
 
 const ProfilePage = () => {
