@@ -96,6 +96,9 @@ export default function SearchForm() {
     setShowSuggestions(false);
   };
 
+  // 1.Endpunkt für UUID
+  const getUUID = async () => {};
+
   // onclick button fetchs hotels with data from backend
   const getCombinedData = async (myCity) => {
     try {

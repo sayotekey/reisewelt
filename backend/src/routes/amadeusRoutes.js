@@ -1,6 +1,7 @@
 import express from 'express';
 import { getAccessToken, fetchFromAmadeus } from "../api/amadeusService.js";
 
+
 const router = express.Router();
 
 const cityNameToCode = {
@@ -57,6 +58,7 @@ const cityNameToCode = {
 
     // ...weitere Städte
 };
+
 
 router.get("/combined", async (req, res) => {
 
