@@ -97,7 +97,12 @@ export default function SearchForm() {
   };
 
   // 1.Endpunkt für UUID
-  const getUUID = async () => {};
+  const getUUID = async () => {
+    // ... später:
+    // const statusResponse = await fetch(`/api/status/${uuid}`);
+    // const statusData = await statusResponse.json();
+    // statusData enthält jetzt die Infos zu dieser UUID
+  };
 
   // onclick button fetchs hotels with data from backend
   const getCombinedData = async (myCity) => {
@@ -105,14 +110,14 @@ export default function SearchForm() {
       setError(""); // optional: reset error before fetch
       setHotels([]); // optional: clear previous hotels
       setLoading(true); // <-- Spinner sichtbar machen
-      const response = await axios.get(
-        "http://localhost:3000/api/amadeus/combined",
-        {
-          params: {
-            cityName: myCity, // Pass the search city to the backend
-          },
-        }
-      );
+      const response = await axios.get("http://localhost:3000/api/generate", {
+        params: {
+          cityName: myCity, // Pass the search city to the backend
+        },
+      });
+      const data = await response.json();
+      const uuid = data.uuid;
+
       console.log("Fetched Information:", response.data);
       console.log(Array.isArray(response.data)); // ist true!
       setHotels(response.data);
