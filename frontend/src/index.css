@@ -15,6 +15,7 @@ html {
   --bg-secondary: #ffffff;
   --text-color: #213547;
   --text-light: rgba(33, 53, 71, 0.87);
+  --input-color: #898989;
   --accent-color: #ff7626;
   --accent-hover: #ff9a56;
   --link-color: #646cff;
@@ -367,14 +368,18 @@ html {
 }
 
 .our-advantages-section::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: radial-gradient(circle at 30% 70%, var(--accent-color)10, transparent 50%),
-              radial-gradient(circle at 70% 30%, var(--accent-hover)08, transparent 50%);
+  background: radial-gradient(
+      circle at 30% 70%,
+      var(--accent-color) 10,
+      transparent 50%
+    ),
+    radial-gradient(circle at 70% 30%, var(--accent-hover) 08, transparent 50%);
   opacity: 0.1;
   transition: opacity 0.5s ease;
   pointer-events: none;
@@ -390,13 +395,18 @@ html {
 }
 
 .advantage-card::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
   transition: left 0.6s ease;
 }
 
@@ -411,12 +421,16 @@ html {
 }
 
 .advantage-icon-container {
-  background: linear-gradient(135deg, var(--bg-color) 0%, var(--bg-secondary) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--bg-color) 0%,
+    var(--bg-secondary) 100%
+  );
   position: relative;
 }
 
 .advantage-icon-container::after {
-  content: '';
+  content: "";
   position: absolute;
   inset: -2px;
   background: linear-gradient(45deg, var(--accent-color), var(--accent-hover));
@@ -474,7 +488,12 @@ html {
 
 /* Footer component enhanced styles - Theme Adaptive */
 .footer-container {
-  background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-color) 50%, var(--bg-secondary) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--bg-secondary) 0%,
+    var(--bg-color) 50%,
+    var(--bg-secondary) 100%
+  );
   border-top: 2px solid var(--border-color);
   position: relative;
   overflow: hidden;
@@ -485,25 +504,34 @@ html {
 /* Light theme footer - Original orange gradient */
 [data-theme="light"] .footer-container,
 :root .footer-container {
-  background: linear-gradient(135deg, #a8d5e2 0%, #a2cedaa9 50%, #a8d5e2  100%);
+  background: linear-gradient(135deg, #a8d5e2 0%, #a2cedaa9 50%, #a8d5e2 100%);
   border-top: 2px solid #ccc;
 }
 
 /* Dark theme footer - Beautiful dark theme */
 [data-theme="dark"] .footer-container {
-  background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-color) 50%, var(--bg-secondary) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--bg-secondary) 0%,
+    var(--bg-color) 50%,
+    var(--bg-secondary) 100%
+  );
   border-top: 2px solid var(--border-color);
 }
 
 .footer-container::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: radial-gradient(circle at 20% 80%, var(--accent-color)05, transparent 50%),
-              radial-gradient(circle at 80% 20%, var(--accent-hover)05, transparent 50%);
+  background: radial-gradient(
+      circle at 20% 80%,
+      var(--accent-color) 05,
+      transparent 50%
+    ),
+    radial-gradient(circle at 80% 20%, var(--accent-hover) 05, transparent 50%);
   opacity: 0.3;
   pointer-events: none;
   transition: opacity 0.5s ease;
@@ -521,7 +549,7 @@ html {
 }
 
 .footer-link::before {
-  content: '';
+  content: "";
   position: absolute;
   bottom: -2px;
   left: 0;
@@ -564,7 +592,11 @@ html {
 }
 
 .footer-newsletter-button {
-  background: linear-gradient(45deg, var(--accent-color), var(--accent-hover)) !important;
+  background: linear-gradient(
+    45deg,
+    var(--accent-color),
+    var(--accent-hover)
+  ) !important;
   border: none !important;
   transition: all 0.3s ease;
 }
@@ -572,4 +604,63 @@ html {
 .footer-newsletter-button:hover {
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Kontaktformular Styles */
+.contact-form {
+  background: linear-gradient(135deg, #a8d5e2 0%, #a2cedaa9 50%, #a8d5e2 100%);
+}
+
+.contact-form-input {
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: white;
+  color: var(--input-color);
+}
+
+/* FAQ Styles */
+.faq-section {
+  background: white;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-color);
+  transition: all 0.2s ease;
+}
+
+.faq-section:hover {
+  border-color: var(--accent-color);
+}
+
+button.faq-question-active,
+.faq-question-active {
+  border: 2px solid black;
+  background-color: white;
+  background: white;
+  font-weight: bold;
+  color: black;
+  border-radius: 8px !important;
+}
+
+button.faq-category-active,
+.faq-category-active {
+  border: 2px solid black;
+  background-color: white;
+  font-weight: bold;
+  border-radius: 8px;
+}
+
+.faq-category-active h3,
+.faq-question-active h3,
+.faq-category-active,
+.faq-question-active {
+  color: black;
+  font-weight: bold;
+}
+
+.faq-antwort {
+  color: var(--text-color);
+  border-left: 2px solid var(--border-color);
+  padding-left: 1rem;
+  border-radius: 0 8px 8px 0;
+  margin-top: 0.5rem;
 }
