@@ -7,17 +7,17 @@ import MyBookings from "../components/Profile/MyBookings";
 import MyReviews from "../components/Profile/MyReviews";
 import ChangePasswordForm from "../components/Profile/ChangePasswordForm";
 import { useAuth } from "../context/AuthContext.jsx";
+import { logoutButton } from "../utils/logout.js";
 
 const ProfilePage = () => {
   const [localUser, setLocalUser] = useState(null);
   const [activeTab, setActiveTab] = useState("personal");
 
-  const { user, logout } = useAuth();
+  const { logout } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    logout();
-    navigate("/");
+    logoutButton(logout, navigate);
   };
 
   //Laden der Benutzerdaten beim Laden der Komponente
@@ -29,7 +29,7 @@ const ProfilePage = () => {
         },
       });
       // console.log("User data:", res.data);
-      
+
       setLocalUser(res.data);
     } catch (error) {
       console.error("Error loading user data:", error);
@@ -187,8 +187,7 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="min-h-screen w-full flex flex-row bg-gray-100 overflow-hidden">
-
+    <div className="min-h-screen w-full flex flex-row bg-gray-100 overflow-hidden mt-18">
       {/* Linkes Menü - Tabs für die Navigation */}
       <div className="flex flex-col w-56 bg-white rounded-r-3xl overflow-hidden">
         <div className="flex items-center justify-center h-20 shadow-md">

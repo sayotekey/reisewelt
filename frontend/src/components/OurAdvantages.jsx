@@ -30,16 +30,63 @@ const advantages = [
 
 const OurAdvantages = () => {
   return (
-    <section className="py-8 bg-white text-center">
-      <h2 className="text-3xl text-blue-400 font-bold mb-12">Warum mit uns reisen</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 max-w-6xl mx-auto">
+    <section 
+      className="our-advantages-section py-8 m-10 text-center rounded-3xl transition-all duration-700 ease-in-out" 
+      style={{ 
+        backgroundColor: 'var(--bg-secondary)', 
+        color: 'var(--text-color)',
+      
+      }}
+    >
+      <h2 
+        className="text-3xl font-bold mb-10 transition-all duration-500 hover:scale-105"
+        style={{ 
+          color: 'var(--accent-color)',
+          textShadow: '0 2px 10px rgba(0, 0, 0, 0.1)'
+        }}
+      >
+        Unser Versprechen an unsere Kunden
+      </h2>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
         {advantages.map((item, index) => (
-          <div key={index} className="flex flex-col items-center px-4">
-            <div className="w-24 h-24 flex items-center justify-center rounded-full bg-green-100 border-2 border-solid border-gray-300 mb-4">
-              <div className="text-gray-600">{item.icon}</div>
+          <div 
+            key={index} 
+            className="advantage-card flex flex-col items-center px-6 py-6 rounded-2xl group cursor-pointer"
+            style={{ 
+              animationDelay: `${index * 0.1}s`,
+              animation: 'fadeInUp 0.6s ease-out forwards'
+            }}
+          >
+            <div 
+              className="advantage-icon-container w-24 h-24 flex items-center justify-center rounded-full mb-5 transition-all duration-500 group-hover:rotate-360 group-hover:scale-110"
+              style={{ 
+                backgroundColor: 'var(--bg-color)', 
+                border: '3px solid var(--accent-color)',
+                boxShadow: '0 8px 25px rgba(0, 0, 0, 0.1)'
+              }}
+            >
+              <div 
+                className="transition-all duration-500 group-hover:scale-125"
+                style={{ color: 'var(--accent-color)' }}
+              >
+                {React.cloneElement(item.icon, { size: 28 })}
+              </div>
             </div>
-            <h3 className="text-lg font-semibold italic text-gray-800 mb-2">{item.title}</h3>
-            <p className="text-sm text-gray-600">{item.description}</p>
+            
+            <h3 
+              className="text-xl font-bold italic mb-4 transition-all duration-300 group-hover:text-shadow-lg"
+              style={{ color: 'var(--text-color)' }}
+            >
+              {item.title}
+            </h3>
+            
+            <p 
+              className="text-sm leading-relaxed transition-all duration-300 group-hover:scale-105"
+              style={{ color: 'var(--text-light)' }}
+            >
+              {item.description}
+            </p>
           </div>
         ))}
       </div>

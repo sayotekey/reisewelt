@@ -3,8 +3,10 @@ import axios from "axios";
 import NewsCard from "./NewsCard";
 import { Link } from "react-router-dom";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { useTheme } from "../context/ThemeContext"; //1.import use theme
 
 const TravelNews = () => {
+  const { isDark } = useTheme(); // 2. use isDark from useTheme hook
   const [news, setNews] = useState([]);
 
   useEffect(() => {
@@ -28,7 +30,7 @@ const TravelNews = () => {
     const isMobile = window.innerWidth < 640;
     const isTablet = window.innerWidth >= 640 && window.innerWidth < 1024;
     let scrollAmount = 320; // desktop default
-    
+
     if (isMobile) {
       scrollAmount = 180; // for 2 cards on mobile
     } else if (isTablet) {
@@ -43,15 +45,41 @@ const TravelNews = () => {
   };
 
   return (
-    <div className="w-full max-w-[1320px] mx-auto p-2 md:p-4">
-      <h2 className="text-2xl md:text-3xl font-bold text-gray-500 mb-4 md:mb-6">
-        Reise-Nachrichten
-      </h2>
+    <div
+      className="w-full max-w-[1320px] mx-auto p-2 md:p-4 my-10"
+      style={{
+        color: "var(--text-color)",
+      }}
+    >
+      <div className="flex justify-between items-center mb-6 relative">
+        <h2
+          className="text-3xl font-bold text-center w-full mb-5 transition-all duration-500 hover:scale-105"
+          style={{
+            color: "var(--accent-color)",
+            textShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
+          }}
+        >
+          Reise-Nachrichten
+        </h2>
+      </div>
 
       <div className="relative">
         <button
           onClick={() => scroll("left")}
-          className="absolute -left-6 md:-left-11 top-1/2 -translate-y-1/2 z-10 text-gray-500 p-1 md:p-2 rounded-full shadow hover:bg-fuchsia-400 transition hidden sm:block"
+          className="absolute -left-6 md:-left-11 top-1/2 -translate-y-1/2 z-10 p-1 md:p-2 rounded-full shadow transition hidden sm:block"
+          style={{
+            color: "var(--text-color)",
+            backgroundColor: "var(--bg-secondary)",
+            border: "1px solid var(--border-color)",
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.backgroundColor = "var(--accent-color)";
+            e.target.style.color = "white";
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.backgroundColor = "var(--bg-secondary)";
+            e.target.style.color = "var(--text-color)";
+          }}
         >
           <FaChevronLeft size={16} className="md:hidden" />
           <FaChevronLeft size={20} className="hidden md:block" />
@@ -73,7 +101,20 @@ const TravelNews = () => {
 
         <button
           onClick={() => scroll("right")}
-          className="absolute -right-6 md:-right-11 top-1/2 -translate-y-1/2 z-10 text-gray-500 p-1 md:p-2 rounded-full shadow hover:bg-fuchsia-400 transition hidden sm:block"
+          className="absolute -right-6 md:-right-11 top-1/2 -translate-y-1/2 z-10 p-1 md:p-2 rounded-full shadow transition hidden sm:block"
+          style={{
+            color: "var(--text-color)",
+            backgroundColor: "var(--bg-secondary)",
+            border: "1px solid var(--border-color)",
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.backgroundColor = "var(--accent-color)";
+            e.target.style.color = "white";
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.backgroundColor = "var(--bg-secondary)";
+            e.target.style.color = "var(--text-color)";
+          }}
         >
           <FaChevronRight size={16} className="md:hidden" />
           <FaChevronRight size={20} className="hidden md:block" />
@@ -83,7 +124,17 @@ const TravelNews = () => {
       <div className="mt-6 md:mt-8 text-center">
         <Link
           to="/news"
-          className="inline-block bg-blue-200 text-white px-4 md:px-6 py-2 rounded-full hover:bg-blue-700 transition text-sm md:text-base"
+          className="inline-block px-4 md:px-6 py-2 rounded-full transition text-sm md:text-base"
+          style={{
+            backgroundColor: "var(--accent-color)",
+            color: "white",
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.backgroundColor = "var(--accent-hover)";
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.backgroundColor = "var(--accent-color)";
+          }}
         >
           Weitere News anzeigen
         </Link>

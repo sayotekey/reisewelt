@@ -6,12 +6,12 @@ import hero4 from "../images/heroSection4.jpg";
 import hero6 from "../images/heroSection6.jpg";
 import hero7 from "../images/heroSection7.jpg";
 import hero8 from "../images/heroSection8.jpg";
-import hero9 from "../images/heroSection9.jpg";
 
 
 
 
-const images = [hero4, hero2, hero3,  hero1, hero6, hero7, hero8, hero9];
+
+const images = [hero4, hero2, hero3,  hero1, hero6, hero7, hero8, ];
 
 const quotes = [
   {
