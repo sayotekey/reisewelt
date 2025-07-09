@@ -9,6 +9,7 @@ import { useAuth } from "../context/useAuth.js";
 import { logoutButton } from "../utils/logout.js";
 import ThemeToggle from "./ThemeToggle.jsx";
 import { useTheme } from "../context/ThemeContext.jsx";
+import { useTranslate } from "../locales/index.js";//translation context
 
 import euroSignDark from "../icons/euro-sign-solid-black.svg";
 // import euroSign from "../icons/euro-sign-solid-white.svg";
@@ -18,6 +19,8 @@ import liraSignDark from "../icons/turkish-lira-sign-solid-black.svg";
 // import liraSign from "../icons/turkish-lira-sign-solid-white.svg";
 import rubleSignDark from "../icons/ruble-sign-solid-black.svg";
 // import rubleSign from "../icons/ruble-sign-solid-white.svg";
+
+
 
 const languages = [
   // label fuer accessibility
@@ -48,7 +51,9 @@ const currencyDark = [
 ];
 
 const HeaderComponent = () => {
-  const { isDark } = useTheme();
+  
+  const {t, changeLanguage } = useTranslate(); // translation context
+const { isDark } = useTheme();
   const [openLanguage, setOpenLanguage] = useState(false);
   const [openCurrency, setOpenCurrency] = useState(false);
 
@@ -141,7 +146,7 @@ const HeaderComponent = () => {
                 e.target.style.color = "var(--text-color)";
               }}
             >
-              Kontakt
+             {t('header.contact') || 'Kontakt'}
             </NavLink>
 
             <NavLink
@@ -155,10 +160,10 @@ const HeaderComponent = () => {
                 e.target.style.color = "var(--text-color)";
               }}
             >
-              Merkliste
+           {t('header.wishlist') || 'Merkliste'}
             </NavLink>
 
-            {/* Выбор языка */}
+            {/* language selection */}
             <div className="relative" ref={languageDropdownRef}>
               <button
                 className="flex items-center p-3 rounded-lg transition-colors duration-200"
@@ -235,6 +240,7 @@ const HeaderComponent = () => {
                       }}
                       onClick={() => {
                         setSelectedLanguage(lang);
+                          changeLanguage(lang.value);
                         setOpenCurrency(false);
                         setOpenLanguage(false);
                       }}
