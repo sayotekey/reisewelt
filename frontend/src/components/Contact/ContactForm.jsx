@@ -53,12 +53,12 @@ const ContactForm = () => {
   };
 
   return (
-    <section className="container max-w-xl px-6 py-10 mx-auto">
+    <section className="container max-w-xl px-6 py-10 mx-auto" >
       <h2 className="text-xl font-semibold text-center text-black lg:text-2xl mb-6">
         Füllen Sie das Kontaktformular aus - wir melden uns schnellstmöglich bei
         Ihnen
       </h2>
-      <div className="px-6 py-8 bg-white rounded-md shadow-md">
+      <div className="px-6 py-6 bg-white rounded-md shadow-md">
         <form className="w-full flex flex-col gap-2" onSubmit={handleSubmit}>
           {/*Name*/}
           <label className="text-gray-900">Name</label>

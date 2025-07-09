@@ -5,7 +5,7 @@ import unitedStates from "../images/united-states.png";
 import ukraine from "../images/ukraine.png";
 import france from "../images/france.png";
 import turkey from "../images/turkey.png";
-import { useAuth } from "../context/AuthContext.jsx";
+import { useAuth } from "../context/useAuth.js";
 import { logoutButton } from "../utils/logout.js";
 import ThemeToggle from "./ThemeToggle.jsx";
 import { useTheme } from "../context/ThemeContext.jsx";
