@@ -87,7 +87,7 @@ export default function CustomerReviews() {
           <h2
             className="text-3xl font-bold text-center w-full mb-10 transition-all duration-500 hover:scale-105"
             style={{
-              color: "var(--accent-color)",
+              color: "var(--text-light)",
               textShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
             }}
           >
@@ -95,15 +95,19 @@ export default function CustomerReviews() {
           </h2>
           <button
             onClick={handleReviewClick}
-            className="absolute right-6 px-6 py-3 rounded-lg font-bold text-sm hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-lg"
+            className="absolute right-6 px-6 py-3 rounded-lg font-bold text-sm hover:scale-105 transition-all duration-300 shadow-lg"
             style={{
-              background: isDark
-                ? "linear-gradient(135deg, #ff7626, #ff5722)"
-                : "linear-gradient(135deg, #0ea5e9, #0284c7)",
+              background: "linear-gradient(135deg, #ff7626, #ff5722)",
               color: "#ffffff",
-              boxShadow: isDark
-                ? "0 4px 20px rgba(255, 118, 38, 0.3)"
-                : "0 4px 20px rgba(14, 165, 233, 0.3)",
+              boxShadow: "0 4px 20px rgba(255, 118, 38, 0.3)",
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.background =
+                "linear-gradient(135deg, #ff8747, #ff6843)";
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.background =
+                "linear-gradient(135deg, #ff7626, #ff5722)";
             }}
           >
             {successMessage}

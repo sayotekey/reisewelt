@@ -2,7 +2,8 @@ import React from "react";
 
 const ContactBanner = () => {
   return (
-    <div className="bg-blue-200 border border-black text-center py-4 px-2 mt-8 mb-8">
+    <div className=" border-black text-center py-4 px-2 mt-8 mb-8"
+    style={{ backgroundColor: '#bedee6' }}>
       <p className=" text-black font-bold text-lg">
         0800 / <span className="underline">1234567890</span>
       </p>

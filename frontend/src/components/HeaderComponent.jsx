@@ -9,7 +9,7 @@ import { useAuth } from "../context/useAuth.js";
 import { logoutButton } from "../utils/logout.js";
 import ThemeToggle from "./ThemeToggle.jsx";
 import { useTheme } from "../context/ThemeContext.jsx";
-import { useTranslate } from "../locales/index.js";//translation context
+import { useTranslate } from "../locales/index.js"; //translation context
 
 import euroSignDark from "../icons/euro-sign-solid-black.svg";
 // import euroSign from "../icons/euro-sign-solid-white.svg";
@@ -19,8 +19,6 @@ import liraSignDark from "../icons/turkish-lira-sign-solid-black.svg";
 // import liraSign from "../icons/turkish-lira-sign-solid-white.svg";
 import rubleSignDark from "../icons/ruble-sign-solid-black.svg";
 // import rubleSign from "../icons/ruble-sign-solid-white.svg";
-
-
 
 const languages = [
   // label fuer accessibility
@@ -51,9 +49,8 @@ const currencyDark = [
 ];
 
 const HeaderComponent = () => {
-  
-  const {t, changeLanguage } = useTranslate(); // translation context
-const { isDark } = useTheme();
+  const { t, changeLanguage } = useTranslate(); // translation context
+  const { isDark } = useTheme();
   const [openLanguage, setOpenLanguage] = useState(false);
   const [openCurrency, setOpenCurrency] = useState(false);
 
@@ -104,11 +101,11 @@ const { isDark } = useTheme();
   //
   return (
     <header
-      className="header-full-width w-full fixed top-0 left-0 right-0 z-50 shadow-sm"
+      className="header-full-width w-full fixed top-0 left-0 right-0 z-51 shadow-sm"
       style={{
         background: isDark
           ? "var(--bg-secondary)"
-          : "linear-gradient(45deg, #a8d5e2 0%, #a2cedaa9 70%, #a8d5e2 100%)",
+          : "linear-gradient( var(--blue-light) 10%, var(--blue-light-hover) 10%, var(--blue-light) 10%)",
         borderBottom: "1px solid var(--border-color)",
       }}
     >
@@ -133,7 +130,6 @@ const { isDark } = useTheme();
             </NavLink>
           </div>
 
-          {/* Навигация посередине, сдвинутая вправо */}
           <nav className="hidden md:flex items-center space-x-10 ml-20">
             <NavLink
               to="/contact"
@@ -146,7 +142,7 @@ const { isDark } = useTheme();
                 e.target.style.color = "var(--text-color)";
               }}
             >
-             {t('header.contact') || 'Kontakt'}
+              {t("header.contact") || "Kontakt"}
             </NavLink>
 
             <NavLink
@@ -160,7 +156,7 @@ const { isDark } = useTheme();
                 e.target.style.color = "var(--text-color)";
               }}
             >
-           {t('header.wishlist') || 'Merkliste'}
+              {t("header.wishlist") || "Merkliste"}
             </NavLink>
 
             {/* language selection */}
@@ -240,7 +236,7 @@ const { isDark } = useTheme();
                       }}
                       onClick={() => {
                         setSelectedLanguage(lang);
-                          changeLanguage(lang.value);
+                        changeLanguage(lang.value);
                         setOpenCurrency(false);
                         setOpenLanguage(false);
                       }}
