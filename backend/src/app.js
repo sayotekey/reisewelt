@@ -24,6 +24,7 @@ app.use("/api/news", newsRoutes);
 app.use("/api/reviews", reviewsRoutes);
 app.use('/api/uuid', uuidRoutes); // UUID Route, http://localhost:3000/api/uuid/generate
 // UUID Status Route, http://localhost:3000/api/uuid/status/:uuid
+// UUID Hotels Anfrage Route, http://localhost:3000/api/uuid/hotels/:uuid?count=5
 
 app.use("/api/hotels", hotelsRoutes);
 app.use("/api/amadeus", amadeusRoutes); // Amadeus API routes lautet : http://localhost:3000/api/amadeus/combined
