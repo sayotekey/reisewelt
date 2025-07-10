@@ -179,10 +179,14 @@ const ContactForm = () => {
             Anfrage absenden
           </button>
           {successMessage && (
-            <p className="text-green-500 text-sm">{successMessage}</p>
+            <p className="mt-1 mb-3 p-2 rounded text-s bg-green-100 text-green-700 border border-green-300">
+              {successMessage}
+            </p>
           )}
           {errorMessage && (
-            <p className="text-red-500 text-sm">{errorMessage}</p>
+            <p className="mt-1 mb-3 p-2 rounded text-s bg-red-100 text-red-700 border border-red-300">
+              {errorMessage}
+            </p>
           )}
         </form>
       </div>
