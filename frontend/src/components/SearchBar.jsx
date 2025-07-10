@@ -97,30 +97,33 @@ export default function SearchForm() {
   };
 
   // 1.Endpunkt für UUID
-  const getUUID = async () => {
-    // ... später:
-    // const statusResponse = await fetch(`/api/status/${uuid}`);
-    // const statusData = await statusResponse.json();
-    // statusData enthält jetzt die Infos zu dieser UUID
-  };
-
   // onclick button fetchs hotels with data from backend
   const getCombinedData = async (myCity) => {
     try {
       setError(""); // optional: reset error before fetch
       setHotels([]); // optional: clear previous hotels
       setLoading(true); // <-- Spinner sichtbar machen
-      const response = await axios.get("http://localhost:3000/api/generate", {
-        params: {
-          cityName: myCity, // Pass the search city to the backend
-        },
-      });
-      const data = await response.json();
-      const uuid = data.uuid;
+      const response = await axios.get(
+        "http://localhost:3000/api/uuid/generate",
+        {
+          params: {
+            cityName: myCity, // Pass the search city to the backend
+          },
+        }
+      );
+      const data = response.data;
+      const uuid = response.data.uuid;
 
-      console.log("Fetched Information:", response.data);
-      console.log(Array.isArray(response.data)); // ist true!
-      setHotels(response.data);
+      console.log("UUID:", uuid); // Gibt die generierte UUID aus
+      // bis hier hin funktioniert alles
+
+      // Fetch hotel count using the uuid
+
+      const hotelCount = axios.get(`/api/status/${uuid}`);
+      const countData = hotelCount.data.count;
+      console.log(countData); // Gibt die Anzahl der Hotels aus
+
+      setHotels(data.hotels);
       setLoading(false); // <-- Spinner ausblenden
 
       // Lesen die zuletzt gespeicherten Suchen aus localStorage
@@ -292,7 +295,6 @@ export default function SearchForm() {
                       className="px-2 py-1 border rounded bg-gray-200 text-gray-700 min-w-[33%] border-transparent font-bold text-lg hover:bg-gray-200 flex items-center justify-center"
                       onClick={() => {
                         setChildren(children + 1);
-                        // handleChildrenAgePopUp();
                       }}
                     >
                       &#43;
