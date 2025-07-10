@@ -666,3 +666,45 @@ button.faq-category-active,
   border-radius: 0 8px 8px 0;
   margin-top: 0.5rem;
 }
+
+/* Reviews - Profile Styles */
+.review-form {
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: linear-gradient(135deg, #a8d5e2 0%, #a2cedaa9 50%, #a8d5e2 100%);
+}
+
+.review-form textarea {
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: white;
+  color: var(--input-color);
+}
+
+.review-list {
+  background-color: white;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+}
+
+/* Change Password Form Styles */
+.change-password-form {
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: white;
+}
+
+/* Last Search Styles */
+
+.last-search {
+  background: white;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-color);
+}
+
+
+
+
+
+
