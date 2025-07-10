@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 const FaqComponent = ({ faqData }) => {
-  const [selctedCategory, setSelectedCategory] = useState(faqData[0]);
+  const [selectedCategory, setSelectedCategory] = useState(faqData[0]);
   const [openQuestionId, setOpenQuestionId] = useState(null);
 
   const handleCategoryClick = (category) => {
@@ -15,23 +15,33 @@ const FaqComponent = ({ faqData }) => {
 
   return (
     <div>
-      <section className="bg-white">
-        <div className="container px-6 py-12 mx-auto">
-          <h2 className="text-2xl font-semibold text-center text-gray-800 lg:text-3xl dark:text-black">
+      <section>
+        <div className="container px-12 py-10 mx-auto mb-8">
+          <h2 className="text-xl font-semibold text-center text-black lg:text-2xl mb-6">
             Häufig gestellte Fragen
           </h2>
 
-          <div className="mt-8 xl:mt-16 lg:flex lg:-mx-12">
+          <div className="mt-8 lg:flex lg:gap-6 items-stretch">
             {/* Links Kolumn - Kategorien */}
-            <div className="lg:mx-12">
+            <div className="flex lg:flex-col p-4 bg-white rounded-md shadow-2xl min-h-[300px]">
               {faqData.map((category) => (
                 <button
                   key={category.category}
                   onClick={() => handleCategoryClick(category)}
-                  className={`block text-black hover:underline mb-2 ${
-                    selctedCategory.category === category.category
-                      ? "font-bold text-blue-600"
-                      : "text-black"
+                  style={
+                    selectedCategory.category === category.category
+                      ? {
+                          border: "2px solid black",
+                          backgroundColor: "white",
+                          color: "black",
+                          fontWeight: "bold",
+                        }
+                      : {}
+                  }
+                  className={`block text-lg mb-2 p-3 w-full transition-all duration-200 ${
+                    selectedCategory.category === category.category
+                      ? "faq-category-active"
+                      : "faq-section"
                   }`}
                 >
                   {category.title}
@@ -40,13 +50,41 @@ const FaqComponent = ({ faqData }) => {
             </div>
 
             {/* Rechts Kategory - Fragen und Antworten */}
-            <div className="flex-1 mt-8 lg:mx-12 lg:mt-0">
-              {selctedCategory.questions.map(({ id, question, answer }) => (
-                <div key={id} className="mb-8">
+            <div className="flex-1 p-4 bg-white rounded-md shadow-2xl min-h-[300px]">
+              {selectedCategory.questions.map(({ id, question, answer }) => (
+                <div key={id} className="mb-2">
                   <button
                     onClick={() => switchQuestion(id)}
-                    className="flex items-center focus:outline-none"
+                    style={
+                      openQuestionId === id
+                        ? {
+                            border: "2px solid black",
+                            backgroundColor: "white",
+                            color: "black",
+                            fontWeight: "bold",
+                          }
+                        : {}
+                    }
+                    className={`flex items-center justify-between p-3 mb-2 w-full transition-all duration-200 ${
+                      openQuestionId === id
+                        ? "faq-question-active"
+                        : "faq-section"
+                    }`}
                   >
+                    <h3
+                      className="mx-4 text-lg"
+                      style={
+                        openQuestionId === id
+                          ? {
+                              color: "black",
+                              fontWeight: "bold",
+                            }
+                          : {}
+                      }
+                    >
+                      {question}
+                    </h3>
+
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
@@ -61,19 +99,13 @@ const FaqComponent = ({ faqData }) => {
                         d="m19.5 8.25-7.5 7.5-7.5-7.5"
                       />
                     </svg>
-
-                    <h3 className="mx-4 text-xl text-black dark:text-black">
-                      {question}
-                    </h3>
                   </button>
 
                   {openQuestionId === id && (
-                    <div className="flex mt-4 md:mx-10">
-                      <p className="max-w-3xl px-4 text-black">{answer}</p>
+                    <div className="mt-2 ml-4 faq-antwort">
+                      <p className="max-w-3xl px-4 py-3">{answer}</p>
                     </div>
                   )}
-
-                  <hr className="my-8 border-gray-200 dark:border-gray-700" />
                 </div>
               ))}
             </div>
