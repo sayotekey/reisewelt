@@ -86,9 +86,7 @@ const FooterComponent = () => {
   return (
     <footer
       className="footer-container w-full overflow-hidden transition-all duration-700 ease-in-out"
-      style={{
-        color: "var(--text-color)",
-      }}
+      
     >
       {/* Main Footer Content */}
       <div className="w-full px-4 sm:px-6 py-12">
