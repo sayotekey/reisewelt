@@ -36,13 +36,13 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  const login = (userData) => {
-    localStorage.setItem("user", JSON.stringify(userData));
-    localStorage.setItem("token", userData.token);
-    setUser(userData);
+  const login = (user, token) => {
+    localStorage.setItem("user", JSON.stringify(user));
+    localStorage.setItem("token", token);
+    setUser(user);
 
     try {
-      const decoded = jwtDecode(userData.token);
+      const decoded = jwtDecode(token);
       const timeUntilExpiration = decoded.exp * 1000 - Date.now();
 
       const timer = setTimeout(() => {
@@ -52,6 +52,7 @@ export const AuthProvider = ({ children }) => {
       setLogoutTimer(timer);
     } catch (error) {
       console.error("Invalid token during login:", error);
+      logout(); // Token ist ungültig, abmelden
     }
   };
 
@@ -73,5 +74,3 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
-
-export const useAuth = () => useContext(AuthContext);

@@ -41,10 +41,8 @@ const LoginPage = () => {
       // Warten auf die Antwort und speichern das Token und den Benutzer im Local Storage
       const { token, user } = response.data;
 
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(user));
-
-      login(user); // Aktualisieren des Auth-Kontexts mit dem Benutzer
+      login(user, token); // Aktualisieren des Auth-Kontexts mit dem Benutzer
+      console.log("Login response:", response.data);
 
       // alert("Login erfolgreich!");
       navigate("/");
