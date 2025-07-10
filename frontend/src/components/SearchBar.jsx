@@ -156,9 +156,9 @@ export default function SearchForm() {
 
   return (
     <div
-      className=" text-gray-900 p-6 rounded-2xl w-full max-w-5xl -mt-20 z-50 mx-auto shadow-md relative"
+      className=" text-gray-600 p-6 rounded-2xl w-full max-w-5xl -mt-20 z-50 mx-auto shadow-md relative"
       style={{
-        background: "linear-gradient(135deg, #ff7626, #ff5722)",
+        background: "linear-gradient(135deg, #ff7626, #ff7851)",
         boxShadow: "0 4px 20px rgba(255, 118, 38, 0.3)",
       }}
     >
@@ -259,6 +259,8 @@ export default function SearchForm() {
                 />
               }
             />
+
+            
           </div>
         </div>
 
@@ -274,7 +276,7 @@ export default function SearchForm() {
           </div>
 
           <div
-            className="w-full p-2 rounded border border-gray-800 pl-4 bg-white cursor-pointer hover:bg-blue-200"
+            className="w-full p-2 rounded border border-gray-500 pl-4 bg-white cursor-pointer hover:bg-blue-200"
             onClick={() => setShowDropdown(!showDropdown)}
           >
             {adults} {t("search.adults") || "Erwachsene"}, {children}{" "}
@@ -287,7 +289,7 @@ export default function SearchForm() {
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="absolute z-15 bg-white border border-gray-800 rounded p-4 mt-2 w-full shadow-md"
+                className="absolute z-15 bg-white border border-gray-500 rounded p-4 mt-2 w-full shadow-md"
               >
                 <div className="flex justify-between items-center mb-3">
                   <span>{t("search.adults") || "Erwachsene"}</span>{" "}
@@ -393,8 +395,17 @@ export default function SearchForm() {
               setError("Bitte Reisedatum angeben!");
             }
           }}
-          className="bg-blue-400 text-white px-6 py-2 rounded hover:bg-blue-500 transition"
-        >
+className="text-white px-6 py-2 rounded transition font-semibold"
+  style={{
+    backgroundColor: "#a8d5e2"
+  }}
+  onMouseEnter={(e) => {
+    e.target.style.backgroundColor = "#a2ceda";
+  }}
+  onMouseLeave={(e) => {
+    e.target.style.backgroundColor = "#a8d5e2";
+  }}
+>
           {t("search.searchButton") || "Suchen"}{" "}
         </button>
       </div>

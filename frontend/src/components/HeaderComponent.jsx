@@ -105,7 +105,7 @@ const HeaderComponent = () => {
       style={{
         background: isDark
           ? "var(--bg-secondary)"
-: "linear-gradient( #a8d5e2f0 10%, #a2cedaf0 10%, #a8d5e2f0 10%)",
+          : "linear-gradient( var(--blue-light) 10%, var(--blue-light-hover) 10%, var(--blue-light) 10%)",
         borderBottom: "1px solid var(--border-color)",
       }}
     >

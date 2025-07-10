@@ -23,6 +23,8 @@ html {
   --border-color: #ccc;
   --button-bg: #f9f9f9;
   --button-hover: #ffc107;
+  --blue-light: #a8d5e2;
+  --blue-light-hover: #a2ceda;
 
   color-scheme: light dark;
   color: var(--text-color);
