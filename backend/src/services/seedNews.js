@@ -30,31 +30,84 @@ const cities = [
 
 // Beispielhafte Überschriften und Beschreibungen
 
-const headlines = [
-  "Neues Boutique-Hotel eröffnet in",
-  "Großveranstaltung bringt Touristen nach",
-  "Reisetrend 2025: Warum alle nach",
-  "Kulinarisches Festival begeistert Besucher in",
-  "Historische Altstadt von",
-  "Flugangebote locken Reisende nach",
-  "Nachhaltiger Tourismus boomt in",
-  "Sommerprogramm in",
-  "Neue Fahrradwege geplant in",
-  "Kunstszene wächst stark in"
-];
+// default language is German
+const language = process.argv[2] || 'de'; 
 
-const descriptions = [
-  "Die Stadt erlebt einen Tourismusboom mit neuen Angeboten.",
-  "Zahlreiche Besucher genießen das lokale Flair und die Sehenswürdigkeiten.",
-  "Das Reiseziel zählt zu den beliebtesten Europas.",
-  "Besonders junge Reisende schätzen die Vielfalt der Stadt.",
-  "Die Region bietet ein einzigartiges Erlebnis für Kulturinteressierte.",
-  "Hotels melden Rekordzahlen an Übernachtungen.",
-  "Lokale Unternehmen profitieren vom starken Reiseverkehr.",
-  "Neue Events und Attraktionen ziehen immer mehr Besucher an.",
-  "Städtereisen liegen weiterhin voll im Trend.",
-  "Die Stadt wird für ihre Nachhaltigkeitsstrategie gelobt."
-];
+
+const headlines = {
+  de: [
+    "Neues Boutique-Hotel eröffnet in",
+    "Großveranstaltung bringt Touristen nach",
+    "Reisetrend 2025: Warum alle nach",
+    "Kulinarisches Festival begeistert Besucher in",
+    "Historische Altstadt von",
+    "Flugangebote locken Reisende nach",
+    "Nachhaltiger Tourismus boomt in",
+    "Sommerprogramm in",
+    "Neue Fahrradwege geplant in",
+    "Kunstszene wächst stark in"
+  ],
+  en: [
+    "New boutique hotel opens in",
+    "Major event brings tourists to",
+    "Travel trend 2025: Why everyone is going to",
+    "Culinary festival delights visitors in",
+    "Historic old town of",
+    "Flight deals attract travelers to",
+    "Sustainable tourism booms in",
+    "Summer program in",
+    "New bike paths planned in",
+    "Art scene grows strongly in"
+  ]
+};
+
+const descriptions = {
+  de: [
+    "Die Stadt erlebt einen Tourismusboom mit neuen Angeboten.",
+    "Zahlreiche Besucher genießen das lokale Flair und die Sehenswürdigkeiten.",
+    "Das Reiseziel zählt zu den beliebtesten Europas.",
+    "Besonders junge Reisende schätzen die Vielfalt der Stadt.",
+    "Die Region bietet ein einzigartiges Erlebnis für Kulturinteressierte.",
+    "Hotels melden Rekordzahlen an Übernachtungen.",
+    "Lokale Unternehmen profitieren vom starken Reiseverkehr.",
+    "Neue Events und Attraktionen ziehen immer mehr Besucher an.",
+    "Städtereisen liegen weiterhin voll im Trend.",
+    "Die Stadt wird für ihre Nachhaltigkeitsstrategie gelobt."
+  ],
+  en: [
+    "The city is experiencing a tourism boom with new offerings.",
+    "Numerous visitors enjoy the local flair and attractions.",
+    "The destination is among Europe's most popular.",
+    "Especially young travelers appreciate the city's diversity.",
+    "The region offers a unique experience for culture enthusiasts.",
+    "Hotels report record numbers of overnight stays.",
+    "Local businesses benefit from strong travel traffic.",
+    "New events and attractions attract more and more visitors.",
+    "City breaks continue to be a major trend.",
+    "The city is praised for its sustainability strategy."
+  ]
+};
+
+const contentTemplates = {
+  de: {
+    paragraph1: (city) => `Die Tourismusbranche in ${city} erlebt eine spannende Zeit. Experten sehen positive Entwicklungen für das kommende Jahr.`,
+    paragraph2: (city) => `Lokale Behörden investieren in Infrastruktur und kulturelle Veranstaltungen. Reisende können sich auf ein vielfältiges Angebot freuen.`,
+    paragraph3: () => `Einwohner begrüßen die Veränderungen, betonen jedoch auch die Bedeutung von nachhaltiger Planung.`,
+    paragraph4: () => `Die Region bietet zahlreiche Freizeitmöglichkeiten: von Stadtführungen bis hin zu kulinarischen Touren.`,
+    paragraph5: () => `Besucher können kulturelle Highlights wie Museen, Theater und lokale Märkte entdecken.`,
+    paragraph6: (city) => `Die Behörden hoffen, dass sich ${city} langfristig als Top-Reiseziel in Europa etabliert.`,
+    mainText: (description, city) => `${description} ${city} ist bereit für neue Besucher.`
+  },
+  en: {
+    paragraph1: (city) => `The tourism industry in ${city} is experiencing an exciting time. Experts see positive developments for the coming year.`,
+    paragraph2: (city) => `Local authorities are investing in infrastructure and cultural events. Travelers can look forward to a diverse offering.`,
+    paragraph3: () => `Residents welcome the changes but also emphasize the importance of sustainable planning.`,
+    paragraph4: () => `The region offers numerous recreational opportunities: from city tours to culinary tours.`,
+    paragraph5: () => `Visitors can discover cultural highlights such as museums, theaters and local markets.`,
+    paragraph6: (city) => `Authorities hope that ${city} will establish itself as a top travel destination in Europe in the long term.`,
+    mainText: (description, city) => `${description} ${city} is ready for new visitors.`
+  }
+};
 
 // Funktion zur Generierung eines zufälligen Datums (letzte 30 Tage)
 
@@ -69,47 +122,68 @@ function randomDate() {
 
 //	 generateSeedData --- verwenden Sie die Wartezeit für Bilder
 async function generateSeedData() {
-  return await Promise.all(
+/*   return await Promise.all(
     Array.from({ length: 10 }).map(async (_, i) => {
       const city = cities[i % cities.length];
       const headline = `${headlines[i % headlines.length]} ${city}`;
       const description = descriptions[i % descriptions.length];
+      const image = await fetchCityImage(city) || "/images/fallback.jpg"; //direkt von API or fallback */
+const currentHeadlines = headlines[language];
+const currentDescriptions = descriptions[language];
+const currentContent = contentTemplates[language];
+
+      return await Promise.all(
+    Array.from({ length: 10 }).map(async (_, i) => {
+      const city = cities[i % cities.length];
+      const headline = `${currentHeadlines[i % currentHeadlines.length]} ${city}`;
+      const description = currentDescriptions[i % currentDescriptions.length];
       const image = await fetchCityImage(city) || "/images/fallback.jpg"; //direkt von API or fallback
 
       return {
         title: headline,
         content: [
-          { type: "paragraph", text: `${description} ${city} ist bereit für neue Besucher.` },
+          { type: "paragraph", text: currentContent.mainText(description, city) },
           { type: "image", url: image },
-          { type: "paragraph", text: `Die Tourismusbranche in ${city} erlebt eine spannende Zeit. Experten sehen positive Entwicklungen für das kommende Jahr.` },
-          { type: "paragraph", text: `Lokale Behörden investieren in Infrastruktur und kulturelle Veranstaltungen. Reisende können sich auf ein vielfältiges Angebot freuen.` },
-          { type: "paragraph", text: `Einwohner begrüßen die Veränderungen, betonen jedoch auch die Bedeutung von nachhaltiger Planung.` },
+          { type: "paragraph", text: currentContent.paragraph1(city) },
+          { type: "paragraph", text: currentContent.paragraph2(city) },
+          { type: "paragraph", text: currentContent.paragraph3() },
           { type: "image", url: `https://picsum.photos/seed/${city.toLowerCase()}-extra-${i}/600/300` },
-          { type: "paragraph", text: `Die Region bietet zahlreiche Freizeitmöglichkeiten: von Stadtführungen bis hin zu kulinarischen Touren.` },
-          { type: "paragraph", text: `Besucher können kulturelle Highlights wie Museen, Theater und lokale Märkte entdecken.` },
-          { type: "paragraph", text: `Die Behörden hoffen, dass sich ${city} langfristig als Top-Reiseziel in Europa etabliert.` }
+          { type: "paragraph", text: currentContent.paragraph4() },
+          { type: "paragraph", text: currentContent.paragraph5() },
+          { type: "paragraph", text: currentContent.paragraph6(city) }
         ],
         image,
+        language: language, 
         createdAt: randomDate()
       };
     })
   );
 }
 
-// Verbindung und Schreiben in die Datenbank
-
+// mongogo db connection and seeding
 mongoose.connect(process.env.MONGODB_URL)
   .then(async () => {
-    const seedData = await generateSeedData(); //bei der Verbindung zu MongoDB Warten auf Daten vor der Aufzeichnung
-    await News.deleteMany();
+    const seedData = await generateSeedData();
+    
+    // wenn die Sprache nicht Deutsch ist, löschen Sie die alten Nachrichten
+    if (language !== 'de') {
+      await News.deleteMany({ language: language });
+    } else {
+      await News.deleteMany({}); // für Deutsch löschen wir alle alten Nachrichten
+    }
+    
     await News.insertMany(seedData);
-    console.log("10 gefälschte Nachrichten wurden erfolgreich auf Deutsch hinzugefügt");
+    console.log(`10 новостей успешно добавлены на ${language === 'de' ? 'немецком' : 'английском'} языке`);
     mongoose.disconnect();
   })
   .catch(err => {
-    console.error("Fehler beim Verbinden mit MongoDB:", err);
+    console.error("Ошибка при подключении к MongoDB:", err);
   });
 
+// comand to run the script
+// node src/services/seedNews.js         default language is German
+// node src/services/seedNews.js de      deutsch
+// node src/services/seedNews.js en      englisch
 
 
   ///node src/services/seedNews.js BEFEHLEN, um die Nachrichten zu generieren und in die Datenbank zu schreiben 

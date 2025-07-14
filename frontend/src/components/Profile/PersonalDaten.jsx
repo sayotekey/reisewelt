@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-const PersonalDaten = ({ user }) => {
+const PersonalDaten = ({ user, onUserUpdate }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -15,10 +15,33 @@ const PersonalDaten = ({ user }) => {
   }, [user]);
 
   const handleSaveClick = async () => {
-    // Backend
+    // console.log("Speichern der Daten:", { name, email });
 
-    console.log("Speichern der Daten:", { name, email });
-    setIsEditing(false);
+    try {
+      setLoading(true);
+      const response = await axios.patch(
+        "http://localhost:3000/api/users/profile",
+        {
+          name,
+          email,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      if (onUserUpdate) {
+        onUserUpdate(response.data); // Callback to update user data in parent component
+      }
+
+      setIsEditing(false); // Schließe den Bearbeitungsmodus ab
+    } catch (error) {
+      console.error("Fehler beim Speichern:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleCancelClick = () => {
@@ -72,7 +95,7 @@ const PersonalDaten = ({ user }) => {
             <input
               type="text"
               value={name}
-              name={name}
+              name="name"
               onChange={(e) => setName(e.target.value)}
               className="mt-1 block w-full border border-gray-300 rounded px-3 py-2 text-gray-500"
             />
@@ -83,7 +106,7 @@ const PersonalDaten = ({ user }) => {
             <input
               type="email"
               value={email}
-              name={email}
+              name="email"
               onChange={(e) => setEmail(e.target.value)}
               className="mt-1 block w-full border border-gray-300 rounded px-3 py-2 text-gray-500"
             />
@@ -93,16 +116,16 @@ const PersonalDaten = ({ user }) => {
               onClick={handleSaveClick}
               disabled={loading}
               className="w-full px-4 py-2"
-            style={{
-              backgroundColor: "var(--accent-color)",
-              color: "white",
-            }}
-            onMouseEnter={(e) => {
-              e.target.style.backgroundColor = "var(--accent-hover)";
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.backgroundColor = "var(--accent-color)";
-            }}
+              style={{
+                backgroundColor: "var(--accent-color)",
+                color: "white",
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.backgroundColor = "var(--accent-hover)";
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.backgroundColor = "var(--accent-color)";
+              }}
             >
               Speichern
             </button>

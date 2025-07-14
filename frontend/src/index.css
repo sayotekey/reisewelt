@@ -669,13 +669,14 @@ button.faq-category-active,
 
 /* Reviews - Profile Styles */
 .review-form {
-  border: 1px solid var(--border-color);
+  border: 2px solid var(--border-color);
   border-radius: 8px;
-  background: linear-gradient(135deg, #a8d5e2 0%, #a2cedaa9 50%, #a8d5e2 100%);
+  /* background: linear-gradient(135deg, #a8d5e2 0%, #a2cedaa9 50%, #a8d5e2 100%); */
+  background: white;
 }
 
 .review-form textarea {
-  border: 1px solid var(--border-color);
+  border: 2px solid var(--border-color);
   border-radius: 8px;
   background: white;
   color: var(--input-color);

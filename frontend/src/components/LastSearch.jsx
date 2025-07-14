@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import lastSearchImg from "../images/lastSearchImg.png";
+import { useTranslate } from "../locales/index.js";
 
 const LastSearch = () => {
   const [lastSearches, setLastSearches] = useState([]);
+  const { t } = useTranslate();
+
 
   useEffect(() => {
     // Beim Laden der Komponente, Daten aus localStorage abrufen
@@ -30,7 +33,7 @@ const LastSearch = () => {
   return (
     <div className="mt-10 px-">
       <h2 className="text-xl font-bold mb-4 text-center">
-        Ihre letzten Suchen
+        {t("lastSearch.title") || "Ihre letzten Suchen"}
       </h2>
 
       <div className="flex flex-wrap gap-6 justify-center">
@@ -50,7 +53,7 @@ const LastSearch = () => {
                 {formatDate(search.startDate)} - {formatDate(search.endDate)}
               </p>
               <p>
-                {search.adults} Erwachsene | {search.children} Kinder
+                {search.adults} {t("lastSearch.adults") || "Erwachsene"} | {search.children} {t("lastSearch.children") || "Kinder"}
               </p>
             </div>
           </div>
