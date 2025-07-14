@@ -169,7 +169,12 @@ const ProfilePage = () => {
   const renderContent = () => {
     switch (activeTab) {
       case "personal":
-        return <PersonalDaten user={localUser} />;
+        return (
+          <PersonalDaten
+            user={localUser}
+            onUserUpdate={(updatedUser) => setLocalUser(updatedUser)}
+          />
+        );
       case "password":
         return <ChangePasswordForm user={localUser} />;
       case "favorites":
