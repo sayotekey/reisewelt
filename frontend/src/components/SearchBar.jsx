@@ -1,6 +1,8 @@
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
+// import { useEffect } from "react";
 import DatePicker from "react-datepicker";
-import { motion, AnimatePresence } from "framer-motion";
+import {AnimatePresence } from "framer-motion";
+// import motion from "framer-motion";
 import { FaCalendarAlt } from "react-icons/fa";
 import "react-datepicker/dist/react-datepicker.css";
 import axios from "axios";
@@ -8,15 +10,15 @@ import axios from "axios";
 import validCities from "../utils/validCities.js";
 
 import xButtonDelete from "../icons/x-solid-black.svg";
-import arrowDown from "../icons/angle-down-solid-black.svg";
+// import arrowDown from "../icons/angle-down-solid-black.svg";
 import travelGoal from "../icons/mountain-city-solid-black.svg";
 import plane from "../icons/plane-solid-black.svg";
-import plane2 from "../icons/plane2-solid-black.png";
+// import plane2 from "../icons/plane2-solid-black.png";
 import persons from "../icons/people-group-solid-black.svg";
-import wishlistHeartFull from "../icons/heart-solid-black.svg";
+// import wishlistHeartFull from "../icons/heart-solid-black.svg";
 import wishlistHeartEmpty from "../icons/heart-regular-black.svg";
 
-import finder from "../icons/finder.gif";
+// import finder from "../icons/finder.gif";
 import search from "../icons/search.gif";
 import gptExample from "../images/ChatGPT.png";
 
@@ -34,7 +36,7 @@ export default function SearchForm() {
   const [startDate, endDate] = dateRange;
   const [loading, setLoading] = useState(false);
 
-  const dropdownRef = useRef();
+  // const dropdownRef = useRef();
 
   // Filtere Vorschläge nach Eingabe (case-insensitive, enthält den Text)
   const suggestions = myCity
@@ -79,9 +81,9 @@ export default function SearchForm() {
     // setError("");
   };
 
-  const handleChildrenAgePopUp = () => {
-    setChildrenAges(true);
-  };
+  // const handleChildrenAgePopUp = () => {
+  //   setChildrenAges(true);
+  // };
 
   const handleSearch = () => {
     if (!myCity) {
@@ -97,7 +99,8 @@ export default function SearchForm() {
   };
 
   // 1.Endpunkt für UUID
-  // onclick button fetchs hotels with data from backend
+  // onclick button anfrage an backend senden, um UUID zu generieren
+  // und die UUID in der MongoDB zu speichern
   const getCombinedData = async (myCity) => {
     try {
       setError(""); // optional: reset error before fetch
@@ -107,25 +110,70 @@ export default function SearchForm() {
         "http://localhost:3000/api/uuid/generate",
         {
           params: {
-            cityName: myCity, // Pass the search city to the backend
+            cityName: myCity, // city-string zum backend schicken
           },
         }
       );
-      const data = response.data;
-      const uuid = response.data.uuid;
+      // const data = response.data;
+      const myUuid = response.data.uuid;
 
-      console.log("UUID:", uuid); // Gibt die generierte UUID aus
+      console.log("UUID:", myUuid); // Gibt die generierte UUID aus
       // bis hier hin funktioniert alles
 
-      // Fetch hotel count using the uuid
+      // 2. Endpunkt: Abfrage der Anzahl der Hotels, die unter dieser UUID gespeichert sind
+      await new Promise((resolve) => setTimeout(resolve, 2000));
 
-      const hotelCount = axios.get(`/api/status/${uuid}`);
-      const countData = hotelCount.data.count;
-      console.log(countData); // Gibt die Anzahl der Hotels aus
+      const url = `http://localhost:3000/api/uuid/status/${myUuid}`;
+      const hotelCountResponse = await axios.get(url); // {"count": 6}
+      const countRaw = hotelCountResponse.data.count;
+     
+      console.log(countRaw); // Gibt die Anzahl der Hotels aus
 
-      setHotels(data.hotels);
+      // console.log("zweiter EP-countData",countData); // Gibt die Anzahl der Hotels aus
+
+      let currentCount = countRaw;
+      // Warte initial 2 Sekunden, bevor der erste Status-Check erfolgt
+      // await new Promise((resolve) => setTimeout(resolve, 2000));
+      let elapsed = 0;
+      const maxWait = 30000; // 30 Sekunden
+      while (currentCount === 0 && elapsed < maxWait) {
+        await new Promise((resolve) => setTimeout(resolve, 3000));
+        elapsed += 5000;
+        const retryResponse = await axios.get(url);
+        currentCount = parseInt(retryResponse.data.count, 10);
+        console.log("Retry Count:", retryResponse.data.count);
+        if (currentCount > 0) {
+          break; // Beende die Schleife, wenn Hotels gefunden wurden
+        }
+      }
+      if (currentCount === 0) {
+        setError("Keine Hotels gefunden. Bitte versuche es später erneut.");
+        setLoading(false); // <-- Spinner ausblenden
+        return;
+      }
+      // solange bis mindestens 1 Hotel gefunden wurde
+      // oder nach 30sekunden abgebrochen wird
+
+      // dann: 3. Endpunkt aufrufen
+
+      // 3. Endpunkt: Abfrage der Hotels, die unter dieser UUID gespeichert sind
+      // mit Timeout von 5 Sekunden
+      await new Promise((resolve) => setTimeout(resolve, 5000));
+
+      try {
+        const urlHotel = `http://localhost:3000/api/uuid/hotels/${myUuid}?${countRaw}`;
+        const hotelResponse = await axios.get(urlHotel);
+        const hotelData = hotelResponse.data.hotels;
+        console.log("Hotels aus der MongoDB:", hotelData); // Gibt die Hotels aus
+
+        setHotels(hotelData);
+      } catch (error) {
+        console.log("Fehler beim Abrufen der Hotels:", error.message);
+        setLoading(false);
+      }
       setLoading(false); // <-- Spinner ausblenden
 
+      //
       // Lesen die zuletzt gespeicherten Suchen aus localStorage
       const previousSearches =
         JSON.parse(localStorage.getItem("lastSearches")) || [];
@@ -384,91 +432,106 @@ export default function SearchForm() {
           Gefundene Hotels in {myCity}:
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-6">
-          {hotels.map((hotel) => (
-            <div
-              className="flex gap-4 my-4 mx-2 transform transition-transform duration-500 hover:scale-105 cursor-pointer"
-              key={hotel.hotel.dupeId}
-              onClick={() =>
-                (window.location.href = `/hotel/${hotel.hotel.dupeId}`)
-              }
-            >
-              <div className="w-2/5 relative">
-                <div className="flex absolute top-2 right-2">
-                  <img
-                    src={wishlistHeartEmpty}
-                    alt="icon: heart"
-                    className="h-5 w-5 z-10"
-                    // onClick={handleAddToWishlist} => kommt noch !!
-                  />
-                </div>
-                <img
-                  src={gptExample}
-                  alt="gpt-example-picture"
-                  className="rounded-tl-xl rounded-bl-xl"
-                />
-              </div>
-
-              <div className="flex flex-wrap w-1/2">
-                <h3 className="font-bold w-full">
-                  {hotel.hotel.name
-                    .toLowerCase()
-                    .replace(/\b\w/g, (char) => char.toUpperCase())}
-                </h3>
-                {/* <p>{Bewertung später}</p> */}
-                <h4 className="block w-full">
-                  &#40;
-                  {
-                    // Finde den passenden Stadtnamen zum CityCode
-                    validCities.find((city) =>
-                      city
-                        .toLowerCase()
-                        .includes(hotel.hotel.cityCode.toLowerCase())
-                    ) || hotel.hotel.cityCode
+          {/* ab hier Hotelcards-data */}
+          {hotels
+            // .filter(
+            //   (hotel) =>
+            //     hotel &&
+            //     hotel.hotel &&
+            //     hotel.hotel.dupeId &&
+            //     hotel.hotel.name &&
+            //     hotel.hotel.cityCode &&
+            //     Array.isArray(hotel.offers) &&
+            //     hotel.offers.length > 0 &&
+            //     hotel.offers[0] &&
+            //     hotel.offers[0].guests &&
+            //     hotel.offers[0].price
+            // )
+            .flatMap((hoteloffer, i) =>
+              hoteloffer.map((offer, j) => (
+                <div
+                  className="flex gap-4 my-4 mx-2 transform transition-transform duration-500 hover:scale-105 cursor-pointer"
+                  key={`${i}-${j}-${offer.hotel.dupeId}`}
+                  onClick={() =>
+                    (window.location.href = `/hotel/${offer.hotel.dupeId}`)
                   }
-                  &#41;&#44;
-                </h4>
-                <p className="block">
-                  {hotel.offers?.[0]?.checkInDate
-                    ? new Date(hotel.offers[0].checkInDate).toLocaleDateString(
-                        "de-DE",
-                        {
-                          day: "2-digit",
-                          month: "2-digit",
-                          year: "numeric",
-                        }
-                      )
-                    : ""}
-                  &#32; &#45;&#32;
-                  {hotel.offers?.[0]?.checkOutDate
-                    ? new Date(hotel.offers[0].checkOutDate).toLocaleDateString(
-                        "de-DE",
-                        {
-                          day: "2-digit",
-                          month: "2-digit",
-                          year: "numeric",
-                        }
-                      )
-                    : ""}
-                </p>
-                {/* Anzahl + Erwachsene(r) */}
-                <p>
-                  {hotel.offers[0].guests.adults}&#32;
-                  {hotel.offers[0].guests.adults > 1
-                    ? "Erwachsene"
-                    : "Erwachsener"}
-                </p>
-                {/* Kinder optional */}
-                <p>
-                  Preis ab:&#32;
-                  {hotel.offers?.[0]?.price?.total
-                    ? hotel.offers[0].price.total.replace(".", ",")
-                    : ""}
-                  &#32;
-                  {hotel.offers[0]?.price.currency.replace("EUR", "€")}
-                </p>
-              </div>
-            </div>
-          ))}
+                >
+                  <div className="w-2/5 relative">
+                    <div className="flex absolute top-2 right-2">
+                      <img
+                        src={wishlistHeartEmpty}
+                        alt="icon: heart"
+                        className="h-5 w-5 z-10"
+                        // onClick={handleAddToWishlist} => kommt noch !!
+                      />
+                    </div>
+                    <img
+                      src={gptExample}
+                      alt="gpt-example-picture"
+                      className="rounded-tl-xl rounded-bl-xl"
+                    />
+                  </div>
+
+                  <div className="flex flex-wrap w-1/2">
+                    <h3 className="font-bold w-full">
+                      {offer.hotel.type
+                        .toLowerCase()
+                        .replace(/\b\w/g, (char) => char.toUpperCase())}
+                    </h3>
+                    {/* <p>{Bewertung später}</p> */}
+                    <h4 className="block w-full">
+                      &#40;
+                      {
+                        // Finde den passenden Stadtnamen zum CityCode
+                        validCities.find((city) =>
+                          city
+                            .toLowerCase()
+                            .includes(offer.hotel.cityCode.toLowerCase())
+                        ) || offer.hotel.cityCode
+                      }
+                      &#41;&#44;
+                    </h4>
+                    <p className="block">
+                      {offer.offers?.[0]?.checkInDate
+                        ? new Date(
+                            offer.offers[0].checkInDate
+                          ).toLocaleDateString("de-DE", {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                          })
+                        : ""}
+                      &#32; &#45;&#32;
+                      {offer.offers?.[0]?.checkOutDate
+                        ? new Date(
+                            offer.offers[0].checkOutDate
+                          ).toLocaleDateString("de-DE", {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                          })
+                        : ""}
+                    </p>
+                    {/* Anzahl + Erwachsene(r) */}
+                    <p>
+                      {offer.offers[0].guests.adults}&#32;
+                      {offer.offers[0].guests.adults > 1
+                        ? "Erwachsene"
+                        : "Erwachsener"}
+                    </p>
+                    {/* Kinder optional */}
+                    <p>
+                      Preis ab:&#32;
+                      {offer.offers?.[0]?.price?.total
+                        ? offer.offers[0].price.total.replace(".", ",")
+                        : ""}
+                      &#32;
+                      {offer.offers[0]?.price.currency.replace("EUR", "€")}
+                    </p>
+                  </div>
+                </div>
+              ))
+            )}
         </div>
       </div>
     </div>
