@@ -35,7 +35,7 @@ const LastSearch = () => {
 
       <div className="flex flex-wrap gap-6 justify-center">
         {lastSearches.map((search, index) => (
-          <div key={index} className="flex w-80 bg-blue-400">
+          <div key={index} className="flex w-80 last-search shadow-xl " >
             <div className="w-32 flex-shrink-0 bg-gray-200">
               <img
                 src={lastSearchImg}
@@ -45,7 +45,7 @@ const LastSearch = () => {
             </div>
 
             <div className="flex flex-col justify-center p-4 text-sm text-gray-800">
-              <p>{search.to || "-"}</p>
+              <p className="font-bold mb-3">{search.to || "-"}</p>
               <p className="mb-1">
                 {formatDate(search.startDate)} - {formatDate(search.endDate)}
               </p>

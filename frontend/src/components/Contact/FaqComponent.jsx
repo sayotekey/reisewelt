@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 const FaqComponent = ({ faqData }) => {
-  const [selctedCategory, setSelectedCategory] = useState(faqData[0]);
+  const [selectedCategory, setSelectedCategory] = useState(faqData[0]);
   const [openQuestionId, setOpenQuestionId] = useState(null);
 
   const handleCategoryClick = (category) => {
@@ -16,7 +16,7 @@ const FaqComponent = ({ faqData }) => {
   return (
     <div>
       <section>
-        <div className="container px-12 py-10 mx-auto">
+        <div className="container px-12 py-10 mx-auto mb-8">
           <h2 className="text-xl font-semibold text-center text-black lg:text-2xl mb-6">
             Häufig gestellte Fragen
           </h2>
@@ -28,10 +28,20 @@ const FaqComponent = ({ faqData }) => {
                 <button
                   key={category.category}
                   onClick={() => handleCategoryClick(category)}
-                  className={`block text-lg text-black hover:font-bold mb-2 border border-black rounded-lg p-3 w-full  hover:bg-gray-100 ${
-                    selctedCategory.category === category.category
-                      ? "font-bold text-black"
-                      : "text-black"
+                  style={
+                    selectedCategory.category === category.category
+                      ? {
+                          border: "2px solid black",
+                          backgroundColor: "white",
+                          color: "black",
+                          fontWeight: "bold",
+                        }
+                      : {}
+                  }
+                  className={`block text-lg mb-2 p-3 w-full transition-all duration-200 ${
+                    selectedCategory.category === category.category
+                      ? "faq-category-active"
+                      : "faq-section"
                   }`}
                 >
                   {category.title}
@@ -41,13 +51,37 @@ const FaqComponent = ({ faqData }) => {
 
             {/* Rechts Kategory - Fragen und Antworten */}
             <div className="flex-1 p-4 bg-white rounded-md shadow-2xl min-h-[300px]">
-              {selctedCategory.questions.map(({ id, question, answer }) => (
+              {selectedCategory.questions.map(({ id, question, answer }) => (
                 <div key={id} className="mb-2">
                   <button
                     onClick={() => switchQuestion(id)}
-                    className="flex items-center justify-between text-black hover:font-bold border border-black rounded-lg p-3 mb-2 w-full hover:bg-gray-100"
+                    style={
+                      openQuestionId === id
+                        ? {
+                            border: "2px solid black",
+                            backgroundColor: "white",
+                            color: "black",
+                            fontWeight: "bold",
+                          }
+                        : {}
+                    }
+                    className={`flex items-center justify-between p-3 mb-2 w-full transition-all duration-200 ${
+                      openQuestionId === id
+                        ? "faq-question-active"
+                        : "faq-section"
+                    }`}
                   >
-                    <h3 className="mx-4 text-lg text-black">
+                    <h3
+                      className="mx-4 text-lg"
+                      style={
+                        openQuestionId === id
+                          ? {
+                              color: "black",
+                              fontWeight: "bold",
+                            }
+                          : {}
+                      }
+                    >
                       {question}
                     </h3>
 
@@ -68,8 +102,8 @@ const FaqComponent = ({ faqData }) => {
                   </button>
 
                   {openQuestionId === id && (
-                    <div className="mt-2 ml-4 border-l-2 border-black pl-4 text-md text-gray-800">
-                      <p className="max-w-3xl px-4 text-black">{answer}</p>
+                    <div className="mt-2 ml-4 faq-antwort">
+                      <p className="max-w-3xl px-4 py-3">{answer}</p>
                     </div>
                   )}
                 </div>

@@ -6,7 +6,7 @@ import FavoriteHotels from "../components/Profile/FavoriteHotels";
 import MyBookings from "../components/Profile/MyBookings";
 import MyReviews from "../components/Profile/MyReviews";
 import ChangePasswordForm from "../components/Profile/ChangePasswordForm";
-import { useAuth } from "../context/AuthContext.jsx";
+import { useAuth } from "../context/useAuth.js";
 import { logoutButton } from "../utils/logout.js";
 
 const ProfilePage = () => {
@@ -187,11 +187,11 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="min-h-screen w-full flex flex-row bg-gray-100 overflow-hidden mt-18">
+    <div className="min-h-screen w-full flex flex-row overflow-hidden mt-18">
       {/* Linkes Menü - Tabs für die Navigation */}
-      <div className="flex flex-col w-56 bg-white rounded-r-3xl overflow-hidden">
+      <div className="flex flex-col w-70 border-r border-gray-300 shadow-lg bg-white">
         <div className="flex items-center justify-center h-20 shadow-md">
-          <h1 className="text-xl uppercase text-indigo-500">Benutzerkonto</h1>
+          <h1 className="text-xl text-black">Benutzerkonto</h1>
         </div>
         <ul className="flex flex-col py-4">
           {tabs.map((tab) => (
@@ -201,7 +201,7 @@ const ProfilePage = () => {
                 className={`flex flex-row items-center w-full h-12 px-4 transform transition-transform duration-200 ease-in ${
                   activeTab === tab.id
                     ? "bg-gray-200 text-gray-900"
-                    : "text-gray-500 hover:text-gray-800 hover:translate-x-2"
+                    : "text-gray-500 hover:translate-x-2"
                 }`}
               >
                 <span className="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400">

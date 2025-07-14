@@ -1,8 +1,8 @@
 import { useState } from "react";
 import validateRegisterPassword from "../utils/validateRegisterPassword";
 import axios from "axios";
-import { toast, ToastContainer } from "react-toastify"; // Bibliothek für Benachrichtigungen
-import "react-toastify/dist/ReactToastify.css"; // Bibliothek für Benachrichtigungen
+// import { toast, ToastContainer } from "react-toastify"; // Bibliothek für Benachrichtigungen
+// import "react-toastify/dist/ReactToastify.css"; // Bibliothek für Benachrichtigungen
 import { useNavigate } from "react-router-dom";
 
 const RegisterPage = () => {
@@ -15,6 +15,9 @@ const RegisterPage = () => {
 
   const [error, setError] = useState({});
   const [showPassword, setShowPassword] = useState(false);
+
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const navigate = useNavigate();
 
@@ -58,9 +61,14 @@ const RegisterPage = () => {
       // console.log("Registrierung erfolgreich:", response.data);
       // alert("Registrierung erfolgreich! Bitte loggen Sie sich ein.");
 
-      toast.success("Registrierung erfolgreich! Bitte loggen Sie sich ein.", {
-        autoClose: 4000,
-      });
+      // toast.success("Registrierung erfolgreich! Bitte loggen Sie sich ein.", {
+      //   autoClose: 4000,
+      // });
+
+      setSuccessMessage(
+        "Registrierung erfolgreich! Bitte loggen Sie sich ein."
+      );
+      setErrorMessage("");
 
       // console.log("Registrationsdaten:", formData);
 
@@ -73,10 +81,12 @@ const RegisterPage = () => {
 
       setTimeout(() => {
         navigate("/login");
-      }, 3000);
+      }, 4000);
     } catch (error) {
       const message = error.response?.data?.message || "Serverfehler";
-      toast.error(message);
+      // toast.error(message);
+      setSuccessMessage("");
+      setErrorMessage(message);
       setError({ server: message });
     }
   };
@@ -96,12 +106,12 @@ const RegisterPage = () => {
                   z-0"
         ></div>
         <div className="w-full mx-auto px-20 flex-col items-center space-y-6">
-          <h1 className="text-white font-bold text-2xl font-sans">
+          <h1 className="text-gray-700 font-bold text-2xl font-sans">
             Herzlich willkommen bei ReiseWelt
           </h1>
-          <p className="text-white mt-1">
+          <p className="text-gray-700 mt-1">
             Hier finden Sie Ihr persönliches Kundenkonto. Einfach registrieren
-            oder einloggen - und los geht#s! Verwalten Sie Ihre Buchungen,
+            oder einloggen - und los gehts! Verwalten Sie Ihre Buchungen,
             persönliche Daten und mehr - alles übersichtlich an einem Ort.
             <br />
             <br />
@@ -346,12 +356,33 @@ const RegisterPage = () => {
 
             <button
               type="submit"
-              className="block w-full bg-indigo-600 rounded-xl hover:bg-indigo-700 hover:-translate-y-1 transition-all duration-500 text-white font-semibold py-2 mt-10"
+              className="block w-full  rounded-lg font-bold py-2 mt-10"
+              style={{
+                backgroundColor: "var(--accent-color)",
+                color: "white",
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.backgroundColor = "var(--accent-hover)";
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.backgroundColor = "var(--accent-color)";
+              }}
             >
               Konto erstellen
             </button>
+
+            {successMessage && (
+              <p className="mt-3 mb-3 p-2 rounded text-s bg-green-100 text-green-700 border border-green-300">
+                {successMessage}
+              </p>
+            )}
+            {errorMessage && (
+              <p className="mt-3 mb-3 p-2 rounded text-s bg-red-100 text-red-700 border border-red-300">
+                {errorMessage}
+              </p>
+            )}
           </form>
-          <ToastContainer />
+          {/* <ToastContainer /> */}
         </div>
       </div>
     </div>
