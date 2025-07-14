@@ -1,5 +1,5 @@
 import { useState } from "react";
-// import { useEffect,useRef } from "react";
+import { useEffect,useRef } from "react";
 import DatePicker from "react-datepicker";
 import {AnimatePresence } from "framer-motion";
 // import motion from "framer-motion";
@@ -38,6 +38,7 @@ export default function SearchForm() {
   const [startDate, endDate] = dateRange;
   const [loading, setLoading] = useState(false);
 
+const dropdownRef = useRef();
 
   //dropdown functionality
   useEffect(() => {
@@ -56,8 +57,7 @@ export default function SearchForm() {
     };
   }, [showDropdown]);
 
-  // const dropdownRef = useRef();
-
+  
   // Filtere Vorschläge nach Eingabe (case-insensitive, enthält den Text)
   const suggestions = myCity
     ? validCities.filter((city) =>
@@ -221,7 +221,7 @@ export default function SearchForm() {
         background: "linear-gradient(135deg, #ff7626, #ff7851)",
         boxShadow: "0 4px 20px rgba(255, 118, 38, 0.3)",
       }}
-    >
+      >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Reiseziel */}
         <div className="relative w-full max-w-md ">
@@ -594,6 +594,6 @@ export default function SearchForm() {
             )}
         </div>
       </div>
-    </div>
+    </div> </div>
   );
 }
