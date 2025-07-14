@@ -194,3 +194,29 @@ export const resetPassword = async (req, res) => {
     res.status(400).json({ message: "Ungültiger oder abgelaufener Token." });
   }
 };
+
+// Benutzer Persönliche Daten bearbeiten/ aktualisieren
+export const updateUserData = async (req, res) => {
+  try {
+    const user = await UserModel.findById(req.user.id);
+
+    if (user) {
+      user.name = req.body.name || user.name;
+      user.email = req.body.email || user.email;
+
+      const updatedUser = await user.save();
+
+      res.json({
+        _id: updatedUser._id,
+        name: updatedUser.name,
+        email: updatedUser.email,
+        updatedAt: updatedUser.updatedAt,
+      });
+    } else {
+      res.status(404).json({ message: "Benutzer nicht gefunden" });
+    }
+  } catch (error) {
+    console.error("Fehler beim Aktualisieren:", error);
+    res.status(500).json({ message: "Serverfehler" });
+  }
+};
