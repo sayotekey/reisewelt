@@ -3,38 +3,42 @@ import axios from "axios";
 import NewsCard from "./NewsCard";
 import { Link } from "react-router-dom";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import { useTheme } from "../context/ThemeContext"; //1.import use theme
+import { useTheme } from "../context/ThemeContext";
+import { useTranslate } from "../locales/index.js";
 
 const TravelNews = () => {
-  const { isDark } = useTheme(); // 2. use isDark from useTheme hook
+  const { isDark } = useTheme();
+  const { t, currentLanguage } = useTranslate();
   const [news, setNews] = useState([]);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:3000/api/news")
-      .then((res) => {
-        const sorted = res.data.sort(
+    const fetchNews = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/api/news?language=${currentLanguage}`
+        );
+        const sorted = response.data.sort(
           (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
         );
-        //  console.log(sorted);
-        setNews(sorted.slice(sorted)); //all news
-      })
-      .catch((err) => {
+        setNews(sorted);
+      } catch (err) {
         console.error("Error loading news:", err);
-      });
-  }, []);
+      }
+    };
+
+    fetchNews();
+  }, [currentLanguage]); // Перезагружаем при смене языка
 
   const scroll = (direction) => {
     const container = document.getElementById("scrollContainer");
-    // Adaptive scroll amount based on screen size
     const isMobile = window.innerWidth < 640;
     const isTablet = window.innerWidth >= 640 && window.innerWidth < 1024;
-    let scrollAmount = 320; // desktop default
+    let scrollAmount = 320;
 
     if (isMobile) {
-      scrollAmount = 180; // for 2 cards on mobile
+      scrollAmount = 180;
     } else if (isTablet) {
-      scrollAmount = 240; // for 3 cards on tablet
+      scrollAmount = 240;
     }
 
     if (direction === "left") {
@@ -59,7 +63,7 @@ const TravelNews = () => {
             textShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
           }}
         >
-          Reise-Nachrichten
+          {t("travelNews.title") || "Reise-Nachrichten"}
         </h2>
       </div>
 
@@ -136,7 +140,7 @@ const TravelNews = () => {
             e.target.style.backgroundColor = "var(--accent-color)";
           }}
         >
-          Weitere News anzeigen
+          {t("travelNews.showMoreNews") || "Weitere News anzeigen"}
         </Link>
       </div>
     </div>

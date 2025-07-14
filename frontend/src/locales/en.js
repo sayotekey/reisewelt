@@ -57,5 +57,18 @@ export const en = {
     hotelNameNotAvailable: "Hotel name not available",
     from: "From",
     stars: "Stars"
-  }
+  },
+
+  // TravelNews
+  travelNews: {
+    title: "Travel News",
+    showMoreNews: "Show more news",
+  },
+
+
+  // AllNews
+  allNews: {
+    title: "All Travel News",
+    backToHome: "← Back to Home",
+  },
 };
