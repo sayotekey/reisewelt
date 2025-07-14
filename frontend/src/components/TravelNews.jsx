@@ -27,7 +27,7 @@ const TravelNews = () => {
     };
 
     fetchNews();
-  }, [currentLanguage]); // Перезагружаем при смене языка
+  }, [currentLanguage]); // ernture: Fetch news whenever the current language changes
 
   const scroll = (direction) => {
     const container = document.getElementById("scrollContainer");

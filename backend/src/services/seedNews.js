@@ -153,23 +153,23 @@ const currentContent = contentTemplates[language];
           { type: "paragraph", text: currentContent.paragraph6(city) }
         ],
         image,
-        language: language, // Добавляем поле языка
+        language: language, 
         createdAt: randomDate()
       };
     })
   );
 }
 
-// Подключение и запись в базу данных
+// mongogo db connection and seeding
 mongoose.connect(process.env.MONGODB_URL)
   .then(async () => {
     const seedData = await generateSeedData();
     
-    // Если генерируем для определенного языка, удаляем только новости на этом языке
+    // wenn die Sprache nicht Deutsch ist, löschen Sie die alten Nachrichten
     if (language !== 'de') {
       await News.deleteMany({ language: language });
     } else {
-      await News.deleteMany({}); // Для немецкого удаляем все (обратная совместимость)
+      await News.deleteMany({}); // für Deutsch löschen wir alle alten Nachrichten
     }
     
     await News.insertMany(seedData);
@@ -180,10 +180,10 @@ mongoose.connect(process.env.MONGODB_URL)
     console.error("Ошибка при подключении к MongoDB:", err);
   });
 
-// Команды для запуска:
-// node src/services/seedNews.js         (немецкий по умолчанию)
-// node src/services/seedNews.js de      (немецкий)
-// node src/services/seedNews.js en      (английский)
+// comand to run the script
+// node src/services/seedNews.js         default language is German
+// node src/services/seedNews.js de      deutsch
+// node src/services/seedNews.js en      englisch
 
 
   ///node src/services/seedNews.js BEFEHLEN, um die Nachrichten zu generieren und in die Datenbank zu schreiben 
