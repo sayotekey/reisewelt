@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import { useTranslate } from "../locales/index.js";
 
 const FooterComponent = () => {
   const navigate = useNavigate();
+  const { t } = useTranslate();
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -35,12 +37,17 @@ const FooterComponent = () => {
     e.preventDefault();
 
     if (!email.trim()) {
-      setMessage("Bitte geben Sie Ihre E-Mail-Adresse ein.");
+      setMessage(
+        t("footer.enterEmail") || "Bitte geben Sie Ihre E-Mail-Adresse ein."
+      );
       return;
     }
 
     if (!validateEmail(email)) {
-      setMessage("Bitte geben Sie eine gültige E-Mail-Adresse ein.");
+      setMessage(
+        t("footer.validEmail") ||
+          "Bitte geben Sie eine gültige E-Mail-Adresse ein."
+      );
       return;
     }
 
@@ -59,13 +66,15 @@ const FooterComponent = () => {
 
       if (response.ok) {
         setMessage(
-          "Vielen Dank! Sie haben sich erfolgreich für unseren Newsletter angemeldet."
+          t("footer.subscribeSuccess") ||
+            "Vielen Dank! Sie haben sich erfolgreich für unseren Newsletter angemeldet."
         );
         setEmail("");
       } else {
         const errorData = await response.json();
         setMessage(
           errorData.message ||
+            t("footer.subscribeError") ||
             "Ein Fehler ist aufgetreten. Bitte versuchen Sie es später erneut."
         );
       }
@@ -73,7 +82,8 @@ const FooterComponent = () => {
       // Fallback for demonstration (when no API available)
       console.log("Newsletter subscription for:", email);
       setMessage(
-        "Vielen Dank! Sie haben sich erfolgreich für unseren Newsletter angemeldet."
+        t("footer.subscribeSuccess") ||
+          "Vielen Dank! Sie haben sich erfolgreich für unseren Newsletter angemeldet."
       );
       setEmail("");
     } finally {
@@ -84,10 +94,7 @@ const FooterComponent = () => {
   };
 
   return (
-    <footer
-      className="footer-container w-full overflow-hidden transition-all duration-700 ease-in-out"
-      
-    >
+    <footer className="footer-container w-full overflow-hidden transition-all duration-700 ease-in-out">
       {/* Main Footer Content */}
       <div className="w-full px-4 sm:px-6 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -110,9 +117,8 @@ const FooterComponent = () => {
               className="text-sm leading-relaxed transition-colors duration-300"
               style={{ color: "var(--text-light)" }}
             >
-              Entdecken Sie die Welt mit uns.
-              <br />
-              Ihre Traumreise wartet.
+              {t("footer.companyDescription") ||
+                "Entdecken Sie die Welt mit uns. Ihre Traumreise wartet."}
             </p>
             <div className="flex space-x-4">
               {/* Social Media Icons */}
@@ -142,7 +148,6 @@ const FooterComponent = () => {
                   <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z" />
                 </svg>
               </a>
-
               <a
                 href="#"
                 className="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center hover:bg-red-600 transition-colors duration-300 group"
@@ -165,29 +170,28 @@ const FooterComponent = () => {
               className="text-lg font-semibold transition-colors duration-300"
               style={{ color: "var(--text-color)" }}
             >
-              Schnelle Links
+              {t("footer.quickLinks") || "Schnelle Links"}
             </h4>
             <ul className="space-y-2">
               <li>
                 <NavLink
                   to="/"
                   onClick={() => {
-                    // in the top of our site
                     window.scrollTo({ top: 0, behavior: "smooth" });
                   }}
                   className="footer-link text-sm"
                 >
-                  Startseite
+                  {t("footer.home") || "Startseite"}
                 </NavLink>
               </li>
               <li>
                 <NavLink to="/contact" className="footer-link text-sm">
-                  Kontakt
+                  {t("footer.contact") || "Kontakt"}
                 </NavLink>
               </li>
               <li>
                 <NavLink to="/news" className="footer-link text-sm">
-                  Reise News
+                  {t("footer.travelNews") || "Reise News"}
                 </NavLink>
               </li>
               <li>
@@ -196,12 +200,12 @@ const FooterComponent = () => {
                   className="footer-link text-sm cursor-pointer"
                   style={{ cursor: "pointer" }}
                 >
-                  Über uns
+                  {t("footer.aboutUs") || "Über uns"}
                 </a>
               </li>
               <li>
                 <NavLink to="/login" className="footer-link text-sm">
-                  Anmelden
+                  {t("footer.login") || "Anmelden"}
                 </NavLink>
               </li>
             </ul>
@@ -213,12 +217,12 @@ const FooterComponent = () => {
               className="text-lg font-semibold transition-colors duration-300"
               style={{ color: "var(--text-color)" }}
             >
-              Angebote & Services
+              {t("footer.servicesOffers") || "Angebote & Services"}
             </h4>
             <ul className="space-y-2">
               <li>
                 <NavLink to="/lastminute-deals" className="footer-link text-sm">
-                  Last-Minute Deals
+                  {t("footer.lastMinuteDeals") || "Last-Minute Deals"}
                 </NavLink>
               </li>
               <li>
@@ -226,7 +230,7 @@ const FooterComponent = () => {
                   to="/fivehundredeuro-deals"
                   className="footer-link text-sm"
                 >
-                  Angebote
+                  {t("footer.offers") || "Angebote"}
                 </NavLink>
               </li>
               <li>
@@ -235,17 +239,17 @@ const FooterComponent = () => {
                   className="footer-link text-sm cursor-pointer"
                   style={{ cursor: "pointer" }}
                 >
-                  Bewertung
+                  {t("footer.reviews") || "Bewertung"}
                 </a>
               </li>
               <li>
                 <NavLink to="/register" className="footer-link text-sm">
-                  Registrieren
+                  {t("footer.register") || "Registrieren"}
                 </NavLink>
               </li>
               <li>
                 <NavLink to="/forgot-password" className="footer-link text-sm">
-                  Passwort vergessen
+                  {t("footer.forgotPassword") || "Passwort vergessen"}
                 </NavLink>
               </li>
             </ul>
@@ -257,7 +261,7 @@ const FooterComponent = () => {
               className="text-lg font-semibold transition-colors duration-300"
               style={{ color: "var(--text-color)" }}
             >
-              Kontakt & Newsletter
+              {t("footer.contactNewsletter") || "Kontakt & Newsletter"}
             </h4>
             <div className="space-y-3">
               <div className="footer-contact-item flex items-center space-x-2 text-sm">
@@ -303,7 +307,7 @@ const FooterComponent = () => {
                 className="text-sm mb-3 transition-colors duration-300"
                 style={{ color: "var(--text-light)" }}
               >
-                Newsletter abonnieren
+                {t("footer.subscribeNewsletter") || "Newsletter abonnieren"}
               </p>
 
               {/* Success/Error Message */}
@@ -311,7 +315,9 @@ const FooterComponent = () => {
                 <div
                   className={`mb-3 p-2 rounded text-xs ${
                     message.includes("erfolgreich") ||
-                    message.includes("Vielen Dank")
+                    message.includes("Vielen Dank") ||
+                    message.includes("successfully") ||
+                    message.includes("Thank you")
                       ? "bg-green-100 text-green-700 border border-green-300"
                       : "bg-red-100 text-red-700 border border-red-300"
                   }`}
@@ -325,7 +331,7 @@ const FooterComponent = () => {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Ihre E-Mail"
+                  placeholder={t("footer.yourEmail") || "Ihre E-Mail"}
                   disabled={isLoading}
                   className="footer-newsletter-input flex-1 px-3 py-2 text-sm rounded-l-md focus:outline-none disabled:cursor-not-allowed"
                 />
@@ -357,7 +363,6 @@ const FooterComponent = () => {
       </div>
 
       {/* Bottom Bar - Legal Links */}
-      {/* NOTE: For production use, these should link to actual legal pages required by German/EU law */}
       <div className="border-t border-orange-400 w-full">
         <div className="w-full px-4 sm:px-6 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
@@ -365,7 +370,8 @@ const FooterComponent = () => {
               className="text-sm transition-colors duration-300"
               style={{ color: "var(--text-light)" }}
             >
-              © 2025 Reisewelt. Alle Rechte vorbehalten.
+              © 2025 Reisewelt.{" "}
+              {t("footer.allRightsReserved") || "Alle Rechte vorbehalten."}
             </div>
             <div className="flex space-x-6">
               <NavLink
@@ -373,28 +379,28 @@ const FooterComponent = () => {
                 className="footer-link text-sm transition-colors duration-300"
                 title="Rechtliche Informationen über das Unternehmen"
               >
-                Impressum
+                {t("footer.imprint") || "Impressum"}
               </NavLink>
               <NavLink
                 to="/privacy"
                 className="footer-link text-sm transition-colors duration-300"
                 title="Informationen zum Datenschutz"
               >
-                Datenschutz
+                {t("footer.privacy") || "Datenschutz"}
               </NavLink>
               <NavLink
                 to="/terms"
                 className="footer-link text-sm transition-colors duration-300"
                 title="Allgemeine Geschäftsbedingungen"
               >
-                AGB
+                {t("footer.terms") || "AGB"}
               </NavLink>
               <NavLink
                 to="/cookies"
                 className="footer-link text-sm transition-colors duration-300"
                 title="Cookie-Richtlinien"
               >
-                Cookies
+                {t("footer.cookies") || "Cookies"}
               </NavLink>
             </div>
           </div>

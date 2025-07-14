@@ -1,6 +1,10 @@
 import React from "react";
+import { useTranslate } from "../locales/index.js";
+
 
 const ContactBanner = () => {
+  const { t } = useTranslate();
+
   return (
     <div className=" border-black text-center py-4 px-2 mt-8 mb-8"
     style={{ backgroundColor: '#bedee6' }}>
@@ -8,7 +12,7 @@ const ContactBanner = () => {
         0800 / <span className="underline">1234567890</span>
       </p>
       <p className="  text-black text-lg mt-1">
-        Service Center -{" "}
+        {t("contactBanner.serviceCenter") || "Service Center"} -{" "}
         <a
           href="https://www.reisewelt.com"
           className="text-blue-600 underline"
@@ -17,7 +21,7 @@ const ContactBanner = () => {
         >
           www.reisewelt.com
         </a>{" "}
-        24h / 7 Tage rund um die Uhr für Sie da!
+        {t("contactBanner.available247") || "24h / 7 Tage rund um die Uhr für Sie da!"}
       </p>
     </div>
   );

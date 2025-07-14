@@ -1,25 +1,32 @@
-// models/newsModel.js
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
-const NewsSchema = new mongoose.Schema({
-  title: String,
-  content: [
-  {
+const newsSchema = new mongoose.Schema({
+  title: {
+    type: String,
+    required: true
+  },
+  content: [{
     type: {
       type: String,
-      enum: ["paragraph", "image"], // Можно потом добавить "heading", "list" и т.д.
-      required: true,
+      enum: ['paragraph', 'image'],
+      required: true
     },
-    text: String, // для paragraph
-    url: String,  // для image
-  }
-],
-  image: String,
+    text: String,
+    url: String
+  }],
+  image: {
+    type: String,
+    required: true
+  },
+  language: {
+    type: String,
+    enum: ['de', 'en'],
+    default: 'de'
+  },
   createdAt: {
     type: Date,
-    default: Date.now,
-  },
+    default: Date.now
+  }
 });
 
-const News = mongoose.model("News", NewsSchema);
-export default News;
+export default mongoose.model('News', newsSchema);

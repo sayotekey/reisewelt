@@ -1,13 +1,16 @@
-// routes/newsRoutes.js
 import express from "express";
 import News from "../models/newsModel.js"; 
 
 const router = express.Router();
 
-//erste news kommt zuerst
+// GET /api/news?language=de или GET /api/news?language=en
 router.get("/", async (req, res) => {
   try {
-    const news = await News.find().sort({ createdAt: -1 });// createdAt: -1  das bedeutet, dass die neuesten Nachrichten zuerst kommen
+    const { language = 'de' } = req.query; 
+    
+    const news = await News.find({ language: language })
+      .sort({ createdAt: -1 }); // createdAt: -1  das bedeutet, dass die neuesten Nachrichten zuerst kommen
+    
     res.json(news);
   } catch (err) {
     res.status(500).json({ error: "Ошибка при загрузке новостей." });
