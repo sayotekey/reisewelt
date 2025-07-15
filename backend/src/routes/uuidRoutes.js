@@ -128,19 +128,13 @@ router.get("/generate", async (req, res) => {
         console.log("Angebote gefunden für Hotel-ID:", hotelIdList[i].hotelIds);
         console.log(`${result.data} wurde in Mongo DB gespeichert`);
         if (countList === 5) {
-          await UuidModel.findOneAndUpdate(
-            { uuid: uniqueId },
-            { $set: { flag: true } }
-          );
+          await UuidModel.findOneAndUpdate({ uuid: uniqueId }, { flag: true });
           console.log("5 Angebote gefunden");
           break;
         } else if (i === hotelIdList.length) {
           // else if (countList < 5 && countList === hotelIdList.length) {
 
-          await UuidModel.findOneAndUpdate(
-            { uuid: uniqueId },
-            { $set: { flag: true } }
-          );
+          await UuidModel.findOneAndUpdate({ uuid: uniqueId }, { flag: true });
           console.log("Liste fertig, keine weiteren Angebote verfügbar");
           break;
         }
@@ -166,10 +160,14 @@ router.get("/status/:uuid", async (req, res) => {
     const eintrag = await UuidModel.findOne({ uuid: uuid }).exec();
 
     if (!eintrag || !Array.isArray(eintrag.hotels)) {
-      return res.json({ count: 0, message: "Noch keinen Eintrag gefunden" });
+      return res.json({
+        count: 0,
+        flag: false,
+        message: "Noch keinen Eintrag gefunden",
+      });
     }
     console.log("mongo-db-eintrag-length", eintrag.hotels.length); // gibt Int/Number zurück
-    res.json({ count: eintrag.hotels.length }); // rückgabe an Frontend
+    res.json({ count: eintrag.hotels.length, flag: eintrag.flag }); // Rückgabe an Frontend
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -180,18 +178,23 @@ export default router;
 // Abfrage der Hotels, die unter dieser UUID gespeichert sind
 // und Rückgabe der Hotels ins Frontend
 
-router.get("/hotels/:uuid", async (req, res) => {
-  const { count } = req.params; //vorher query
-  const { uuid } = req.params;
+router.get("/hotels", async (req, res) => {
+  const { limit } = req.query;
+  const { count } = req.query;
+  const { uuid } = req.query;
+
+  console.log("limit:", limit);
   console.log("uuid:", uuid);
   console.log("Count:", count);
   try {
     const countNum = count ? parseInt(count, 10) : null;
+    const limitNum = limit ? parseInt(limit, 10) : null;
+
     console.log("Parsed count:", countNum);
-    if (countNum > 0) {
+    if (countNum >= 0) {
       const eintrag = await UuidModel.findOne({ uuid: uuid }).exec();
       if (eintrag && Array.isArray(eintrag.hotels)) {
-        const hotels = eintrag.hotels.slice(0, countNum);
+        const hotels = eintrag.hotels.slice(countNum, countNum + limitNum);
         console.log(hotels);
         res.json({ hotels });
       } else {

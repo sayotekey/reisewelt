@@ -136,11 +136,12 @@ export default function SearchForm() {
       // bis hier hin funktioniert alles
 
       // 2. Endpunkt: Abfrage der Anzahl der Hotels, die unter dieser UUID gespeichert sind
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       const url = `http://localhost:3000/api/uuid/status/${myUuid}`;
-      const hotelCountResponse = await axios.get(url); // {"count": 6}
-      const countRaw = hotelCountResponse.data.count;
+      const hotelCountResponse = await axios.get(url);
+      const countRaw = hotelCountResponse.data.count; // {"count": 6}
+      let flag = hotelCountResponse.data.flag; // false?
 
       console.log("countRaw ist:", countRaw); // Gibt die Anzahl der Hotels aus
 
@@ -151,12 +152,56 @@ export default function SearchForm() {
         await new Promise((resolve) => setTimeout(resolve, 3000));
         elapsed += 3000;
         // solange bis mindestens 1 Hotel gefunden wurde
-        // oder nach 30sekunden abgebrochen wird
+        // oder nach 50sekunden abgebrochen wird
         const retryResponse = await axios.get(url);
         currentCount = parseInt(retryResponse.data.count, 10);
         console.log("Retry Count:", retryResponse.data.count);
         if (currentCount > 0) {
-          // hier evtl 3. Endpunkt hinzufügen?
+          // 3. Endpunkt: Abfrage der Hotels, die unter dieser UUID gespeichert sind
+          // Hole das aktuelle "flag"-Attribut aus der MongoDB für die gegebene UUID
+
+          let allHotels = [];
+          let offset = 0;
+          while (flag === false) {
+            try {
+              // Hole maximal 3 Hotels pro Durchgang mit Offset
+              const urlHotel = `http://localhost:3000/api/uuid/hotels`;
+              const hotelResponse = await axios.get(urlHotel, {
+                params: {
+                  limit: 3,
+                  count: offset,
+                  uuid: myUuid,
+                },
+              });
+              flag = hotelResponse.data.flag;
+              const hotelData = hotelResponse.data.hotels;
+              console.log("Hotels aus der MongoDB:", hotelData);
+
+              // Füge neue Hotels zu allHotels hinzu, ohne Duplikate
+              allHotels = [...allHotels, ...hotelData].filter(
+                (hotel, idx, arr) =>
+                  arr.findIndex(
+                    (h) =>
+                      h.hotel &&
+                      hotel.hotel &&
+                      h.hotel.dupeId === hotel.hotel.dupeId
+                  ) === idx
+              );
+
+              offset += hotelData.length;
+
+              if (flag === true) {
+                break;
+              }
+
+              await new Promise((resolve) => setTimeout(resolve, 500));
+            } catch (error) {
+              console.log("Fehler beim Abrufen der Hotels:", error.message);
+              setLoading(false);
+            }
+          }
+          setHotels([...allHotels]); // Zeige alle geladenen Hotels nach dem Laden an
+          setLoading(false); // <-- Spinner ausblenden
           // break; // Beende die Schleife, wenn Hotels gefunden wurden
         }
       }
@@ -168,59 +213,6 @@ export default function SearchForm() {
         return;
       }
 
-      // dann: 3. Endpunkt aufrufen
-
-      // 3. Endpunkt: Abfrage der Hotels, die unter dieser UUID gespeichert sind
-      // mit Timeout von 2 Sekunden
-      // await new Promise((resolve) => setTimeout(resolve, 2000));
-      // Hole das aktuelle "flag"-Attribut aus der MongoDB für die gegebene UUID
-      let flag = false;
-
-      const flagResponse = await axios.get(
-        `http://localhost:3000/api/uuid/hotels/${myUuid}`
-      );
-      flag = flagResponse.data.flag;
-      console.log("Flag aus der MongoDB:", flag);
-
-      // let newCount = 0;
-      // let updatedCount = 0;
-
-      if (currentCount > 0) {
-        let allHotels = [];
-        let offset = 0;
-        while (flag === false) {
-          try {
-            // Hole maximal 3 Hotels pro Durchgang mit Offset
-            const urlHotel = `http://localhost:3000/api/uuid/hotels/${myUuid}?limit=3&offset=${offset}`;
-            const hotelResponse = await axios.get(urlHotel);
-            flag = hotelResponse.data.flag;
-            const hotelData = hotelResponse.data.hotels;
-            console.log("Hotels aus der MongoDB:", hotelData);
-
-            // Füge neue Hotels zu allHotels hinzu, ohne Duplikate
-            allHotels = [...allHotels, ...hotelData].filter(
-              (hotel, idx, arr) =>
-                arr.findIndex(
-                  (h) =>
-                    h.hotel &&
-                    hotel.hotel &&
-                    h.hotel.dupeId === hotel.hotel.dupeId
-                ) === idx
-            );
-
-            setHotels([...allHotels]); // Zeige alle bisher geladenen Hotels an
-
-            offset += hotelData.length;
-
-            await new Promise((resolve) => setTimeout(resolve, 500));
-          } catch (error) {
-            console.log("Fehler beim Abrufen der Hotels:", error.message);
-            setLoading(false);
-            break;
-          }
-        }
-        setLoading(false); // <-- Spinner ausblenden
-      }
       //
       // Lesen die zuletzt gespeicherten Suchen aus localStorage
       const previousSearches =
