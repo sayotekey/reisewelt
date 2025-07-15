@@ -16,12 +16,11 @@ import plane from "../icons/plane-solid-black.svg";
 // import plane2 from "../icons/plane2-solid-black.png";
 import persons from "../icons/people-group-solid-black.svg";
 // import wishlistHeartFull from "../icons/heart-solid-black.svg";
-import wishlistHeartEmpty from "../icons/heart-regular-black.svg";
+// import wishlistHeartEmpty from "../icons/heart-regular-black.svg";
 
 // import finder from "../icons/finder.gif";
 import search from "../icons/search.gif";
-import gptExample from "../images/ChatGPT.png";
-import UuidModel from "../../../backend/src/models/uuidModel.js";
+// import gptExample from "../images/ChatGPT.png";
 
 export default function SearchForm() {
   const { t } = useTranslate();
@@ -173,10 +172,23 @@ export default function SearchForm() {
               limit: newCount - hotelLength,
             },
           });
-          console.log(hotelResponse.data);
-          allHotels.push(hotelResponse.data.hotels);
+          console.log(hotelResponse.data.hotels);
+          console.log(Array.isArray(hotelResponse.data.hotels));
+
+          // Array.prototype.push.apply(allHotels, hotelResponse.data.hotels);
+          // allHotels = [...allHotels, ...hotelResponse.data.hotels];
+          hotelResponse.data.hotels.forEach((hotel) => allHotels.push(hotel));
+
+          setHotels([...allHotels]);
           // anzeige hier einbauen/neu rendern
         }
+      }
+      if (allHotels.length === 0) {
+        setError("Es wurden keine Hotels gefunden.");
+        setLoading(false);
+      } else {
+        setHotels([...allHotels]);
+        setLoading(false);
       }
       console.log(allHotels);
 
@@ -226,18 +238,14 @@ export default function SearchForm() {
       //                 h.hotel.dupeId === hotel.hotel.dupeId
       //             ) === idx
       //         );
-
       //         offset += hotelData.length;
-
       //         // Breche die Schleife ab, wenn flag true ist oder keine neuen Hotels mehr kommen
       //         if (flag === true || hotelData.length === 0) {
       //           break;
       //         }
-
       //         // if (flag === true) {
       //         //   break;
       //         // }
-
       //         await new Promise((resolve) => setTimeout(resolve, 500));
       //       } catch (error) {
       //         console.log("Fehler beim Abrufen der Hotels:", error.message);
@@ -248,13 +256,6 @@ export default function SearchForm() {
       //     setHotels([...allHotels]); // Zeige alle geladenen Hotels nach dem Laden an
       //     setLoading(false); // <-- Spinner ausblenden
       //   }
-      // }
-      // if (currentCount === 0) {
-      //   setError(
-      //     `Aktuell sind keine Angebote für ${myCity} verfügbar, bitte gib ein anderes Reiseziel ein.`
-      //   );
-      //   setLoading(false); // <-- Spinner ausblenden
-      //   return;
       // }
 
       //
@@ -557,94 +558,24 @@ export default function SearchForm() {
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-6">
             {/* ab hier Hotelcards-data */}
-            {hotels.flatMap((hoteloffer, i) =>
-              hoteloffer.map((offer, j) => (
-                <div
-                  className="flex gap-4 my-4 mx-2 transform transition-transform duration-500 hover:scale-105 cursor-pointer"
-                  key={`${i}-${j}-${offer.hotel.dupeId}`}
-                  onClick={() =>
-                    (window.location.href = `/hotel/${offer.hotel.dupeId}`)
-                  }
-                >
-                  <div className="w-2/5 relative">
-                    <div className="flex absolute top-2 right-2">
-                      <img
-                        src={wishlistHeartEmpty}
-                        alt="icon: heart"
-                        className="h-5 w-5 z-10"
-                        // onClick={handleAddToWishlist} => kommt noch !!
-                      />
-                    </div>
-                    <img
-                      src={gptExample}
-                      alt="gpt-example-picture"
-                      className="rounded-tl-xl rounded-bl-xl"
-                    />
-                  </div>
+            <ul>
+              {hotels.map((item, idx) =>
+                item && item.hotel ? (
+                  <li key={item.hotel.hotelId || idx}>{item.hotel.name}</li>
+                ) : null
+              )}
+            </ul>
 
-                  <div className="flex flex-wrap w-1/2">
-                    <h3 className="font-bold w-full">
-                      {offer.hotel.type
-                        .toLowerCase()
-                        .replace(/\b\w/g, (char) => char.toUpperCase())}
-                    </h3>
-                    {/* <p>{Bewertung später}</p> */}
-                    <h4 className="block w-full">
-                      &#40;
-                      {
-                        // Finde den passenden Stadtnamen zum CityCode
-                        validCities.find((city) =>
-                          city
-                            .toLowerCase()
-                            .includes(offer.hotel.cityCode.toLowerCase())
-                        ) || offer.hotel.cityCode
-                      }
-                      &#41;&#44;
-                    </h4>
-                    <p className="block">
-                      {offer.offers?.[0]?.checkInDate
-                        ? new Date(
-                            offer.offers[0].checkInDate
-                          ).toLocaleDateString("de-DE", {
-                            day: "2-digit",
-                            month: "2-digit",
-                            year: "numeric",
-                          })
-                        : ""}
-                      &#32; &#45;&#32;
-                      {offer.offers?.[0]?.checkOutDate
-                        ? new Date(
-                            offer.offers[0].checkOutDate
-                          ).toLocaleDateString("de-DE", {
-                            day: "2-digit",
-                            month: "2-digit",
-                            year: "numeric",
-                          })
-                        : ""}
-                    </p>
-                    {/* Anzahl + Erwachsene(r) */}
-                    <p>
-                      {offer.offers[0].guests.adults}&#32;
-                      {offer.offers[0].guests.adults > 1
-                        ? "Erwachsene"
-                        : "Erwachsener"}
-                    </p>
-                    {/* Kinder optional */}
-                    <p>
-                      Preis ab:&#32;
-                      {offer.offers?.[0]?.price?.total
-                        ? offer.offers[0].price.total.replace(".", ",")
-                        : ""}
-                      &#32;
-                      {offer.offers[0]?.price.currency.replace("EUR", "€")}
-                    </p>
-                  </div>
-                </div>
-              ))
-            )}
+            {/* <ul>
+              {hotels.map((innerArray, i) =>
+                innerArray.map((hotel, j) => (
+                  <li key={`${i}-${j}`}>{hotel.name}</li>
+                ))
+              )}
+            </ul> */}
           </div>
         </div>
-      </div>{" "}
+      </div>
     </div>
   );
 }
