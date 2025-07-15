@@ -269,7 +269,7 @@ const HamburgHotelsPage = () => {
 
   const filteredHotels = useMemo(() => {
     let filtered = hotels.filter((hotel) => {
-      // Фильтр по цене
+      // filter in price range
       if (filters.priceRange === "under300" && hotel.priceValue >= 300)
         return false;
       if (
@@ -280,11 +280,11 @@ const HamburgHotelsPage = () => {
       if (filters.priceRange === "over350" && hotel.priceValue <= 350)
         return false;
 
-      // Фильтр по звездам
+      // Filter by stars
       if (filters.stars !== "all" && hotel.stars !== parseInt(filters.stars))
         return false;
 
-      // Фильтр по рейтингу
+      // Filter by rating
       if (filters.rating === "above80" && parseInt(hotel.rating) < 80)
         return false;
       if (filters.rating === "above90" && parseInt(hotel.rating) < 90)
@@ -292,19 +292,19 @@ const HamburgHotelsPage = () => {
       if (filters.rating === "above95" && parseInt(hotel.rating) < 95)
         return false;
 
-      // Фильтр по району
+      // Filter by district
       if (filters.district !== "all" && hotel.district !== filters.district)
         return false;
 
-      // Фильтр по завтраку
+      // Filter by breakfast
       if (filters.breakfast !== "all" && hotel.breakfast !== filters.breakfast)
         return false;
 
-      // Фильтр по типу комнаты
+      // Filter by room type
       if (filters.roomType !== "all" && hotel.roomType !== filters.roomType)
         return false;
 
-      // Булевы фильтры
+      // Boolean filters
       if (filters.parking && !hotel.parking) return false;
       if (filters.petFriendly && !hotel.petFriendly) return false;
       if (filters.businessCenter && !hotel.businessCenter) return false;
@@ -318,7 +318,7 @@ const HamburgHotelsPage = () => {
       return true;
     });
 
-    // Сортировка
+    // Sorting
     filtered.sort((a, b) => {
       switch (filters.sortBy) {
         case "price_low":
@@ -367,7 +367,7 @@ const HamburgHotelsPage = () => {
   return (
     <div className="pt-15">
       <div className="flex flex-col lg:flex-row p-4 gap-6 bg-gray-50 min-h-screen">
-        {/* Фильтры */}
+        {/* Filters */}
         <aside className="w-full lg:w-1/4 bg-white p-6 rounded-lg shadow-md h-fit">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-gray-800">Filter</h2>
