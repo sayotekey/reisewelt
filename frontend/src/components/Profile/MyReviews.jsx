@@ -4,7 +4,7 @@ const MyReviews = ({ user, loadUser }) => {
   return (
     <section className="space-y-2">
       {/* Bewertungen hinzufügen */}
-      <div className="space-y-2 mt-2">
+      <div className="space-y-4 mt-2 ">
         <h2 className="text-xl font-semibold">Bewertung hinzufügen</h2>
         {/* Formular für Backend*/}
         {/*

@@ -184,7 +184,7 @@ const ChangePasswordForm = () => {
         </div>
         <button
           type="submit"
-          className=" px-4 py-2 rounded-xl mt-2"
+          className=" px-4 py-2 rounded-md mt-2"
           style={{
               backgroundColor: "var(--accent-color)",
               color: "white",
