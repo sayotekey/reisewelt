@@ -1,7 +1,7 @@
-import { useState } from "react";
-import { useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import DatePicker from "react-datepicker";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
+// import motion from "framer-motion";
 import { FaCalendarAlt } from "react-icons/fa";
 import "react-datepicker/dist/react-datepicker.css";
 import axios from "axios";
@@ -140,78 +140,122 @@ export default function SearchForm() {
 
       const url = `http://localhost:3000/api/uuid/status/${myUuid}`;
       const hotelCountResponse = await axios.get(url);
-      const countRaw = hotelCountResponse.data.count; // {"count": 6}
+      const countRaw = hotelCountResponse.data.count; // {"count":3 }
       let flag = hotelCountResponse.data.flag; // false?
 
-      console.log("countRaw ist:", countRaw); // Gibt die Anzahl der Hotels aus
+      console.log("2.Endpunkt: aktueller Count", countRaw);
+      console.log("2.Endpunkt: aktuelle flag", flag);
 
-      let currentCount = countRaw;
-      let elapsed = 0;
-      const maxWait = 50000; // 50 Sekunden
-      while (currentCount === 0 && elapsed < maxWait) {
+      //
+      // while schleife
+      // solange flag = false => abfrage an mongo db nach count und hotels mit passender MyUuid
+      // wenn count > hotel.length => get hotels (UUID)=>
+      // }
+      //
+      let allHotels = []; // Array für alle Hotels
+      let newCount = 0; // Variable für neuen Count
+
+      while (flag === false) {
         await new Promise((resolve) => setTimeout(resolve, 3000));
-        elapsed += 3000;
-        // solange bis mindestens 1 Hotel gefunden wurde
-        // oder nach 50sekunden abgebrochen wird
-        const retryResponse = await axios.get(url);
-        currentCount = parseInt(retryResponse.data.count, 10);
-        console.log("Retry Count:", retryResponse.data.count);
-        if (currentCount > 0) {
-          // 3. Endpunkt: Abfrage der Hotels, die unter dieser UUID gespeichert sind
-          // Hole das aktuelle "flag"-Attribut aus der MongoDB für die gegebene UUID
+        const retryResponse = await axios.get(url); // erneute Abfrage der Anzahl der Hotels
+        newCount = retryResponse.data.count; // aktualisiere neuen Count
+        console.log("newCount aus while-loop:", newCount);
+        flag = retryResponse.data.flag;
 
-          let allHotels = [];
-          let offset = 0;
-          while (flag === false) {
-            try {
-              // Hole maximal 3 Hotels pro Durchgang mit Offset
-              const urlHotel = `http://localhost:3000/api/uuid/hotels`;
-              const hotelResponse = await axios.get(urlHotel, {
-                params: {
-                  limit: 3,
-                  count: offset,
-                  uuid: myUuid,
-                },
-              });
-              flag = hotelResponse.data.flag;
-              const hotelData = hotelResponse.data.hotels;
-              console.log("Hotels aus der MongoDB:", hotelData);
-
-              // Füge neue Hotels zu allHotels hinzu, ohne Duplikate
-              allHotels = [...allHotels, ...hotelData].filter(
-                (hotel, idx, arr) =>
-                  arr.findIndex(
-                    (h) =>
-                      h.hotel &&
-                      hotel.hotel &&
-                      h.hotel.dupeId === hotel.hotel.dupeId
-                  ) === idx
-              );
-
-              offset += hotelData.length;
-
-              if (flag === true) {
-                break;
-              }
-
-              await new Promise((resolve) => setTimeout(resolve, 500));
-            } catch (error) {
-              console.log("Fehler beim Abrufen der Hotels:", error.message);
-              setLoading(false);
-            }
-          }
-          setHotels([...allHotels]); // Zeige alle geladenen Hotels nach dem Laden an
-          setLoading(false); // <-- Spinner ausblenden
-          // break; // Beende die Schleife, wenn Hotels gefunden wurden
+        if (newCount > allHotels.length) {
+          //3. endpunkt
+          const hotelLength = allHotels.length;
+          const urlHotel = "http://localhost:3000/api/uuid/hotels";
+          const hotelResponse = await axios.get(urlHotel, {
+            params: {
+              uuid: myUuid,
+              count: hotelLength,
+              limit: newCount - hotelLength,
+            },
+          });
+          console.log(hotelResponse.data);
+          allHotels.push(hotelResponse.data.hotels);
+          // anzeige hier einbauen/neu rendern
         }
       }
-      if (currentCount === 0) {
-        setError(
-          `Aktuell sind keine Angebote für ${myCity} verfügbar, bitte gib ein anderes Reiseziel ein.`
-        );
-        setLoading(false); // <-- Spinner ausblenden
-        return;
-      }
+      console.log(allHotels);
+
+      //
+      // let currentCount = countRaw;
+      // let elapsed = 0;
+      // const maxWait = 50000; // 50 Sekunden
+      // while (currentCount === 0 && elapsed < maxWait) {
+      //   await new Promise((resolve) => setTimeout(resolve, 3000));
+      //   elapsed += 3000;
+      //   // solange bis mindestens 1 Hotel gefunden wurde
+      //   // oder nach 50sekunden abgebrochen wird
+      //   const retryResponse = await axios.get(url);
+      //   currentCount = parseInt(retryResponse.data.count, 10);
+      //   flag = retryResponse.data.flag;
+      //   console.log("Retry Count:", retryResponse.data.count);
+      //   console.log("retry flag", flag);
+
+      //   if (currentCount > 0) {
+      //     // 3. Endpunkt: Abfrage der Hotels, die unter dieser UUID gespeichert sind
+      //     let allHotels = [];
+      //     let offset = 0;
+      //     // Hole immer nur 3 Hotels pro Durchgang
+      //     while (flag === false) {
+      //       try {
+      //         const urlHotel = "http://localhost:3000/api/uuid/hotels";
+      //         const hotelResponse = await axios.get(urlHotel, {
+      //           params: {
+      //             limit: 3,
+      //             count: offset,
+      //             uuid: myUuid,
+      //           },
+      //         });
+      //         const hotelData = hotelResponse.data.hotels;
+      //         console.log("hotelData:", hotelData);
+
+      //         flag = hotelResponse.data.flag;
+      //         console.log("Hotels aus der MongoDB:", hotelData);
+
+      //         // Füge neue Hotels zu allHotels hinzu, ohne Duplikate
+      //         allHotels = [...allHotels, ...hotelData].filter(
+      //           (hotel, idx, arr) =>
+      //             arr.findIndex(
+      //               (h) =>
+      //                 h.hotel &&
+      //                 hotel.hotel &&
+      //                 h.hotel.dupeId === hotel.hotel.dupeId
+      //             ) === idx
+      //         );
+
+      //         offset += hotelData.length;
+
+      //         // Breche die Schleife ab, wenn flag true ist oder keine neuen Hotels mehr kommen
+      //         if (flag === true || hotelData.length === 0) {
+      //           break;
+      //         }
+
+      //         // if (flag === true) {
+      //         //   break;
+      //         // }
+
+      //         await new Promise((resolve) => setTimeout(resolve, 500));
+      //       } catch (error) {
+      //         console.log("Fehler beim Abrufen der Hotels:", error.message);
+      //         setLoading(false);
+      //         break; // Break the loop if an error occurs
+      //       }
+      //     }
+      //     setHotels([...allHotels]); // Zeige alle geladenen Hotels nach dem Laden an
+      //     setLoading(false); // <-- Spinner ausblenden
+      //   }
+      // }
+      // if (currentCount === 0) {
+      //   setError(
+      //     `Aktuell sind keine Angebote für ${myCity} verfügbar, bitte gib ein anderes Reiseziel ein.`
+      //   );
+      //   setLoading(false); // <-- Spinner ausblenden
+      //   return;
+      // }
 
       //
       // Lesen die zuletzt gespeicherten Suchen aus localStorage
@@ -513,105 +557,91 @@ export default function SearchForm() {
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-6">
             {/* ab hier Hotelcards-data */}
-            {hotels
-              // .filter(
-              //   (hotel) =>
-              //     hotel &&
-              //     hotel.hotel &&
-              //     hotel.hotel.dupeId &&
-              //     hotel.hotel.name &&
-              //     hotel.hotel.cityCode &&
-              //     Array.isArray(hotel.offers) &&
-              //     hotel.offers.length > 0 &&
-              //     hotel.offers[0] &&
-              //     hotel.offers[0].guests &&
-              //     hotel.offers[0].price
-              // )
-              .flatMap((hoteloffer, i) =>
-                hoteloffer.map((offer, j) => (
-                  <div
-                    className="flex gap-4 my-4 mx-2 transform transition-transform duration-500 hover:scale-105 cursor-pointer"
-                    key={`${i}-${j}-${offer.hotel.dupeId}`}
-                    onClick={() =>
-                      (window.location.href = `/hotel/${offer.hotel.dupeId}`)
-                    }
-                  >
-                    <div className="w-2/5 relative">
-                      <div className="flex absolute top-2 right-2">
-                        <img
-                          src={wishlistHeartEmpty}
-                          alt="icon: heart"
-                          className="h-5 w-5 z-10"
-                          // onClick={handleAddToWishlist} => kommt noch !!
-                        />
-                      </div>
+            {hotels.flatMap((hoteloffer, i) =>
+              hoteloffer.map((offer, j) => (
+                <div
+                  className="flex gap-4 my-4 mx-2 transform transition-transform duration-500 hover:scale-105 cursor-pointer"
+                  key={`${i}-${j}-${offer.hotel.dupeId}`}
+                  onClick={() =>
+                    (window.location.href = `/hotel/${offer.hotel.dupeId}`)
+                  }
+                >
+                  <div className="w-2/5 relative">
+                    <div className="flex absolute top-2 right-2">
                       <img
-                        src={gptExample}
-                        alt="gpt-example-picture"
-                        className="rounded-tl-xl rounded-bl-xl"
+                        src={wishlistHeartEmpty}
+                        alt="icon: heart"
+                        className="h-5 w-5 z-10"
+                        // onClick={handleAddToWishlist} => kommt noch !!
                       />
                     </div>
-
-                    <div className="flex flex-wrap w-1/2">
-                      <h3 className="font-bold w-full">
-                        {offer.hotel.type
-                          .toLowerCase()
-                          .replace(/\b\w/g, (char) => char.toUpperCase())}
-                      </h3>
-                      {/* <p>{Bewertung später}</p> */}
-                      <h4 className="block w-full">
-                        &#40;
-                        {
-                          // Finde den passenden Stadtnamen zum CityCode
-                          validCities.find((city) =>
-                            city
-                              .toLowerCase()
-                              .includes(offer.hotel.cityCode.toLowerCase())
-                          ) || offer.hotel.cityCode
-                        }
-                        &#41;&#44;
-                      </h4>
-                      <p className="block">
-                        {offer.offers?.[0]?.checkInDate
-                          ? new Date(
-                              offer.offers[0].checkInDate
-                            ).toLocaleDateString("de-DE", {
-                              day: "2-digit",
-                              month: "2-digit",
-                              year: "numeric",
-                            })
-                          : ""}
-                        &#32; &#45;&#32;
-                        {offer.offers?.[0]?.checkOutDate
-                          ? new Date(
-                              offer.offers[0].checkOutDate
-                            ).toLocaleDateString("de-DE", {
-                              day: "2-digit",
-                              month: "2-digit",
-                              year: "numeric",
-                            })
-                          : ""}
-                      </p>
-                      {/* Anzahl + Erwachsene(r) */}
-                      <p>
-                        {offer.offers[0].guests.adults}&#32;
-                        {offer.offers[0].guests.adults > 1
-                          ? "Erwachsene"
-                          : "Erwachsener"}
-                      </p>
-                      {/* Kinder optional */}
-                      <p>
-                        Preis ab:&#32;
-                        {offer.offers?.[0]?.price?.total
-                          ? offer.offers[0].price.total.replace(".", ",")
-                          : ""}
-                        &#32;
-                        {offer.offers[0]?.price.currency.replace("EUR", "€")}
-                      </p>
-                    </div>
+                    <img
+                      src={gptExample}
+                      alt="gpt-example-picture"
+                      className="rounded-tl-xl rounded-bl-xl"
+                    />
                   </div>
-                ))
-              )}
+
+                  <div className="flex flex-wrap w-1/2">
+                    <h3 className="font-bold w-full">
+                      {offer.hotel.type
+                        .toLowerCase()
+                        .replace(/\b\w/g, (char) => char.toUpperCase())}
+                    </h3>
+                    {/* <p>{Bewertung später}</p> */}
+                    <h4 className="block w-full">
+                      &#40;
+                      {
+                        // Finde den passenden Stadtnamen zum CityCode
+                        validCities.find((city) =>
+                          city
+                            .toLowerCase()
+                            .includes(offer.hotel.cityCode.toLowerCase())
+                        ) || offer.hotel.cityCode
+                      }
+                      &#41;&#44;
+                    </h4>
+                    <p className="block">
+                      {offer.offers?.[0]?.checkInDate
+                        ? new Date(
+                            offer.offers[0].checkInDate
+                          ).toLocaleDateString("de-DE", {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                          })
+                        : ""}
+                      &#32; &#45;&#32;
+                      {offer.offers?.[0]?.checkOutDate
+                        ? new Date(
+                            offer.offers[0].checkOutDate
+                          ).toLocaleDateString("de-DE", {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                          })
+                        : ""}
+                    </p>
+                    {/* Anzahl + Erwachsene(r) */}
+                    <p>
+                      {offer.offers[0].guests.adults}&#32;
+                      {offer.offers[0].guests.adults > 1
+                        ? "Erwachsene"
+                        : "Erwachsener"}
+                    </p>
+                    {/* Kinder optional */}
+                    <p>
+                      Preis ab:&#32;
+                      {offer.offers?.[0]?.price?.total
+                        ? offer.offers[0].price.total.replace(".", ",")
+                        : ""}
+                      &#32;
+                      {offer.offers[0]?.price.currency.replace("EUR", "€")}
+                    </p>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </div>{" "}

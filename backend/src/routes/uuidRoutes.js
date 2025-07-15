@@ -68,7 +68,7 @@ router.get("/generate", async (req, res) => {
   const uniqueId = uuidv4();
 
   try {
-    const newUuid = new UuidModel({ uuid: uniqueId, flag: false });
+    const newUuid = new UuidModel({ uuid: uniqueId, flag: false, hotels: [] });
     await newUuid.save();
     console.log("UUID saved successfully:", uniqueId);
   } catch (error) {
@@ -131,17 +131,15 @@ router.get("/generate", async (req, res) => {
           await UuidModel.findOneAndUpdate({ uuid: uniqueId }, { flag: true });
           console.log("5 Angebote gefunden");
           break;
-        } else if (i === hotelIdList.length) {
-          // else if (countList < 5 && countList === hotelIdList.length) {
-
-          await UuidModel.findOneAndUpdate({ uuid: uniqueId }, { flag: true });
-          console.log("Liste fertig, keine weiteren Angebote verfügbar");
-          break;
         }
       }
-      // else {
-      //   console.log("No offers found for hotelId:", hotelIdList[i].hotelIds);
-      // }
+      if (i == hotelIdList.length - 1) {
+        // else if (countList < 5 && countList === hotelIdList.length) {
+
+        await UuidModel.findOneAndUpdate({ uuid: uniqueId }, { flag: true });
+        console.log("Liste fertig, keine weiteren Angebote verfügbar");
+        break;
+      }
     }
   } catch (error) {
     console.error("Error fetching hotel data:", error);
