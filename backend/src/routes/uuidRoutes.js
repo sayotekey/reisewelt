@@ -66,8 +66,9 @@ const cityNameToCode = {
 // speichern von abgerufenen Amadeus-API-Daten unter dieser UUID in der Mongo-Datenbank
 router.get("/generate", async (req, res) => {
   const uniqueId = uuidv4();
+
   try {
-    const newUuid = new UuidModel({ uuid: uniqueId });
+    const newUuid = new UuidModel({ uuid: uniqueId, flag: false });
     await newUuid.save();
     console.log("UUID saved successfully:", uniqueId);
   } catch (error) {
@@ -104,13 +105,15 @@ router.get("/generate", async (req, res) => {
     let countList = 0;
     for (let i = 0; i < hotelIdList.length; i++) {
       console.log("Frage Hotel-ID an:", hotelIdList[i]); // Ausgabe im Terminal zur Kontrolle
+      console.log("i=", i);
+
       const result = await fetchFromAmadeus(
         `/v3/shopping/hotel-offers?hotelIds=${hotelIdList[i].hotelIds}`,
         token
       ); // alle Hotelangebote für die jeweilige Hotel-ID
 
-      // Pruefen, ob es Angebote mit available: true gibt
       if (
+        // Pruefen, ob es Angebote mit available: true gibt
         result &&
         result.data &&
         Array.isArray(result.data) &&
@@ -125,40 +128,47 @@ router.get("/generate", async (req, res) => {
         console.log("Angebote gefunden für Hotel-ID:", hotelIdList[i].hotelIds);
         console.log(`${result.data} wurde in Mongo DB gespeichert`);
         if (countList === 5) {
+          await UuidModel.findOneAndUpdate(
+            { uuid: uniqueId },
+            { $set: { flag: true } }
+          );
           console.log("5 Angebote gefunden");
           break;
-        } else if (countList === hotelIdList.length) {
+        } else if (i === hotelIdList.length) {
+          // else if (countList < 5 && countList === hotelIdList.length) {
+
+          await UuidModel.findOneAndUpdate(
+            { uuid: uniqueId },
+            { $set: { flag: true } }
+          );
           console.log("Liste fertig, keine weiteren Angebote verfügbar");
           break;
         }
-      } else {
-        console.log(
-          "No offers found or error for hotelId:",
-          hotelIdList[i].hotelIds
-        );
       }
+      // else {
+      //   console.log("No offers found for hotelId:", hotelIdList[i].hotelIds);
+      // }
     }
   } catch (error) {
     console.error("Error fetching hotel data:", error);
-    res.status(500).json({ error: error.message });
   }
 });
 
 // zweiter Endpunkt:
 // Abfrage der Anzahl der Hotels, die unter dieser UUID gespeichert sind
 // und Rückgabe der Anzahl ins Frontend
-// Beispiel-URL: http://localhost:3000/api/uuid/status/:uuid
+// URL: http://localhost:3000/api/uuid/status/:uuid
 router.get("/status/:uuid", async (req, res) => {
   const { uuid } = req.params;
   console.log("uuid-backend-ep-zwei:", uuid);
 
   try {
     const eintrag = await UuidModel.findOne({ uuid: uuid }).exec();
-    console.log("mongo-db-eintrag-length", eintrag.hotels.length); // gibt Int zurück
 
     if (!eintrag || !Array.isArray(eintrag.hotels)) {
       return res.json({ count: 0, message: "Noch keinen Eintrag gefunden" });
     }
+    console.log("mongo-db-eintrag-length", eintrag.hotels.length); // gibt Int/Number zurück
     res.json({ count: eintrag.hotels.length }); // rückgabe an Frontend
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -171,14 +181,14 @@ export default router;
 // und Rückgabe der Hotels ins Frontend
 
 router.get("/hotels/:uuid", async (req, res) => {
-  const { count } = req.query;
+  const { count } = req.params; //vorher query
   const { uuid } = req.params;
   console.log("uuid:", uuid);
   console.log("Count:", count);
   try {
     const countNum = count ? parseInt(count, 10) : null;
     console.log("Parsed count:", countNum);
-    if (countNum && countNum > 0) {
+    if (countNum > 0) {
       const eintrag = await UuidModel.findOne({ uuid: uuid }).exec();
       if (eintrag && Array.isArray(eintrag.hotels)) {
         const hotels = eintrag.hotels.slice(0, countNum);

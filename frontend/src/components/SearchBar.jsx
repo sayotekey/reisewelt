@@ -1,8 +1,7 @@
 import { useState } from "react";
-import { useEffect,useRef } from "react";
+import { useEffect, useRef } from "react";
 import DatePicker from "react-datepicker";
-import {AnimatePresence } from "framer-motion";
-// import motion from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { FaCalendarAlt } from "react-icons/fa";
 import "react-datepicker/dist/react-datepicker.css";
 import axios from "axios";
@@ -22,6 +21,7 @@ import wishlistHeartEmpty from "../icons/heart-regular-black.svg";
 // import finder from "../icons/finder.gif";
 import search from "../icons/search.gif";
 import gptExample from "../images/ChatGPT.png";
+import UuidModel from "../../../backend/src/models/uuidModel.js";
 
 export default function SearchForm() {
   const { t } = useTranslate();
@@ -38,7 +38,7 @@ export default function SearchForm() {
   const [startDate, endDate] = dateRange;
   const [loading, setLoading] = useState(false);
 
-const dropdownRef = useRef();
+  const dropdownRef = useRef();
 
   //dropdown functionality
   useEffect(() => {
@@ -57,7 +57,6 @@ const dropdownRef = useRef();
     };
   }, [showDropdown]);
 
-  
   // Filtere Vorschläge nach Eingabe (case-insensitive, enthält den Text)
   const suggestions = myCity
     ? validCities.filter((city) =>
@@ -101,10 +100,6 @@ const dropdownRef = useRef();
     // setError("");
   };
 
-  // const handleChildrenAgePopUp = () => {
-  //   setChildrenAges(true);
-  // };
-
   const handleSearch = () => {
     if (!myCity) {
       setError("Bitte einen Städtenamen eingeben.");
@@ -146,53 +141,86 @@ const dropdownRef = useRef();
       const url = `http://localhost:3000/api/uuid/status/${myUuid}`;
       const hotelCountResponse = await axios.get(url); // {"count": 6}
       const countRaw = hotelCountResponse.data.count;
-     
-      console.log(countRaw); // Gibt die Anzahl der Hotels aus
 
-      // console.log("zweiter EP-countData",countData); // Gibt die Anzahl der Hotels aus
+      console.log("countRaw ist:", countRaw); // Gibt die Anzahl der Hotels aus
 
       let currentCount = countRaw;
-      // Warte initial 2 Sekunden, bevor der erste Status-Check erfolgt
-      // await new Promise((resolve) => setTimeout(resolve, 2000));
       let elapsed = 0;
-      const maxWait = 30000; // 30 Sekunden
+      const maxWait = 50000; // 50 Sekunden
       while (currentCount === 0 && elapsed < maxWait) {
         await new Promise((resolve) => setTimeout(resolve, 3000));
-        elapsed += 5000;
+        elapsed += 3000;
+        // solange bis mindestens 1 Hotel gefunden wurde
+        // oder nach 30sekunden abgebrochen wird
         const retryResponse = await axios.get(url);
         currentCount = parseInt(retryResponse.data.count, 10);
         console.log("Retry Count:", retryResponse.data.count);
         if (currentCount > 0) {
-          break; // Beende die Schleife, wenn Hotels gefunden wurden
+          // hier evtl 3. Endpunkt hinzufügen?
+          // break; // Beende die Schleife, wenn Hotels gefunden wurden
         }
       }
       if (currentCount === 0) {
-        setError("Keine Hotels gefunden. Bitte versuche es später erneut.");
+        setError(
+          `Aktuell sind keine Angebote für ${myCity} verfügbar, bitte gib ein anderes Reiseziel ein.`
+        );
         setLoading(false); // <-- Spinner ausblenden
         return;
       }
-      // solange bis mindestens 1 Hotel gefunden wurde
-      // oder nach 30sekunden abgebrochen wird
 
       // dann: 3. Endpunkt aufrufen
 
       // 3. Endpunkt: Abfrage der Hotels, die unter dieser UUID gespeichert sind
-      // mit Timeout von 5 Sekunden
-      await new Promise((resolve) => setTimeout(resolve, 5000));
+      // mit Timeout von 2 Sekunden
+      // await new Promise((resolve) => setTimeout(resolve, 2000));
+      // Hole das aktuelle "flag"-Attribut aus der MongoDB für die gegebene UUID
+      let flag = false;
 
-      try {
-        const urlHotel = `http://localhost:3000/api/uuid/hotels/${myUuid}?${countRaw}`;
-        const hotelResponse = await axios.get(urlHotel);
-        const hotelData = hotelResponse.data.hotels;
-        console.log("Hotels aus der MongoDB:", hotelData); // Gibt die Hotels aus
+      const flagResponse = await axios.get(
+        `http://localhost:3000/api/uuid/hotels/${myUuid}`
+      );
+      flag = flagResponse.data.flag;
+      console.log("Flag aus der MongoDB:", flag);
 
-        setHotels(hotelData);
-      } catch (error) {
-        console.log("Fehler beim Abrufen der Hotels:", error.message);
-        setLoading(false);
+      // let newCount = 0;
+      // let updatedCount = 0;
+
+      if (currentCount > 0) {
+        let allHotels = [];
+        let offset = 0;
+        while (flag === false) {
+          try {
+            // Hole maximal 3 Hotels pro Durchgang mit Offset
+            const urlHotel = `http://localhost:3000/api/uuid/hotels/${myUuid}?limit=3&offset=${offset}`;
+            const hotelResponse = await axios.get(urlHotel);
+            flag = hotelResponse.data.flag;
+            const hotelData = hotelResponse.data.hotels;
+            console.log("Hotels aus der MongoDB:", hotelData);
+
+            // Füge neue Hotels zu allHotels hinzu, ohne Duplikate
+            allHotels = [...allHotels, ...hotelData].filter(
+              (hotel, idx, arr) =>
+                arr.findIndex(
+                  (h) =>
+                    h.hotel &&
+                    hotel.hotel &&
+                    h.hotel.dupeId === hotel.hotel.dupeId
+                ) === idx
+            );
+
+            setHotels([...allHotels]); // Zeige alle bisher geladenen Hotels an
+
+            offset += hotelData.length;
+
+            await new Promise((resolve) => setTimeout(resolve, 500));
+          } catch (error) {
+            console.log("Fehler beim Abrufen der Hotels:", error.message);
+            setLoading(false);
+            break;
+          }
+        }
+        setLoading(false); // <-- Spinner ausblenden
       }
-      setLoading(false); // <-- Spinner ausblenden
-
       //
       // Lesen die zuletzt gespeicherten Suchen aus localStorage
       const previousSearches =
@@ -221,24 +249,24 @@ const dropdownRef = useRef();
         background: "linear-gradient(135deg, #ff7626, #ff7851)",
         boxShadow: "0 4px 20px rgba(255, 118, 38, 0.3)",
       }}
-      >
+    >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Reiseziel */}
-        <div className="relative w-full max-w-md ">
-          <div className="flex  mb-1 gap-2 ">
+        <div className="relative w-full max-w-md">
+          <div className="flex mb-1 gap-2 ">
             <img
               src={travelGoal}
               alt="icon: mountain and building"
               className="h-4"
             />
-            <label className="font-semibold flex items-center gap-2 ">
-              {t("search.whereTravel") || "Wohin möchtest du reisen?"}{" "}
+            <label className="font-semibold flex items-center gap-2">
+              {t("search.whereTravel") || "Wohin möchtest du reisen?"}
             </label>
           </div>
           <input
             type="text"
             placeholder={t("search.enterDestination") || "Reiseziel eingeben"}
-            className="w-full p-2 rounded border  hover:bg-blue-200 bg-white border-gray-500"
+            className="w-full p-2 rounded border hover:bg-blue-200 bg-white border-gray-500"
             value={myCity}
             onChange={handleInputChange}
             onFocus={() => setShowSuggestions(true)}
@@ -279,321 +307,322 @@ const dropdownRef = useRef();
           <label className="font-semibold hover:cursor-pointer mb-1 flex text-blue-100 gap-2">
             Optional
           </label>
-        <div className="w-full max-w-md">
-          <div className="flex mb-1 gap-2">
-            <img
-              src={plane}
-              alt="icon: mountain and building"
-              className="h-4"
+          <div className="w-full max-w-md">
+            <div className="flex mb-1 gap-2">
+              <img
+                src={plane}
+                alt="icon: mountain and building"
+                className="h-4"
+              />
+              <label className="font-semibold hover:cursor-pointer flex text-blue-100 gap-2">
+                Willst du fliegen?
+              </label>
+            </div>
+            <input
+              type="text"
+              placeholder={t("search.addFlight") || "  +  Flug hinzufügen"}
+              className="w-full p-2 hover:cursor-pointer border rounded border-dashed border-gray-500 text-gray-600 placeholder-gray-600"
             />
-            <label className="font-semibold hover:cursor-pointer flex text-blue-100 gap-2">
-              Willst du fliegen?
+          </div>
+
+          <div>
+            <label className="font-semibold mb-1 flex items-center gap-2">
+              <FaCalendarAlt className="text-black" />
+              {t("search.whenTravel") || "Wann reisen?"}{" "}
             </label>
-          </div>
-          <input
-            type="text"
-            placeholder={t("search.addFlight") || "  +  Flug hinzufügen"}
-            className="w-full p-2 hover:cursor-pointer border rounded border-dashed border-gray-500 text-gray-600 placeholder-gray-600"
-          />
-        </div>
-
-        <div>
-          <label className="font-semibold mb-1 flex items-center gap-2">
-            <FaCalendarAlt className="text-black" />
-            {t("search.whenTravel") || "Wann reisen?"}{" "}
-          </label>
-          <div className="w-full">
-            <DatePicker
-              selectsRange
-              startDate={startDate}
-              endDate={endDate}
-              onChange={(update) => {
-                setDateRange(update);
-              }}
-              className="w-full p-2  bg-white rounded border border-gray-500 cursor-pointer  hover:bg-blue-200"
-              wrapperClassName="w-full"
-              placeholderText={t("search.selectDate") || "Datum auswählen"}
-              dateFormat="dd.MM.yyyy"
-              isClearable
-              customInput={
-                <input
-                  style={{
-                    width: "451px", //hier size anpassen
-                    padding: "8px",
-                    border: "1px solid #1f2937",
-                    borderRadius: "6px",
-                    outline: "none",
-                    height: "40px",
-                    boxSizing: "border-box",
-                    fontSize: "16px",
-                  }}
-                />
-              }
-            />
-
-            
-          </div>
-        </div>
-
-        {/* Personenwahl */}
-        <div className="relative" ref={dropdownRef}>
-          <div className="flex flex-row mb-1 ">
-            <img
-              src={persons}
-              alt="icon: group of 3 people"
-              className="h-5 pr-2"
-            />
-            {t("search.howManyPeople") || "Wie viele Personen reisen?"}{" "}
+            <div className="w-full">
+              <DatePicker
+                selectsRange
+                startDate={startDate}
+                endDate={endDate}
+                onChange={(update) => {
+                  setDateRange(update);
+                }}
+                className="w-full p-2  bg-white rounded border border-gray-500 cursor-pointer  hover:bg-blue-200"
+                wrapperClassName="w-full"
+                placeholderText={t("search.selectDate") || "Datum auswählen"}
+                dateFormat="dd.MM.yyyy"
+                isClearable
+                customInput={
+                  <input
+                    style={{
+                      width: "451px", //hier size anpassen
+                      padding: "8px",
+                      border: "1px solid #1f2937",
+                      borderRadius: "6px",
+                      outline: "none",
+                      height: "40px",
+                      boxSizing: "border-box",
+                      fontSize: "16px",
+                    }}
+                  />
+                }
+              />
+            </div>
           </div>
 
-          <div
-            className="w-full p-2 rounded border border-gray-500 pl-4 bg-white cursor-pointer hover:bg-blue-200"
-            onClick={() => setShowDropdown(!showDropdown)}
-          >
-            {adults} {t("search.adults") || "Erwachsene"}, {children}{" "}
-            {t("search.children") || "Kinder (0 - 17 Jahre)"}{" "}
-          </div>
+          {/* Personenwahl */}
+          <div className="relative" ref={dropdownRef}>
+            <div className="flex flex-row mb-1 ">
+              <img
+                src={persons}
+                alt="icon: group of 3 people"
+                className="h-5 pr-2"
+              />
+              {t("search.howManyPeople") || "Wie viele Personen reisen?"}{" "}
+            </div>
 
-          <AnimatePresence>
-            {showDropdown && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="absolute z-15 bg-white border border-gray-500 rounded p-4 mt-2 w-full shadow-md"
-              >
-                <div className="flex justify-between items-center mb-3">
-                  <span>{t("search.adults") || "Erwachsene"}</span>{" "}
-                  <div className="flex gap-2 items-center">
-                    <button
-                      className="px-2 py-1 border rounded bg-gray-200 text-gray-700 min-w-[33%] border-transparent font-bold text-lg hover:bg-gray-200 flex items-center justify-center"
-                      onClick={() => setAdults(Math.max(1, adults - 1))}
-                    >
-                      &#45;
-                    </button>
-                    <span>{adults}</span>
-                    <button
-                      className="px-2 py-1 border rounded bg-gray-200 text-gray-700 min-w-[33%] border-transparent font-bold text-lg hover:bg-gray-200 flex items-center justify-center"
-                      onClick={() => setAdults(adults + 1)}
-                    >
-                      &#43;
-                    </button>
-                  </div>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span>{t("search.children") || "Kinder (0 - 17 Jahre)"}</span>{" "}
-                  <div className="flex gap-2 items-center">
-                    <button
-                      className="px-2 py-1 border rounded bg-gray-200 text-gray-700 min-w-[33%] border-transparent font-bold text-lg hover:bg-gray-200 flex items-center justify-center"
-                      onClick={() => setChildren(Math.max(0, children - 1))}
-                    >
-                      &#45;
-                    </button>
-                    <span>{children}</span>
-                    <button
-                      className="px-2 py-1 border rounded bg-gray-200 text-gray-700 min-w-[33%] border-transparent font-bold text-lg hover:bg-gray-200 flex items-center justify-center"
-                      onClick={() => {
-                        setChildren(children + 1);
-                      }}
-                    >
-                      &#43;
-                    </button>
-                  </div>
-                </div>
-                {children >= 1 && (
-                  <>
-                    <div className="pt-3 pb-2 w-full">
-                      <p className="pb-3 ">Alter bei Rückreise:</p>
-                      {/* Für jedes Kind ein Dropdown */}
-                      <div className="grid grid-cols-2 gap-7">
-                        {Array.from({ length: children }).map((_, idx) => (
-                          <div
-                            key={idx}
-                            className="mb-2 flex items-center gap-2"
-                          >
-                            <label className="flex items-center gap-2">
-                              Kind {idx + 1}
-                            </label>
-                            <select
-                              className="border rounded px-1 py-0.5"
-                              value={childrenAges[idx] || ""}
-                              onChange={(e) => {
-                                const newAges = [...childrenAges];
-                                newAges[idx] = e.target.value;
-                                setChildrenAges(newAges);
-                              }}
-                            >
-                              <option value="Alter">Alter wählen</option>
-                              {Array.from({ length: 18 }).map((_, age) => (
-                                <option key={age} value={age}>
-                                  {age}
-                                </option>
-                              ))}
-                            </select>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="relative h-8">
+            <div
+              className="w-full p-2 rounded border border-gray-500 pl-4 bg-white cursor-pointer hover:bg-blue-200"
+              onClick={() => setShowDropdown(!showDropdown)}
+            >
+              {adults} {t("search.adults") || "Erwachsene"}, {children}{" "}
+              {t("search.children") || "Kinder (0 - 17 Jahre)"}{" "}
+            </div>
+
+            <AnimatePresence>
+              {showDropdown && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="absolute z-15 bg-white border border-gray-500 rounded p-4 mt-2 w-full shadow-md"
+                >
+                  <div className="flex justify-between items-center mb-3">
+                    <span>{t("search.adults") || "Erwachsene"}</span>{" "}
+                    <div className="flex gap-2 items-center">
                       <button
-                        className="bg-blue-400 rounded absolute bottom-0 right-0 w-fit px-2 py-1"
-                        onClick={() => setShowDropdown(false)}
+                        className="px-2 py-1 border rounded bg-gray-200 text-gray-700 min-w-[33%] border-transparent font-bold text-lg hover:bg-gray-200 flex items-center justify-center"
+                        onClick={() => setAdults(Math.max(1, adults - 1))}
                       >
-                        Angaben speichern
+                        &#45;
+                      </button>
+                      <span>{adults}</span>
+                      <button
+                        className="px-2 py-1 border rounded bg-gray-200 text-gray-700 min-w-[33%] border-transparent font-bold text-lg hover:bg-gray-200 flex items-center justify-center"
+                        onClick={() => setAdults(adults + 1)}
+                      >
+                        &#43;
                       </button>
                     </div>
-                  </>
-                )}
-              </motion.div>
-            )}
-          </AnimatePresence>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span>
+                      {t("search.children") || "Kinder (0 - 17 Jahre)"}
+                    </span>{" "}
+                    <div className="flex gap-2 items-center">
+                      <button
+                        className="px-2 py-1 border rounded bg-gray-200 text-gray-700 min-w-[33%] border-transparent font-bold text-lg hover:bg-gray-200 flex items-center justify-center"
+                        onClick={() => setChildren(Math.max(0, children - 1))}
+                      >
+                        &#45;
+                      </button>
+                      <span>{children}</span>
+                      <button
+                        className="px-2 py-1 border rounded bg-gray-200 text-gray-700 min-w-[33%] border-transparent font-bold text-lg hover:bg-gray-200 flex items-center justify-center"
+                        onClick={() => {
+                          setChildren(children + 1);
+                        }}
+                      >
+                        &#43;
+                      </button>
+                    </div>
+                  </div>
+                  {children >= 1 && (
+                    <>
+                      <div className="pt-3 pb-2 w-full">
+                        <p className="pb-3 ">Alter bei Rückreise:</p>
+                        {/* Für jedes Kind ein Dropdown */}
+                        <div className="grid grid-cols-2 gap-7">
+                          {Array.from({ length: children }).map((_, idx) => (
+                            <div
+                              key={idx}
+                              className="mb-2 flex items-center gap-2"
+                            >
+                              <label className="flex items-center gap-2">
+                                Kind {idx + 1}
+                              </label>
+                              <select
+                                className="border rounded px-1 py-0.5"
+                                value={childrenAges[idx] || ""}
+                                onChange={(e) => {
+                                  const newAges = [...childrenAges];
+                                  newAges[idx] = e.target.value;
+                                  setChildrenAges(newAges);
+                                }}
+                              >
+                                <option value="Alter">Alter wählen</option>
+                                {Array.from({ length: 18 }).map((_, age) => (
+                                  <option key={age} value={age}>
+                                    {age}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="relative h-8">
+                        <button
+                          className="bg-blue-400 rounded absolute bottom-0 right-0 w-fit px-2 py-1"
+                          onClick={() => setShowDropdown(false)}
+                        >
+                          Angaben speichern
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
-      </div>
-      <div className="mt-6 flex justify-end">
-        <button
-          onClick={() => {
-            handleSearch();
-            // Only fetch hotels if there is no error, myCity is valid, and both dates are selected
-            if (
-              myCity &&
-              validCities.includes(myCity) &&
-              startDate &&
-              endDate
-            ) {
-              getCombinedData(myCity);
-            } else if (!startDate || !endDate) {
-              setError("Bitte Reisedatum angeben!");
-            }
-          }}
-          className="text-white px-6 py-2 rounded transition font-semibold"
-          style={{
-          backgroundColor: "#a8d5e2"
-           }}
-          onMouseEnter={(e) => {
-            e.target.style.backgroundColor = "#a2ceda";
-           }}
-          onMouseLeave={(e) => {
-          e.target.style.backgroundColor = "#a8d5e2";
-         }}
+        <div className="mt-6 flex justify-end">
+          <button
+            onClick={() => {
+              handleSearch();
+              // Only fetch hotels if there is no error, myCity is valid, and both dates are selected
+              if (
+                myCity &&
+                validCities.includes(myCity) &&
+                startDate &&
+                endDate
+              ) {
+                getCombinedData(myCity);
+              } else if (!startDate || !endDate) {
+                setError("Bitte Reisedatum angeben!");
+              }
+            }}
+            className="text-white px-6 py-2 rounded transition font-semibold"
+            style={{
+              backgroundColor: "#a8d5e2",
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.backgroundColor = "#a2ceda";
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.backgroundColor = "#a8d5e2";
+            }}
           >
-          {t("search.searchButton") || "Suchen"}{" "}
-        </button>
-      </div>
-      {/* Error Message */}
-      {error && <div className="text-red-600 mt-2">{error}</div>}
-      {loading && (
-        <div className="flex bg-white mt-4">
-          <p className="font-bold">Wir suchen gerade die besten Deals!</p>
-          <img src={search} width={200} alt="find-gif" />
+            {t("search.searchButton") || "Suchen"}{" "}
+          </button>
         </div>
-      )}
-      <div className="mt-6">
-        <h2 className="text-lg font-semibold mb-4">
-          {t("search.foundHotels") || "Gefundene Hotels in"} {myCity}:
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-6">
-          {/* ab hier Hotelcards-data */}
-          {hotels
-            // .filter(
-            //   (hotel) =>
-            //     hotel &&
-            //     hotel.hotel &&
-            //     hotel.hotel.dupeId &&
-            //     hotel.hotel.name &&
-            //     hotel.hotel.cityCode &&
-            //     Array.isArray(hotel.offers) &&
-            //     hotel.offers.length > 0 &&
-            //     hotel.offers[0] &&
-            //     hotel.offers[0].guests &&
-            //     hotel.offers[0].price
-            // )
-            .flatMap((hoteloffer, i) =>
-              hoteloffer.map((offer, j) => (
-                <div
-                  className="flex gap-4 my-4 mx-2 transform transition-transform duration-500 hover:scale-105 cursor-pointer"
-                  key={`${i}-${j}-${offer.hotel.dupeId}`}
-                  onClick={() =>
-                    (window.location.href = `/hotel/${offer.hotel.dupeId}`)
-                  }
-                >
-                  <div className="w-2/5 relative">
-                    <div className="flex absolute top-2 right-2">
+        {/* Error Message */}
+        {error && <div className="text-red-600 mt-2">{error}</div>}
+        {loading && (
+          <div className="flex bg-white mt-4">
+            <p className="font-bold">Wir suchen gerade die besten Deals!</p>
+            <img src={search} width={200} alt="find-gif" />
+          </div>
+        )}
+        <div className="mt-6">
+          <h2 className="text-lg font-semibold mb-4">
+            {t("search.foundHotels") || "Gefundene Hotels in"} {myCity}:
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-6">
+            {/* ab hier Hotelcards-data */}
+            {hotels
+              // .filter(
+              //   (hotel) =>
+              //     hotel &&
+              //     hotel.hotel &&
+              //     hotel.hotel.dupeId &&
+              //     hotel.hotel.name &&
+              //     hotel.hotel.cityCode &&
+              //     Array.isArray(hotel.offers) &&
+              //     hotel.offers.length > 0 &&
+              //     hotel.offers[0] &&
+              //     hotel.offers[0].guests &&
+              //     hotel.offers[0].price
+              // )
+              .flatMap((hoteloffer, i) =>
+                hoteloffer.map((offer, j) => (
+                  <div
+                    className="flex gap-4 my-4 mx-2 transform transition-transform duration-500 hover:scale-105 cursor-pointer"
+                    key={`${i}-${j}-${offer.hotel.dupeId}`}
+                    onClick={() =>
+                      (window.location.href = `/hotel/${offer.hotel.dupeId}`)
+                    }
+                  >
+                    <div className="w-2/5 relative">
+                      <div className="flex absolute top-2 right-2">
+                        <img
+                          src={wishlistHeartEmpty}
+                          alt="icon: heart"
+                          className="h-5 w-5 z-10"
+                          // onClick={handleAddToWishlist} => kommt noch !!
+                        />
+                      </div>
                       <img
-                        src={wishlistHeartEmpty}
-                        alt="icon: heart"
-                        className="h-5 w-5 z-10"
-                        // onClick={handleAddToWishlist} => kommt noch !!
+                        src={gptExample}
+                        alt="gpt-example-picture"
+                        className="rounded-tl-xl rounded-bl-xl"
                       />
                     </div>
-                    <img
-                      src={gptExample}
-                      alt="gpt-example-picture"
-                      className="rounded-tl-xl rounded-bl-xl"
-                    />
-                  </div>
 
-                  <div className="flex flex-wrap w-1/2">
-                    <h3 className="font-bold w-full">
-                      {offer.hotel.type
-                        .toLowerCase()
-                        .replace(/\b\w/g, (char) => char.toUpperCase())}
-                    </h3>
-                    {/* <p>{Bewertung später}</p> */}
-                    <h4 className="block w-full">
-                      &#40;
-                      {
-                        // Finde den passenden Stadtnamen zum CityCode
-                        validCities.find((city) =>
-                          city
-                            .toLowerCase()
-                            .includes(offer.hotel.cityCode.toLowerCase())
-                        ) || offer.hotel.cityCode
-                      }
-                      &#41;&#44;
-                    </h4>
-                    <p className="block">
-                      {offer.offers?.[0]?.checkInDate
-                        ? new Date(
-                            offer.offers[0].checkInDate
-                          ).toLocaleDateString("de-DE", {
-                            day: "2-digit",
-                            month: "2-digit",
-                            year: "numeric",
-                          })
-                        : ""}
-                      &#32; &#45;&#32;
-                      {offer.offers?.[0]?.checkOutDate
-                        ? new Date(
-                            offer.offers[0].checkOutDate
-                          ).toLocaleDateString("de-DE", {
-                            day: "2-digit",
-                            month: "2-digit",
-                            year: "numeric",
-                          })
-                        : ""}
-                    </p>
-                    {/* Anzahl + Erwachsene(r) */}
-                    <p>
-                      {offer.offers[0].guests.adults}&#32;
-                      {offer.offers[0].guests.adults > 1
-                        ? "Erwachsene"
-                        : "Erwachsener"}
-                    </p>
-                    {/* Kinder optional */}
-                    <p>
-                      Preis ab:&#32;
-                      {offer.offers?.[0]?.price?.total
-                        ? offer.offers[0].price.total.replace(".", ",")
-                        : ""}
-                      &#32;
-                      {offer.offers[0]?.price.currency.replace("EUR", "€")}
-                    </p>
+                    <div className="flex flex-wrap w-1/2">
+                      <h3 className="font-bold w-full">
+                        {offer.hotel.type
+                          .toLowerCase()
+                          .replace(/\b\w/g, (char) => char.toUpperCase())}
+                      </h3>
+                      {/* <p>{Bewertung später}</p> */}
+                      <h4 className="block w-full">
+                        &#40;
+                        {
+                          // Finde den passenden Stadtnamen zum CityCode
+                          validCities.find((city) =>
+                            city
+                              .toLowerCase()
+                              .includes(offer.hotel.cityCode.toLowerCase())
+                          ) || offer.hotel.cityCode
+                        }
+                        &#41;&#44;
+                      </h4>
+                      <p className="block">
+                        {offer.offers?.[0]?.checkInDate
+                          ? new Date(
+                              offer.offers[0].checkInDate
+                            ).toLocaleDateString("de-DE", {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                            })
+                          : ""}
+                        &#32; &#45;&#32;
+                        {offer.offers?.[0]?.checkOutDate
+                          ? new Date(
+                              offer.offers[0].checkOutDate
+                            ).toLocaleDateString("de-DE", {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                            })
+                          : ""}
+                      </p>
+                      {/* Anzahl + Erwachsene(r) */}
+                      <p>
+                        {offer.offers[0].guests.adults}&#32;
+                        {offer.offers[0].guests.adults > 1
+                          ? "Erwachsene"
+                          : "Erwachsener"}
+                      </p>
+                      {/* Kinder optional */}
+                      <p>
+                        Preis ab:&#32;
+                        {offer.offers?.[0]?.price?.total
+                          ? offer.offers[0].price.total.replace(".", ",")
+                          : ""}
+                        &#32;
+                        {offer.offers[0]?.price.currency.replace("EUR", "€")}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              ))
-            )}
+                ))
+              )}
+          </div>
         </div>
-      </div>
-    </div> </div>
+      </div>{" "}
+    </div>
   );
 }
