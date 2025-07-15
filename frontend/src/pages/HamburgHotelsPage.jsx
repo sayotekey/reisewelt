@@ -1,4 +1,19 @@
 import React, { useState, useMemo } from "react";
+import {
+  FaMapMarkerAlt,
+  FaThumbsUp,
+  FaCar,
+  FaDog,
+  FaSwimmingPool,
+  FaWifi,
+  FaSnowflake,
+  FaSpa,
+  FaDumbbell,
+  FaBuilding,
+  FaStar,
+  FaUtensils,
+  FaBed,
+} from "react-icons/fa";
 
 const hotels = [
   {
@@ -368,7 +383,7 @@ const HamburgHotelsPage = () => {
             {/* 1. Preiskategorie */}
             <div>
               <label className="block font-semibold text-gray-700 mb-2">
-                💰 Preiskategorie
+                Preiskategorie
               </label>
               <select
                 value={filters.priceRange}
@@ -387,7 +402,7 @@ const HamburgHotelsPage = () => {
             {/* 2. Sterne */}
             <div>
               <label className="block font-semibold text-gray-700 mb-2">
-                ⭐ Sterne
+                Sterne
               </label>
               <select
                 value={filters.stars}
@@ -404,7 +419,7 @@ const HamburgHotelsPage = () => {
             {/* 3. Bewertung */}
             <div>
               <label className="block font-semibold text-gray-700 mb-2">
-                👍 Bewertung
+                Bewertung
               </label>
               <select
                 value={filters.rating}
@@ -421,7 +436,7 @@ const HamburgHotelsPage = () => {
             {/* 4. Stadtteil */}
             <div>
               <label className="block font-semibold text-gray-700 mb-2">
-                📍 Stadtteil
+                Stadtteil
               </label>
               <select
                 value={filters.district}
@@ -441,7 +456,7 @@ const HamburgHotelsPage = () => {
             {/* 5. Verpflegung */}
             <div>
               <label className="block font-semibold text-gray-700 mb-2">
-                🍽️ Verpflegung
+                Verpflegung
               </label>
               <select
                 value={filters.breakfast}
@@ -460,7 +475,7 @@ const HamburgHotelsPage = () => {
             {/* 6. Zimmertyp */}
             <div>
               <label className="block font-semibold text-gray-700 mb-2">
-                🏨 Zimmertyp
+                Zimmertyp
               </label>
               <select
                 value={filters.roomType}
@@ -475,45 +490,65 @@ const HamburgHotelsPage = () => {
               </select>
             </div>
 
-            {/* 7-15. Ausstattung (Checkboxes) */}
+            {/* Ausstattung */}
             <div>
               <label className="block font-semibold text-gray-700 mb-3">
-                🔧 Ausstattung
+                Ausstattung
               </label>
               <div className="space-y-3">
                 {[
                   {
                     key: "parking",
-                    label: "🚗 Parkplatz",
+                    label: "Parkplatz",
                     value: filters.parking,
+                    icon: <FaCar className="text-blue-600" />,
                   },
                   {
                     key: "petFriendly",
-                    label: "🐕 Haustierfreundlich",
+                    label: "Haustierfreundlich",
                     value: filters.petFriendly,
+                    icon: <FaDog className="text-blue-600" />,
                   },
                   {
                     key: "businessCenter",
-                    label: "💼 Business Center",
+                    label: "Business Center",
                     value: filters.businessCenter,
+                    icon: <FaBuilding className="text-blue-600" />,
                   },
-                  { key: "pool", label: "🏊 Pool", value: filters.pool },
-                  { key: "wifi", label: "📶 WLAN", value: filters.wifi },
+                  {
+                    key: "pool",
+                    label: "Pool",
+                    value: filters.pool,
+                    icon: <FaSwimmingPool className="text-blue-600" />,
+                  },
+                  {
+                    key: "wifi",
+                    label: "WLAN",
+                    value: filters.wifi,
+                    icon: <FaWifi className="text-blue-600" />,
+                  },
                   {
                     key: "airConditioning",
-                    label: "❄️ Klimaanlage",
+                    label: "Klimaanlage",
                     value: filters.airConditioning,
+                    icon: <FaSnowflake className="text-blue-600" />,
                   },
-                  { key: "spa", label: "🧘 Spa", value: filters.spa },
+                  {
+                    key: "spa",
+                    label: "Spa",
+                    value: filters.spa,
+                    icon: <FaSpa className="text-blue-600" />,
+                  },
                   {
                     key: "fitness",
-                    label: "🏋️ Fitnessstudio",
+                    label: "Fitnessstudio",
                     value: filters.fitness,
+                    icon: <FaDumbbell className="text-blue-600" />,
                   },
                 ].map((filter) => (
                   <label
                     key={filter.key}
-                    className="flex items-center space-x-3 cursor-pointer"
+                    className="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors"
                   >
                     <input
                       type="checkbox"
@@ -523,6 +558,7 @@ const HamburgHotelsPage = () => {
                       }
                       className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                     />
+                    {filter.icon}
                     <span className="text-gray-700">{filter.label}</span>
                   </label>
                 ))}
@@ -532,7 +568,7 @@ const HamburgHotelsPage = () => {
             {/* Sortierung */}
             <div>
               <label className="block font-semibold text-gray-700 mb-2">
-                🔄 Sortieren nach
+                Sortieren nach
               </label>
               <select
                 value={filters.sortBy}
@@ -563,7 +599,7 @@ const HamburgHotelsPage = () => {
             {filteredHotels.map((hotel) => (
               <div
                 key={hotel.id}
-                className="flex flex-col md:flex-row bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 p-4"
+                className="flex flex-col md:flex-row bg-white shadow-lg rounded-xl overflow-hidden hover:shadow-2xl transition-all duration-300 border border-gray-100"
               >
                 <div className="w-full md:w-[320px] h-[250px] md:h-[220px] overflow-hidden rounded-lg ml-4 mt-4">
                   <img
@@ -580,49 +616,70 @@ const HamburgHotelsPage = () => {
                       </h3>
                       <div className="flex items-center">
                         {[...Array(hotel.stars)].map((_, i) => (
-                          <span key={i} className="text-yellow-400">
-                            ⭐
-                          </span>
+                          <FaStar key={i} className="text-yellow-400 text-lg" />
                         ))}
                       </div>
                     </div>
-                    <p className="text-gray-600 mb-1">
-                      📍 {hotel.district}, {hotel.location}
+                    <p className="text-gray-600 mb-1 flex items-center">
+                      <FaMapMarkerAlt className="text-red-500 mr-2" />
+                      {hotel.district}, {hotel.location}
                     </p>
-                    <p className="text-green-600 font-semibold mb-2">
-                      👍 {hotel.rating} positive Bewertungen
+                    <p className="text-green-600 font-semibold mb-2 flex items-center">
+                      <FaThumbsUp className="text-green-500 mr-2" />
+                      {hotel.rating} positive Bewertungen
                     </p>
                     <p className="text-sm text-gray-500 mb-3">{hotel.nights}</p>
                     <div className="flex flex-wrap gap-2 mb-3">
                       {hotel.amenities.map((amenity, index) => (
                         <span
                           key={index}
-                          className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full"
+                          className="px-3 py-1 bg-blue-50 text-blue-700 text-sm rounded-full border border-blue-200"
                         >
                           {amenity}
                         </span>
                       ))}
                     </div>
-                    <p className="text-sm text-gray-600">
-                      🏨 {hotel.roomType} • 🍽️ {hotel.breakfast}
+                    <p className="text-sm text-gray-600 flex items-center">
+                      <FaBed className="text-gray-500 mr-2" />
+                      {hotel.roomType} •
+                      <FaUtensils className="text-gray-500 mx-2" />
+                      {hotel.breakfast}
                     </p>
                   </div>
-                  <div className="flex items-center justify-between mt-4">
-                    <div className="flex space-x-2">
+                  <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
+                    <div className="flex flex-wrap gap-3">
                       {hotel.parking && (
-                        <span className="text-green-600">🚗</span>
+                        <div className="flex items-center text-green-600 bg-green-50 px-3 py-1 rounded-full">
+                          <FaCar className="mr-1" />
+                          <span className="text-sm font-medium">Parkplatz</span>
+                        </div>
                       )}
                       {hotel.petFriendly && (
-                        <span className="text-green-600">🐕</span>
+                        <div className="flex items-center text-green-600 bg-green-50 px-3 py-1 rounded-full">
+                          <FaDog className="mr-1" />
+                          <span className="text-sm font-medium">
+                            Haustierfreundlich
+                          </span>
+                        </div>
                       )}
-                      {hotel.pool && <span className="text-green-600">🏊</span>}
-                      {hotel.wifi && <span className="text-green-600">📶</span>}
+                      {hotel.pool && (
+                        <div className="flex items-center text-green-600 bg-green-50 px-3 py-1 rounded-full">
+                          <FaSwimmingPool className="mr-1" />
+                          <span className="text-sm font-medium">Pool</span>
+                        </div>
+                      )}
+                      {hotel.wifi && (
+                        <div className="flex items-center text-green-600 bg-green-50 px-3 py-1 rounded-full">
+                          <FaWifi className="mr-1" />
+                          <span className="text-sm font-medium">WLAN</span>
+                        </div>
+                      )}
                     </div>
                     <div className="text-right">
                       <div className="text-2xl font-bold text-blue-600">
                         {hotel.price}
                       </div>
-                      <button className="mt-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                      <button className="mt-2 px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-400 transition-colors font-medium shadow-md hover:shadow-lg">
                         Buchen
                       </button>
                     </div>
