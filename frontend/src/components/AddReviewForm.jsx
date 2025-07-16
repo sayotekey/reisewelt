@@ -54,7 +54,7 @@ const AddReviewForm = ({ tripId, onReviewAdded }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="border p-4 space-y-4">
+    <form onSubmit={handleSubmit} className="border p-4 space-y-4 review-form shadow-2xl">
       {/* Bewertungsauswahl */}
       <div>
         <label className="block font-medium"> Bewertung: </label>
@@ -67,7 +67,7 @@ const AddReviewForm = ({ tripId, onReviewAdded }) => {
         <textarea
           value={comment}
           onChange={(e) => setComment(e.target.value)}
-          className="border w-full px-2 py-1"
+          className="border w-full px-2 py-1 review-form"
           rows="3"
         />
       </div>
@@ -76,7 +76,17 @@ const AddReviewForm = ({ tripId, onReviewAdded }) => {
       <button
         type="submit"
         disabled={loading} // blockieren des Buttons während des Ladens
-         className="bg-blue-500 text-white px-4 py-2 hover:bg-blue-600 rounded-xl"
+         className= "px-4 py-2 rounded-md"
+         style={{
+              backgroundColor: "var(--accent-color)",
+              color: "white",
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.backgroundColor = "var(--accent-hover)";
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.backgroundColor = "var(--accent-color)";
+            }}
       >
         {loading ? "Wird gesendet..." : "Bewertung absenden"}
       </button>

@@ -5,10 +5,11 @@ import unitedStates from "../images/united-states.png";
 import ukraine from "../images/ukraine.png";
 import france from "../images/france.png";
 import turkey from "../images/turkey.png";
-import { useAuth } from "../context/AuthContext.jsx";
+import { useAuth } from "../context/useAuth.js";
 import { logoutButton } from "../utils/logout.js";
 import ThemeToggle from "./ThemeToggle.jsx";
 import { useTheme } from "../context/ThemeContext.jsx";
+import { useTranslate } from "../locales/index.js"; //translation context
 
 import euroSignDark from "../icons/euro-sign-solid-black.svg";
 // import euroSign from "../icons/euro-sign-solid-white.svg";
@@ -48,6 +49,7 @@ const currencyDark = [
 ];
 
 const HeaderComponent = () => {
+  const { t, changeLanguage } = useTranslate(); // translation context
   const { isDark } = useTheme();
   const [openLanguage, setOpenLanguage] = useState(false);
   const [openCurrency, setOpenCurrency] = useState(false);
@@ -99,11 +101,11 @@ const HeaderComponent = () => {
   //
   return (
     <header
-      className="header-full-width w-full fixed top-0 left-0 right-0 z-50 shadow-sm"
+      className="header-full-width w-full fixed top-0 left-0 right-0 z-51 shadow-sm"
       style={{
         background: isDark
           ? "var(--bg-secondary)"
-          : "linear-gradient(45deg, #a8d5e2 0%, #a2cedaa9 70%, #a8d5e2 100%)",
+          : "linear-gradient( var(--blue-light) 10%, var(--blue-light-hover) 10%, var(--blue-light) 10%)",
         borderBottom: "1px solid var(--border-color)",
       }}
     >
@@ -128,7 +130,6 @@ const HeaderComponent = () => {
             </NavLink>
           </div>
 
-          {/* Навигация посередине, сдвинутая вправо */}
           <nav className="hidden md:flex items-center space-x-10 ml-20">
             <NavLink
               to="/contact"
@@ -141,7 +142,7 @@ const HeaderComponent = () => {
                 e.target.style.color = "var(--text-color)";
               }}
             >
-              Kontakt
+              {t("header.contact") || "Kontakt"}
             </NavLink>
 
             <NavLink
@@ -155,10 +156,10 @@ const HeaderComponent = () => {
                 e.target.style.color = "var(--text-color)";
               }}
             >
-              Merkliste
+              {t("header.wishlist") || "Merkliste"}
             </NavLink>
 
-            {/* Выбор языка */}
+            {/* language selection */}
             <div className="relative" ref={languageDropdownRef}>
               <button
                 className="flex items-center p-3 rounded-lg transition-colors duration-200"
@@ -235,6 +236,7 @@ const HeaderComponent = () => {
                       }}
                       onClick={() => {
                         setSelectedLanguage(lang);
+                        changeLanguage(lang.value);
                         setOpenCurrency(false);
                         setOpenLanguage(false);
                       }}

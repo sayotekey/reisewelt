@@ -19,7 +19,7 @@ const FavoriteHotels = ({ user, onUpdate }) => {
   };
 
   return (
-    <section className="space-y-2">
+    <section className="space-y-4">
       <h2 className="text-xl font-semibold">Merkzettel</h2>
       {!user?.favoriteHotels ? (
         <p>Loading...</p>

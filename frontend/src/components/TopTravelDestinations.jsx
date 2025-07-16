@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import MapComponent from "./MapComponent.jsx";
 import { useTheme } from "../context/ThemeContext";
+import { useTranslate } from "../locales/index.js";
+
 
 // Animationsstile hinzufügen
 const fadeInStyle = `
@@ -89,6 +91,7 @@ const TopTravelDestinations = () => {
   const [hotels, setHotels] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const { t } = useTranslate();
 
   // Städte des ausgewählten Landes anzeigen
   const handleCountryClick = (country) => {
@@ -153,9 +156,9 @@ const TopTravelDestinations = () => {
           className="text-3xl font-bold mb-4 pl-4"
           style={{ color: "var(--text-color)" }}
         >
-          Top Reiseziele –{" "}
-          <span style={{ color: "var(--accent-color)" }}>Europa</span>{" "}
-          Traumurlaub
+          {t("topTravel.title") || "Top Reiseziele"} –{" "}
+          <span style={{ color: "var(--accent-color)" }}>{t("topTravel.subtitle") || "Europa"}</span>{" "}
+          {t("topTravel.dreamVacation") || "Traumurlaub"}
         </h2>
 
         <div className="flex flex-wrap gap-4 text-sm pl-4">
@@ -188,13 +191,13 @@ const TopTravelDestinations = () => {
                 className="text-xl font-semibold mb-2 opacity-70 animate-custom-pulse"
                 style={{ color: "var(--text-color)" }}
               >
-                Bitte wähle ein Land
+                {t("topTravel.pleaseSelectCountry") || "Bitte wähle ein Land"}
               </h4>
               <p
                 className="text-sm opacity-60"
                 style={{ color: "var(--text-light)" }}
               >
-                Klicken Sie auf ein Land oben, um Städte zu sehen
+                {t("topTravel.clickCountryToSee") || "Klicken Sie auf ein Land oben, um Städte zu sehen"}
               </p>
               <div className="mt-8 text-6xl opacity-30 animate-slow-bounce">
                 🌍
@@ -209,7 +212,7 @@ const TopTravelDestinations = () => {
                 className="text-xl font-semibold mb-4"
                 style={{ color: "var(--text-color)" }}
               >
-                Städte in {activeCountry}
+                {t("topTravel.citiesIn") || "Städte in"} {activeCountry}
               </h4>
               <div className="grid grid-cols-1 gap-3">
                 {countriesCities[activeCountry].map((city) => (
@@ -246,7 +249,7 @@ const TopTravelDestinations = () => {
                   e.target.style.color = "var(--text-light)";
                 }}
               >
-                ← Zurück zur Länderauswahl
+                  {t("topTravel.backToCities") || "← Zurück zu Städten in"} {activeCountry}
               </button>
             </div>
           )}
@@ -259,7 +262,7 @@ const TopTravelDestinations = () => {
                   className="text-xl font-semibold"
                   style={{ color: "var(--text-color)" }}
                 >
-                  Hotels in {selectedCity}
+                  {t("topTravel.hotelsIn") || "Hotels in"} {selectedCity}
                 </h4>
                 <button
                   onClick={() => {
@@ -276,7 +279,7 @@ const TopTravelDestinations = () => {
                     e.target.style.color = "var(--text-light)";
                   }}
                 >
-                  ← Zurück zu Städten in {activeCountry}
+                  {t("topTravel.backToCities") || "← Zurück zu Städten in"} {activeCountry}
                 </button>
               </div>
 
@@ -296,7 +299,7 @@ const TopTravelDestinations = () => {
                     className="text-sm mt-1"
                     style={{ color: "var(--text-light)" }}
                   >
-                    Bitte warten Sie einen Moment
+                    {t("topTravel.pleaseWait") || "Bitte warten Sie einen Moment"}
                   </p>
                 </div>
               )}
@@ -305,7 +308,7 @@ const TopTravelDestinations = () => {
 
               {!loading && !error && hotels.length === 0 && (
                 <p style={{ color: "var(--text-color)" }}>
-                  Keine Hotels in {selectedCity} gefunden.
+                  {t("topTravel.noHotelsFound") || "Keine Hotels in"} {selectedCity} gefunden.
                 </p>
               )}
 
@@ -345,7 +348,7 @@ const TopTravelDestinations = () => {
                         className="text-sm mt-1"
                         style={{ color: "var(--accent-color)" }}
                       >
-                        Ab {hotel.offers[0].price?.total}{" "}
+                        {t("topTravel.from") || "Ab"} {hotel.offers[0].price?.total}{" "}
                         {hotel.offers[0].price?.currency}
                       </div>
                     )}
@@ -354,7 +357,7 @@ const TopTravelDestinations = () => {
                         className="text-sm mt-1"
                         style={{ color: "var(--accent-hover)" }}
                       >
-                        {hotel.hotel.rating} Sterne
+                        {hotel.hotel.rating} {t("topTravel.stars") || "Sterne"}
                       </div>
                     )}
                   </div>

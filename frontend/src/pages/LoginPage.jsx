@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/useAuth";
 import validateRegisterPassword from "../utils/validateRegisterPassword";
 import axios from "axios";
 
@@ -41,10 +41,8 @@ const LoginPage = () => {
       // Warten auf die Antwort und speichern das Token und den Benutzer im Local Storage
       const { token, user } = response.data;
 
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(user));
-
-      login(user); // Aktualisieren des Auth-Kontexts mit dem Benutzer
+      login(user, token); // Aktualisieren des Auth-Kontexts mit dem Benutzer
+      console.log("Login response:", response.data);
 
       // alert("Login erfolgreich!");
       navigate("/");
@@ -72,10 +70,10 @@ const LoginPage = () => {
                   z-0"
         ></div>
         <div className="w-full mx-auto px-20 flex-col items-center space-y-6">
-          <h1 className="text-black font-bold text-4xl font-sans">
+          <h1 className="text-gray-700 font-bold text-4xl font-sans">
             Herzlich willkommen bei ReiseWelt
           </h1>
-          <p className="text-black mt-1">
+          <p className="text-gray-700 mt-1">
             Hier finden Sie Ihr persönliches Kundenkonto. Einfach registrieren
             oder einloggen - und los geht's! Verwalten Sie Ihre Buchungen,
             persönliche Daten und mehr - alles übersichtlich an einem Ort.
@@ -210,7 +208,17 @@ const LoginPage = () => {
 
             <button
               type="submit"
-              className="block w-full bg-black rounded-xl hover:bg-indigo-700 hover:-translate-y-1 transition-all duration-500 text-white font-semibold py-2"
+              className="block w-full rounded-lg font-bold py-2"
+              style={{
+                backgroundColor: "var(--accent-color)",
+                color: "white",
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.backgroundColor = "var(--accent-hover)";
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.backgroundColor = "var(--accent-color)";
+              }}
             >
               Login
             </button>

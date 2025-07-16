@@ -7,7 +7,7 @@ const ContactPage = () => {
   return (
     <>
       {/* Kontaktinformation Section */}
-      <section className="max-w-7xl mx-auto px-4 py-12 mt-18">
+      <section className="max-w-7xl mx-auto px-4 py-12 mt-18 ">
         <h2 className="text-xl font-semibold text-center text-black lg:text-2xl mb-6">
           Hilfe und Kontakt
         </h2>
