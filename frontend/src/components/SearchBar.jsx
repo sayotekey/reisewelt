@@ -562,9 +562,6 @@ export default function SearchForm() {
 
           {hotels.map((hotel) => (
             <div key={hotel.hotel.dupeId}>
-              <div>
-                <h1>{hotel.hotel.name}</h1>
-              </div>
               <div
                 className="flex gap-4 my-4 mx-2 transform transition-transform duration-500 hover:scale-105 cursor-pointer"
                 onClick={() =>

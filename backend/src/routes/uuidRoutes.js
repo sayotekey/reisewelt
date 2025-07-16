@@ -25,7 +25,6 @@ const cityNameToCode = {
   Glasgow: "GLA",
   Granada: "GRX",
   Graz: "GRZ",
-  Hamburg: "HAM",
   Innsbruck: "INN",
   Inverness: "INV",
   Kopenhagen: "CPH",
