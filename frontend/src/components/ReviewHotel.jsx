@@ -18,7 +18,7 @@ const ReviewHotel = ({ reviews }) => {
     const stars = [];
     for (let i = 1; i <= 10; i += 2) {
       stars.push(
-        <span key={i} className="text-yellow-400 text-sm">
+        <span key={i} className="text-yellow-400 text-md">
           {rating >= i ? "★" : "☆"}
         </span>
       );
@@ -54,7 +54,7 @@ const ReviewHotel = ({ reviews }) => {
             style={{
               scrollbarWidth: "none",
               msOverflowStyle: "none",
-              WebkitOverflowScrolling: "touch"
+              WebkitOverflowScrolling: "touch",
             }}
           >
             {reviews.map((review) => (
@@ -67,9 +67,7 @@ const ReviewHotel = ({ reviews }) => {
                     <h3 className="text-m text-gray-700 font-semibold">
                       {review.name}
                     </h3>
-                    <span className="text-sm text-gray-700">
-                      {review.date}
-                    </span>
+                    <span className="text-sm text-gray-700">{review.date}</span>
                   </div>
                   <p className="text-base text-gray-700 font-semibold mb-2">
                     {review.title}
