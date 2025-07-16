@@ -2,7 +2,17 @@ import { useState, useEffect, useRef } from "react";
 import DatePicker from "react-datepicker";
 import { AnimatePresence } from "framer-motion";
 import { motion } from "framer-motion";
-import { FaCalendarAlt } from "react-icons/fa";
+import {
+  FaCalendarAlt,
+  FaMapMarkerAlt,
+  FaThumbsUp,
+  FaBed,
+  FaUtensils,
+  FaCar,
+  FaDog,
+  FaSwimmingPool,
+  FaWifi,
+} from "react-icons/fa";
 import "react-datepicker/dist/react-datepicker.css";
 import axios from "axios";
 import { useTranslate } from "../locales/index.js"; // Import the translation context
@@ -15,7 +25,7 @@ import travelGoal from "../icons/mountain-city-solid-black.svg";
 import plane from "../icons/plane-solid-black.svg";
 // import plane2 from "../icons/plane2-solid-black.png";
 import persons from "../icons/people-group-solid-black.svg";
-import wishlistHeartFull from "../icons/heart-solid-black.svg";
+// import wishlistHeartFull from "../icons/heart-solid-black.svg";
 import wishlistHeartEmpty from "../icons/heart-regular-black.svg";
 
 // import finder from "../icons/finder.gif";
@@ -37,6 +47,13 @@ export default function SearchForm() {
   const [startDate, endDate] = dateRange;
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    const lastHotels = JSON.parse(localStorage.getItem("lastHotels")) || [];
+    if (lastHotels.length > 0) {
+      setHotels(lastHotels);
+    }
+  }, []);
+
   const dropdownRef = useRef();
 
   //dropdown functionality
@@ -55,6 +72,13 @@ export default function SearchForm() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [showDropdown]);
+
+  // localStorage last-search-Hotellist
+  useEffect(() => {
+    if (hotels.length > 0) {
+      localStorage.setItem("lastHotels", JSON.stringify(hotels));
+    }
+  }, [hotels]);
 
   // Filtere Vorschläge nach Eingabe (case-insensitive, enthält den Text)
   const suggestions = myCity
@@ -183,18 +207,18 @@ export default function SearchForm() {
           });
 
           setHotels([...allHotels]);
-          // anzeige hier einbauen/neu rendern
         }
       }
       if (allHotels.length === 0) {
         setError("Es wurden keine Hotels gefunden.");
         setLoading(false);
       } else {
-        setHotels([...allHotels]);
+        // setHotels([...allHotels]);
         setLoading(false);
       }
       console.log("allHotels", allHotels);
 
+      localStorage.setItem("lastHotels", JSON.stringify(allHotels));
       //
       // let currentCount = countRaw;
       // let elapsed = 0;
@@ -566,22 +590,29 @@ export default function SearchForm() {
           <img src={search} width={200} alt="find-gif" />
         </div>
       )}
-      <div className="mt-6">
-        {/* <h2 className="text-lg font-semibold mb-4">
-          {t("search.foundHotels") || "Gefundene Hotels in"} {myCity}:
-        </h2> */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-6">
-          {/* ab hier Hotelcards-data */}
+      <section className="w-full lg:w-3/4">
+        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+          <div className="grid grid-cols-1">
+            <h1 className="text-3xl font-bold text-gray-600 mb-2">
+              {(t("search.foundHotels") || "Gefundene Hotels in") +
+                (myCity ? ` ${myCity}` : "")}
+              :
+            </h1>
+            <p className="text-gray-600">
+              Es wurden {hotels.length} Hotels gefunden
+            </p>
 
-          {hotels.map((hotel) => (
-            <div key={hotel.hotel.dupeId}>
-              <div
-                className="flex gap-4 my-4 mx-2 transform transition-transform duration-500 hover:scale-105 cursor-pointer"
-                onClick={() =>
-                  (window.location.href = `/hotel/${hotel.hotel.dupeId}`)
-                }
-              >
-                <div className="w-2/5 relative">
+            {/* ab hier Hotelcards-data */}
+
+            {hotels.map((hotel) => (
+              <div key={hotel.hotel.dupeId}>
+                <div
+                  className="flex flex-col md:flex-row bg-white shadow-lg rounded-xl overflow-hidden hover:shadow-2xl transition-all duration-300 border border-gray-100"
+                  onClick={() =>
+                    (window.location.href = `/hotel/${hotel.hotel.dupeId}`)
+                  }
+                ></div>
+                <div className="w-full md:w-[320px] h-[250px] md:h-[220px] overflow-hidden rounded-lg ml-4 mt-4">
                   <div className="flex absolute top-2 right-2">
                     <img
                       src={wishlistHeartEmpty}
@@ -593,72 +624,149 @@ export default function SearchForm() {
                   <img
                     src={gptExample}
                     alt="gpt-example-picture"
-                    className="rounded-tl-xl rounded-bl-xl"
+                    className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
                   />
                 </div>
-
-                <div className="flex flex-wrap w-1/2">
-                  <h3 className="font-bold w-full">
-                    {hotel.hotel.name
-                      .toLowerCase()
-                      .replace(/\b\w/g, (char) => char.toUpperCase())}
-                  </h3>
-                  {/* <p>{Bewertung später}</p> */}
-                  <h4 className="block w-full">
-                    &#40;
-                    {
-                      // Finde den passenden Stadtnamen zum CityCode
-                      validCities.find((city) =>
-                        city
+                <div className="p-8 flex flex-col justify-between flex-1 ml-4">
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <h3 className="text-xl font-bold text-gray-700">
+                        {hotel.hotel.name
                           .toLowerCase()
-                          .includes(hotel.hotel.cityCode.toLowerCase())
-                      ) || hotel.hotel.cityCode
-                    }
-                    &#41;&#44;
-                  </h4>
-                  <p className="block">
-                    {hotel.offers?.[0]?.checkInDate
-                      ? new Date(
-                          hotel.offers[0].checkInDate
-                        ).toLocaleDateString("de-DE", {
-                          day: "2-digit",
-                          month: "2-digit",
-                          year: "numeric",
-                        })
-                      : ""}
-                    &#32; &#45;&#32;
-                    {hotel.offers?.[0]?.checkOutDate
-                      ? new Date(
-                          hotel.offers[0].checkOutDate
-                        ).toLocaleDateString("de-DE", {
-                          day: "2-digit",
-                          month: "2-digit",
-                          year: "numeric",
-                        })
-                      : ""}
-                  </p>
-                  {/* Anzahl + Erwachsene(r) */}
-                  <p>
-                    {hotel.offers[0].guests.adults}&#32;
-                    {hotel.offers[0].guests.adults > 1
-                      ? "Erwachsene"
-                      : "Erwachsener"}
-                  </p>
-                  {/* Kinder optional */}
-                  <p>
-                    Preis ab:&#32;
-                    {hotel.offers?.[0]?.price?.total
-                      ? hotel.offers[0].price.total.replace(".", ",")
-                      : ""}
-                    &#32;
-                    {hotel.offers[0]?.price.currency.replace("EUR", "€")}
-                  </p>
+                          .replace(/\b\w/g, (char) => char.toUpperCase())}
+                      </h3>
+                      {/* <p>{Bewertung später}</p> */}
+
+                      <div className="flex items-center">
+                        {/*  {[...Array(hotel.stars)].map((_, i) => (
+                                            <FaStar key={i} className="text-yellow-400 text-lg" />
+                                          ))}
+                                        </div>
+                  */}
+                      </div>
+                      <p className="text-gray-600 mb-1 flex items-center">
+                        <FaMapMarkerAlt className="text-red-500 mr-2" />
+                        {/* {hotel.district}, {hotel.location} */}
+                      </p>
+                      <p className="text-blue-400 font-semibold mb-2 flex items-center">
+                        <FaThumbsUp className="text-blue-400 mr-2" />
+                        {/* {hotel.rating} */}positive Bewertungen
+                      </p>
+                      <p className="text-sm text-gray-500 mb-3">
+                        {hotel.offers?.[0]?.checkInDate
+                          ? new Date(
+                              hotel.offers[0].checkInDate
+                            ).toLocaleDateString("de-DE", {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                            })
+                          : ""}
+                        &#32; &#45;&#32;
+                        {hotel.offers?.[0]?.checkOutDate
+                          ? new Date(
+                              hotel.offers[0].checkOutDate
+                            ).toLocaleDateString("de-DE", {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                            })
+                          : ""}
+                      </p>
+
+                      <h4 className="block w-full">
+                        &#40;
+                        {
+                          // Finde den passenden Stadtnamen zum CityCode
+                          validCities.find((city) =>
+                            city
+                              .toLowerCase()
+                              .includes(hotel.hotel.cityCode.toLowerCase())
+                          ) || hotel.hotel.cityCode
+                        }
+                        &#41;&#44;
+                      </h4>
+                      {/* Anzahl + Erwachsene(r) */}
+                      <p>
+                        {hotel.offers[0].guests.adults}&#32;
+                        {hotel.offers[0].guests.adults > 1
+                          ? "Erwachsene"
+                          : "Erwachsener"}
+                      </p>
+                      {/* Kinder optional */}
+                      <p>
+                        Preis ab:&#32;
+                        {hotel.offers?.[0]?.price?.total
+                          ? hotel.offers[0].price.total.replace(".", ",")
+                          : ""}
+                        &#32;
+                        {hotel.offers[0]?.price.currency.replace("EUR", "€")}
+                      </p>
+                    </div>
+                    <div className="flex flex-wrap gap-2 mb-3">
+                      {/*} {hotel.amenities.map((amenity, index) => (
+                      <span
+                        key={index}
+                        className="px-3 py-1 bg-blue-50 text-blue-700 text-sm rounded-full border border-blue-200"
+                      >*/}
+                      {/* {amenity} */}
+                      {/* </span> */}
+                      {/* ))} */}
+
+                      <p className="text-sm text-gray-600 flex items-center">
+                        <FaBed className="text-gray-500 mr-2" />
+                        {hotel.roomType} •
+                        <FaUtensils className="text-gray-500 mx-2" />
+                        {hotel.breakfast}
+                      </p>
+                    </div>
+                    <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
+                      <div className="flex flex-wrap gap-3">
+                        {hotel.parking && (
+                          <div className="flex items-center text-blue-400 border bg-white border-amber-500 px-3 py-1 rounded-full">
+                            <FaCar className="mr-1" />
+                            <span className="text-sm font-medium">
+                              Parkplatz
+                            </span>
+                          </div>
+                        )}
+                        {hotel.petFriendly && (
+                          <div className="flex items-center text-blue-400 border bg-white border-amber-500 px-3 py-1 rounded-full">
+                            <FaDog className="mr-1" />
+                            <span className="text-sm font-medium">
+                              Haustierfreundlich
+                            </span>
+                          </div>
+                        )}
+                        {hotel.pool && (
+                          <div className="flex items-center text-blue-400 border bg-white border-amber-500 px-3 py-1 rounded-full">
+                            <FaSwimmingPool className="mr-1" />
+                            <span className="text-sm font-medium">Pool</span>
+                          </div>
+                        )}
+                        {hotel.wifi && (
+                          <div className="flex items-center text-blue-400 border bg-white border-amber-500 px-3 py-1 rounded-full">
+                            <FaWifi className="mr-1" />
+                            <span className="text-sm font-medium">WLAN</span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="text-right">
+                        <div className="text-2xl font-bold text-blue-600">
+                          {hotel.price}
+                        </div>
+                        <button className="mt-2 px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-400 transition-colors font-medium shadow-md hover:shadow-lg">
+                          Buchen
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
+      </section>
     </div>
   );
 }
