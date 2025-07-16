@@ -64,14 +64,14 @@ const ReviewHotel = ({ reviews }) => {
               >
                 <div>
                   <div className="flex justify-between items-center mb-2">
-                    <h3 className="text-m font-semibold">
+                    <h3 className="text-m text-gray-700 font-semibold">
                       {review.name}
                     </h3>
-                    <span className="text-sm text-gray-500">
+                    <span className="text-sm text-gray-700">
                       {review.date}
                     </span>
                   </div>
-                  <p className="text-base font-semibold mb-2">
+                  <p className="text-base text-gray-700 font-semibold mb-2">
                     {review.title}
                   </p>
                   <p className="text-gray-700 text-m">{review.text}</p>
