@@ -259,8 +259,6 @@ export default function SearchForm() {
                 />
               }
             />
-
-            
           </div>
         </div>
 
@@ -384,28 +382,34 @@ export default function SearchForm() {
           onClick={() => {
             handleSearch();
             // Only fetch hotels if there is no error, myCity is valid, and both dates are selected
+
             if (
               myCity &&
               validCities.includes(myCity) &&
               startDate &&
               endDate
             ) {
-              getCombinedData(myCity);
+              // getCombinedData(myCity);
+              if (myCity.toLowerCase() === "hamburg") {
+                window.location.href = "/hamburg-hotels";
+              } else {
+                getCombinedData(myCity);
+              }
             } else if (!startDate || !endDate) {
               setError("Bitte Reisedatum angeben!");
             }
           }}
-className="text-white px-6 py-2 rounded transition font-semibold"
-  style={{
-    backgroundColor: "#a8d5e2"
-  }}
-  onMouseEnter={(e) => {
-    e.target.style.backgroundColor = "#a2ceda";
-  }}
-  onMouseLeave={(e) => {
-    e.target.style.backgroundColor = "#a8d5e2";
-  }}
->
+          className="text-white px-6 py-2 rounded transition font-semibold"
+          style={{
+            backgroundColor: "#a8d5e2",
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.backgroundColor = "#a2ceda";
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.backgroundColor = "#a8d5e2";
+          }}
+        >
           {t("search.searchButton") || "Suchen"}{" "}
         </button>
       </div>
