@@ -27,7 +27,7 @@ const hotels = [
     image: "/src/images/hamburg-1.jpg",
     stars: 5,
     district: "Altstadt",
-    amenities: ["WLAN", "Frühstück", "Parkplatz", "Spa"],
+    amenities: [],
     roomType: "Deluxe",
     breakfast: "Frühstück",
     parking: true,
@@ -50,7 +50,7 @@ const hotels = [
     image: "/src/images/hamburg-2.jpg",
     stars: 4,
     district: "Speicherstadt",
-    amenities: ["WLAN", "Halbpension", "Fitnessstudio"],
+    amenities: [],
     roomType: "Standard",
     breakfast: "Halbpension",
     parking: false,
@@ -73,7 +73,7 @@ const hotels = [
     image: "/src/images/hamburg-3.jpg",
     stars: 3,
     district: "Rotherbaum",
-    amenities: ["WLAN", "Frühstück"],
+    amenities: [],
     roomType: "Economy",
     breakfast: "Frühstück",
     parking: true,
@@ -96,7 +96,7 @@ const hotels = [
     image: "/src/images/hamburg-4.jpg",
     stars: 4,
     district: "St. Pauli",
-    amenities: ["WLAN", "All-Inclusive", "Spa", "Fitnessstudio"],
+    amenities: [],
     roomType: "Suite",
     breakfast: "All-Inclusive",
     parking: true,
@@ -119,7 +119,7 @@ const hotels = [
     image: "/src/images/hamburg-5.jpg",
     stars: 5,
     district: "Neustadt",
-    amenities: ["WLAN", "Frühstück", "Spa", "Parkplatz"],
+    amenities: [],
     roomType: "Deluxe",
     breakfast: "Frühstück",
     parking: true,
@@ -142,7 +142,7 @@ const hotels = [
     image: "/src/images/hamburg-6.jpg",
     stars: 4,
     district: "Altstadt",
-    amenities: ["WLAN", "Halbpension", "Fitnessstudio"],
+    amenities: [],
     roomType: "Standard",
     breakfast: "Halbpension",
     parking: false,
@@ -165,7 +165,7 @@ const hotels = [
     image: "/src/images/hamburg-7.jpg",
     stars: 3,
     district: "Harburg",
-    amenities: ["WLAN", "Frühstück"],
+    amenities: [],
     roomType: "Economy",
     breakfast: "Frühstück",
     parking: true,
@@ -188,7 +188,7 @@ const hotels = [
     image: "/src/images/hamburg-8.jpg",
     stars: 5,
     district: "St. Pauli",
-    amenities: ["WLAN", "All-Inclusive", "Spa", "Parkplatz"],
+    amenities: [],
     roomType: "Suite",
     breakfast: "All-Inclusive",
     parking: true,
@@ -211,7 +211,7 @@ const hotels = [
     image: "/src/images/hamburg-9.jpg",
     stars: 4,
     district: "Speicherstadt",
-    amenities: ["WLAN", "Frühstück", "Fitnessstudio"],
+    amenities: [],
     roomType: "Deluxe",
     breakfast: "Frühstück",
     parking: false,
@@ -234,7 +234,7 @@ const hotels = [
     image: "/src/images/hamburg-10.jpg",
     stars: 5,
     district: "Rotherbaum",
-    amenities: ["WLAN", "All-Inclusive", "Spa", "Parkplatz", "Fitnessstudio"],
+    amenities: [],
     roomType: "Suite",
     breakfast: "All-Inclusive",
     parking: true,
@@ -370,7 +370,7 @@ const HamburgHotelsPage = () => {
         {/* Filters */}
         <aside className="w-full lg:w-1/4 bg-white p-6 rounded-lg shadow-md h-fit">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-gray-800">Filter</h2>
+            <h2 className="text-2xl font-bold text-gray-600">Filter</h2>
             <button
               onClick={resetFilters}
               className="text-blue-600 hover:text-blue-800 text-sm font-medium"
@@ -390,7 +390,7 @@ const HamburgHotelsPage = () => {
                 onChange={(e) =>
                   handleFilterChange("priceRange", e.target.value)
                 }
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-300"
               >
                 <option value="all">Alle Preise</option>
                 <option value="under300">Unter 300€</option>
@@ -474,7 +474,7 @@ const HamburgHotelsPage = () => {
 
             {/* 6. Zimmertyp */}
             <div>
-              <label className="block font-semibold text-gray-700 mb-2">
+              <label className="block font-semibold text-gray-600 mb-2">
                 Zimmertyp
               </label>
               <select
@@ -492,7 +492,7 @@ const HamburgHotelsPage = () => {
 
             {/* Ausstattung */}
             <div>
-              <label className="block font-semibold text-gray-700 mb-3">
+              <label className="block font-semibold text-gray-600 mb-3">
                 Ausstattung
               </label>
               <div className="space-y-3">
@@ -501,49 +501,49 @@ const HamburgHotelsPage = () => {
                     key: "parking",
                     label: "Parkplatz",
                     value: filters.parking,
-                    icon: <FaCar className="text-blue-600" />,
+                    icon: <FaCar className="text-blue-400" />,
                   },
                   {
                     key: "petFriendly",
                     label: "Haustierfreundlich",
                     value: filters.petFriendly,
-                    icon: <FaDog className="text-blue-600" />,
+                    icon: <FaDog className="text-blue-400" />,
                   },
                   {
                     key: "businessCenter",
                     label: "Business Center",
                     value: filters.businessCenter,
-                    icon: <FaBuilding className="text-blue-600" />,
+                    icon: <FaBuilding className="text-blue-400" />,
                   },
                   {
                     key: "pool",
                     label: "Pool",
                     value: filters.pool,
-                    icon: <FaSwimmingPool className="text-blue-600" />,
+                    icon: <FaSwimmingPool className="text-blue-400" />,
                   },
                   {
                     key: "wifi",
                     label: "WLAN",
                     value: filters.wifi,
-                    icon: <FaWifi className="text-blue-600" />,
+                    icon: <FaWifi className="text-blue-400" />,
                   },
                   {
                     key: "airConditioning",
                     label: "Klimaanlage",
                     value: filters.airConditioning,
-                    icon: <FaSnowflake className="text-blue-600" />,
+                    icon: <FaSnowflake className="text-blue-400" />,
                   },
                   {
                     key: "spa",
                     label: "Spa",
                     value: filters.spa,
-                    icon: <FaSpa className="text-blue-600" />,
+                    icon: <FaSpa className="text-blue-400" />,
                   },
                   {
                     key: "fitness",
                     label: "Fitnessstudio",
                     value: filters.fitness,
-                    icon: <FaDumbbell className="text-blue-600" />,
+                    icon: <FaDumbbell className="text-blue-400" />,
                   },
                 ].map((filter) => (
                   <label
@@ -556,10 +556,10 @@ const HamburgHotelsPage = () => {
                       onChange={(e) =>
                         handleFilterChange(filter.key, e.target.checked)
                       }
-                      className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                      className="appearance-none w-4 h-4 border-2 border-orange-400 rounded checked:bg-blue-400 checked:border-blue-200 focus:ring-blue-500"
                     />
                     {filter.icon}
-                    <span className="text-gray-700">{filter.label}</span>
+                    <span className="text-gray-600">{filter.label}</span>
                   </label>
                 ))}
               </div>
@@ -584,10 +584,10 @@ const HamburgHotelsPage = () => {
           </div>
         </aside>
 
-        {/* Результаты */}
+        {/* Ergebnisse */}
         <section className="w-full lg:w-3/4">
           <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">
+            <h1 className="text-3xl font-bold text-gray-600 mb-2">
               Hotels in Hamburg
             </h1>
             <p className="text-gray-600">
@@ -611,7 +611,7 @@ const HamburgHotelsPage = () => {
                 <div className="p-8 flex flex-col justify-between flex-1 ml-4">
                   <div>
                     <div className="flex items-center justify-between mb-2">
-                      <h3 className="text-xl font-bold text-gray-800">
+                      <h3 className="text-xl font-bold text-gray-700">
                         {hotel.name}
                       </h3>
                       <div className="flex items-center">
@@ -624,8 +624,8 @@ const HamburgHotelsPage = () => {
                       <FaMapMarkerAlt className="text-red-500 mr-2" />
                       {hotel.district}, {hotel.location}
                     </p>
-                    <p className="text-green-600 font-semibold mb-2 flex items-center">
-                      <FaThumbsUp className="text-green-500 mr-2" />
+                    <p className="text-blue-400 font-semibold mb-2 flex items-center">
+                      <FaThumbsUp className="text-blue-400 mr-2" />
                       {hotel.rating} positive Bewertungen
                     </p>
                     <p className="text-sm text-gray-500 mb-3">{hotel.nights}</p>
@@ -649,13 +649,13 @@ const HamburgHotelsPage = () => {
                   <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
                     <div className="flex flex-wrap gap-3">
                       {hotel.parking && (
-                        <div className="flex items-center text-green-600 bg-green-50 px-3 py-1 rounded-full">
+                        <div className="flex items-center text-blue-400 bg-orange-100 px-3 py-1 rounded-full">
                           <FaCar className="mr-1" />
                           <span className="text-sm font-medium">Parkplatz</span>
                         </div>
                       )}
                       {hotel.petFriendly && (
-                        <div className="flex items-center text-green-600 bg-green-50 px-3 py-1 rounded-full">
+                        <div className="flex items-center text-blue-400 bg-orange-100 px-3 py-1 rounded-full">
                           <FaDog className="mr-1" />
                           <span className="text-sm font-medium">
                             Haustierfreundlich
@@ -663,13 +663,13 @@ const HamburgHotelsPage = () => {
                         </div>
                       )}
                       {hotel.pool && (
-                        <div className="flex items-center text-green-600 bg-green-50 px-3 py-1 rounded-full">
+                        <div className="flex items-center text-blue-400 bg-orange-100 px-3 py-1 rounded-full">
                           <FaSwimmingPool className="mr-1" />
                           <span className="text-sm font-medium">Pool</span>
                         </div>
                       )}
                       {hotel.wifi && (
-                        <div className="flex items-center text-green-600 bg-green-50 px-3 py-1 rounded-full">
+                        <div className="flex items-center text-blue-400 bg-orange-100 px-3 py-1 rounded-full">
                           <FaWifi className="mr-1" />
                           <span className="text-sm font-medium">WLAN</span>
                         </div>
