@@ -18,9 +18,11 @@ import Privacy from "./pages/Privacy.jsx"; // Legal pages
 import Imprint from "./pages/Imprint.jsx"; // Legal pages
 import Terms from "./pages/Terms.jsx"; // Legal pages
 import Cookies from "./pages/Cookies.jsx"; // Legal pages
+import HamburgHotelsPage from "./pages/HamburgHotelsPage.jsx";
+import HotelDetailPage from "./pages/HotelDetailPage.jsx";
 import { ThemeProvider } from "./context/ThemeContext.jsx"; // Theme context
 import { I18nProvider } from "./context/I18nContext.jsx"; //translation context
-import HamburgHotelsPage from "./pages/HamburgHotelsPage.jsx";
+
 
 function App() {
   return (
@@ -40,12 +42,13 @@ function App() {
             <Route path="/lastminute-deals" element={<LastMinuteDeals />} />
             <Route path="/news" element={<AllNews />} />
             <Route path="/news/:id" element={<SingleNews />} />
-            <Route path="/hamburg-hotels" element={<HamburgHotelsPage />} />
+           <Route path="/hamburg-hotels" element={<HamburgHotelsPage />} />
             <Route
               path="/fivehundredeuro-deals"
               element={<FivehundredEuroDeals />}
             />
-            {/* Legal pages */}
+           <Route path="/hotel/:id" element={<HotelDetailPage />} />
+          {/* Legal pages */}
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/imprint" element={<Imprint />} />
             <Route path="/terms" element={<Terms />} />
