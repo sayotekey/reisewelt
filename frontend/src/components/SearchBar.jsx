@@ -156,10 +156,10 @@ export default function SearchForm() {
 
   return (
     <div
-      className=" text-gray-600 p-6 rounded-2xl w-full max-w-5xl -mt-20 z-50 mx-auto shadow-md relative"
+      className=" text-gray-700 p-6 rounded-2xl w-full max-w-5xl -mt-20 z-50 mx-auto shadow-md relative"
       style={{
         background: "linear-gradient(135deg, #ff7626, #ff7851)",
-        boxShadow: "0 4px 20px rgba(255, 118, 38, 0.3)",
+        boxShadow: "0 4px 20px rgba(0, 0, 0, 0.2)",
       }}
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

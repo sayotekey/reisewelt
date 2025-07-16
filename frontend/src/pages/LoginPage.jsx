@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/useAuth";
+import { useTheme } from "../context/ThemeContext";
 import validateRegisterPassword from "../utils/validateRegisterPassword";
 import axios from "axios";
 
 const LoginPage = () => {
+  const { isDark } = useTheme();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -24,7 +26,6 @@ const LoginPage = () => {
 
     if (!isValid) {
       setErrors(validationErrors);
-
       return;
     }
 
@@ -52,28 +53,37 @@ const LoginPage = () => {
     }
   };
 
-  // console.log("Email:", email);
-  // console.log("Password:", password);
-
   return (
-    <div className="h-screen flex">
+    <div
+      className="h-screen flex"
+      style={{
+        backgroundColor: "var(--bg-primary)",
+        color: "var(--text-color)",
+      }}
+    >
       {/* die linke Hälfte mit der Begrüßung */}
       <div
-        className="hidden lg:flex w-full lg:w-1/2 login_img_section
-          justify-around items-center"
+        className="hidden lg:flex w-full lg:w-1/2 login_img_section justify-around items-center"
+        style={{
+          backgroundColor: isDark ? "var(--bg-secondary)" : "transparent",
+        }}
       >
         <div
-          className=" 
-                  bg-black 
-                  opacity-20 
-                  inset-0 
-                  z-0"
+          className="bg-black opacity-20 inset-0 z-0"
+          style={{
+            backgroundColor: isDark
+              ? "rgba(0, 0, 0, 0.4)"
+              : "rgba(0, 0, 0, 0.2)",
+          }}
         ></div>
         <div className="w-full mx-auto px-20 flex-col items-center space-y-6">
-          <h1 className="text-gray-700 font-bold text-4xl font-sans">
+          <h1
+            className="font-bold text-4xl font-sans"
+            style={{ color: "var(--text-color)" }}
+          >
             Herzlich willkommen bei ReiseWelt
           </h1>
-          <p className="text-gray-700 mt-1">
+          <p className="mt-1" style={{ color: "var(--text-color)" }}>
             Hier finden Sie Ihr persönliches Kundenkonto. Einfach registrieren
             oder einloggen - und los geht's! Verwalten Sie Ihre Buchungen,
             persönliche Daten und mehr - alles übersichtlich an einem Ort.
@@ -85,25 +95,50 @@ const LoginPage = () => {
       </div>
 
       {/* die rechte Hälfte mit dem Anmeldeformular*/}
-      <div className="flex w-full lg:w-1/2 justify-center items-center bg-white space-y-8">
+      <div
+        className="flex w-full lg:w-1/2 justify-center items-center space-y-8"
+        style={{ backgroundColor: "var(--bg-primary)" }}
+      >
         <div className="w-full px-8 md:px-32 lg:px-24">
           <form
-            className="bg-white rounded-md shadow-2xl p-5 text-left"
+            className="rounded-md shadow-2xl p-5 text-left"
+            style={{
+              backgroundColor: "var(--bg-secondary)",
+              color: "var(--text-color)",
+            }}
             onSubmit={handleSubmit}
           >
-            <h2 className="text-2xl font-bold text-center text-gray-700 mb-8">
+            <h2
+              className="text-2xl font-bold text-center mb-8"
+              style={{ color: "var(--text-color)" }}
+            >
               Anmelden
             </h2>
 
             {/* Eingabefelder für E-Mail */}
-            <div className="flex flex-col mb-4 ">
-              <label htmlFor="email" className="text-gray-700 mb-2">
+            <div className="flex flex-col mb-4">
+              <label
+                htmlFor="email"
+                className="mb-2"
+                style={{ color: "var(--text-color)" }}
+              >
                 Email
               </label>
-              <div className="flex items-center border-2 border-gray-300 rounded-xl px-3 py-2 focus-within:border-indigo-500 focus-within:ring-1 focus-within:ring-indigo-300">
+              <div
+                className="flex items-center border-2 rounded-xl px-3 py-2 focus-within:ring-1"
+                style={{
+                  borderColor: isDark ? "var(--border-color)" : "#d1d5db",
+                  backgroundColor: "var(--bg-primary)",
+                  focusWithin: {
+                    borderColor: "var(--accent-color)",
+                    ringColor: "var(--accent-color)",
+                  },
+                }}
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 text-gray-400 mr-2"
+                  className="h-5 w-5 mr-2"
+                  style={{ color: isDark ? "var(--text-color)" : "#9ca3af" }}
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -117,7 +152,11 @@ const LoginPage = () => {
                 </svg>
                 <input
                   id="email"
-                  className="w-full outline-none text-left text-black"
+                  className="w-full outline-none text-left"
+                  style={{
+                    backgroundColor: "transparent",
+                    color: "var(--text-color)",
+                  }}
                   type="email"
                   name="email"
                   placeholder="Email Adresse"
@@ -129,13 +168,24 @@ const LoginPage = () => {
 
               {/* Eingabefeld für Passwort */}
               <div className="flex flex-col mb-4">
-                <label htmlFor="password" className="text-gray-700 mb-2 mt-2">
+                <label
+                  htmlFor="password"
+                  className="mb-2 mt-2"
+                  style={{ color: "var(--text-color)" }}
+                >
                   Passwort
                 </label>
-                <div className="flex items-center border-2 border-gray-300 rounded-xl px-3 py-2 focus-within:border-indigo-500 focus-within:ring-1 focus-within:ring-indigo-300">
+                <div
+                  className="flex items-center border-2 rounded-xl px-3 py-2 focus-within:ring-1"
+                  style={{
+                    borderColor: isDark ? "var(--border-color)" : "#d1d5db",
+                    backgroundColor: "var(--bg-primary)",
+                  }}
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5 text-gray-400 mr-2"
+                    className="h-5 w-5 mr-2"
+                    style={{ color: isDark ? "var(--text-color)" : "#9ca3af" }}
                     viewBox="0 0 20 20"
                     fill="currentColor"
                   >
@@ -147,8 +197,12 @@ const LoginPage = () => {
                   </svg>
                   <input
                     id="password"
-                    className="w-full outline-none text-left text-black"
-                    type={showPassword ? "text" : "password"} // Toggle password visibility
+                    className="w-full outline-none text-left"
+                    style={{
+                      backgroundColor: "transparent",
+                      color: "var(--text-color)",
+                    }}
+                    type={showPassword ? "text" : "password"}
                     name="password"
                     placeholder="Passwort"
                     value={password}
@@ -158,7 +212,12 @@ const LoginPage = () => {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="ml-2 pl-2 pr-2 pb-1 pt-1 bg-white border-2 border-gray-300 rounded-md text-gray-500 focus:outline-none"
+                    className="ml-2 pl-2 pr-2 pb-1 pt-1 border-2 rounded-md focus:outline-none"
+                    style={{
+                      backgroundColor: "var(--bg-secondary)",
+                      borderColor: isDark ? "var(--border-color)" : "#d1d5db",
+                      color: isDark ? "var(--text-color)" : "#6b7280",
+                    }}
                   >
                     {showPassword ? (
                       <svg
@@ -222,17 +281,35 @@ const LoginPage = () => {
             >
               Login
             </button>
-            <div className="flex justify-between mt-4 ">
+            <div className="flex justify-between mt-4">
               <a
                 href="/forgot-password"
-                className="text-sm ml-2 mt-3 hover:text-blue-500 cursor-pointer hover:-translate-y-1 duration-500 transition-all"
+                className="text-sm ml-2 mt-3 cursor-pointer hover:-translate-y-1 duration-500 transition-all"
+                style={{
+                  color: "var(--text-color)",
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.color = "var(--accent-color)";
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.color = "var(--text-color)";
+                }}
               >
                 Password vergessen?
               </a>
 
               <a
                 href="/register"
-                className="text-sm ml-2 mt-3 hover:text-blue-500 cursor-pointer hover:-translate-y-1 duration-500 transition-all"
+                className="text-sm ml-2 mt-3 cursor-pointer hover:-translate-y-1 duration-500 transition-all"
+                style={{
+                  color: "var(--text-color)",
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.color = "var(--accent-color)";
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.color = "var(--text-color)";
+                }}
               >
                 Kundenkonto erstellen
               </a>
