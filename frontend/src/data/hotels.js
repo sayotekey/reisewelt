@@ -130,6 +130,7 @@ const hotels = [
     nights: "7 Nächte vom 13.08 bis 19.08",
     price: "ab 310€",
     priceValue: 310,
+    image: "/src/images/hamburg-2.jpg",
     gallery: [
       "/src/images/hotel-details/1/1-1.jpg",
       "/src/images/hotel-details/1/1-2.jpg",

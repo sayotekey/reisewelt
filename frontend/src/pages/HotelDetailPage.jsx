@@ -249,7 +249,7 @@ const HotelDetailPage = () => {
         </div>
 
         {/* Rechte Seite */}
-        <div className="flex-1 min-w-[300px] space-y-7 mt-32 pt-3">
+        <div className="flex-1 min-w-[300px] space-y-5 mt-32 pt-3">
           {/* Rating */}
           <a href="#bewertungen" className="block">
             <div className="flex items-center justify-between bg-white p-4 rounded-lg shadow-lg border border-gray-300 cursor-pointer hover:bg-gray-50 transition-colors">
@@ -333,8 +333,18 @@ const HotelDetailPage = () => {
             </button>
           </div>
 
+          {/* Preis */}
+          <div className="bg-white p-4 rounded-lg shadow-lg border border-gray-300 mt-7">
+            <div className="text-center">
+              <p className="text-base text-gray-600 mb-1">{hotelData.nights}</p>
+              <div className="text-2xl font-bold text-blue-600">
+                {hotelData.price}
+              </div>
+            </div>
+          </div>
+
           {/* Zusätzliche Informationen */}
-          <div className="mt-6 bg-white p-4 rounded-lg shadow-lg border border-gray-300 space-y-3">
+          <div className="mt-5 bg-white p-4 rounded-lg shadow-lg border border-gray-300 space-y-3">
             {[
               {
                 label: `Check-in: ${hotelData.checkIn}`,
