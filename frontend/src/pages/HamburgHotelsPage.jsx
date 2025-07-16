@@ -649,13 +649,13 @@ const HamburgHotelsPage = () => {
                   <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
                     <div className="flex flex-wrap gap-3">
                       {hotel.parking && (
-                        <div className="flex items-center text-blue-400 bg-orange-100 px-3 py-1 rounded-full">
+                        <div className="flex items-center text-blue-400 border bg-white border-amber-500 px-3 py-1 rounded-full">
                           <FaCar className="mr-1" />
                           <span className="text-sm font-medium">Parkplatz</span>
                         </div>
                       )}
                       {hotel.petFriendly && (
-                        <div className="flex items-center text-blue-400 bg-orange-100 px-3 py-1 rounded-full">
+                        <div className="flex items-center text-blue-400 border bg-white border-amber-500 px-3 py-1 rounded-full">
                           <FaDog className="mr-1" />
                           <span className="text-sm font-medium">
                             Haustierfreundlich
@@ -663,13 +663,13 @@ const HamburgHotelsPage = () => {
                         </div>
                       )}
                       {hotel.pool && (
-                        <div className="flex items-center text-blue-400 bg-orange-100 px-3 py-1 rounded-full">
+                        <div className="flex items-center text-blue-400 border bg-white border-amber-500 px-3 py-1 rounded-full">
                           <FaSwimmingPool className="mr-1" />
                           <span className="text-sm font-medium">Pool</span>
                         </div>
                       )}
                       {hotel.wifi && (
-                        <div className="flex items-center text-blue-400 bg-orange-100 px-3 py-1 rounded-full">
+                        <div className="flex items-center text-blue-400 border bg-white border-amber-500 px-3 py-1 rounded-full">
                           <FaWifi className="mr-1" />
                           <span className="text-sm font-medium">WLAN</span>
                         </div>
