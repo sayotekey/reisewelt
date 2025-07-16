@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import DatePicker from "react-datepicker";
 import { AnimatePresence } from "framer-motion";
-// import motion from "framer-motion";
+import { motion } from "framer-motion";
 import { FaCalendarAlt } from "react-icons/fa";
 import "react-datepicker/dist/react-datepicker.css";
 import axios from "axios";
@@ -284,16 +284,16 @@ export default function SearchForm() {
 
   return (
     <div
-      className=" text-gray-600 p-6 rounded-2xl w-full max-w-5xl -mt-20 z-50 mx-auto shadow-md relative"
+      className=" text-gray-600 p-6 rounded-2xl w-full max-w-7xl -mt-20 z-50 mx-auto shadow-md relative"
       style={{
         background: "linear-gradient(135deg, #ff7626, #ff7851)",
         boxShadow: "0 4px 20px rgba(255, 118, 38, 0.3)",
       }}
     >
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 md:gap-3 lg:grid-cols-2 xl:grid-cols-4 gap-6">
         {/* Reiseziel */}
-        <div className="relative w-full max-w-md">
-          <div className="flex mb-1 gap-2 ">
+        <div className="relative w-full">
+          <div className="flex mb-1 items-center gap-2 ">
             <img
               src={travelGoal}
               alt="icon: mountain and building"
@@ -306,7 +306,7 @@ export default function SearchForm() {
           <input
             type="text"
             placeholder={t("search.enterDestination") || "Reiseziel eingeben"}
-            className="w-full p-2 rounded border hover:bg-blue-200 bg-white border-gray-500"
+            className="w-full p-2 rounded border hover:bg-blue-200 bg-white border-gray-800"
             value={myCity}
             onChange={handleInputChange}
             onFocus={() => setShowSuggestions(true)}
@@ -314,7 +314,7 @@ export default function SearchForm() {
             autoComplete="off"
           />
           {showSuggestions && suggestions.length > 0 && (
-            <ul className="absolute z-10 bg-white border border-gray-300 w-full mt-1 rounded shadow max-h-48 overflow-y-auto">
+            <ul className="absolute z-20 bg-white border border-gray-500 w-full mt-1 rounded shadow max-h-48 overflow-y-auto">
               {suggestions.map((city, idx) => (
                 <li
                   key={city}
@@ -344,31 +344,29 @@ export default function SearchForm() {
         </div>
         {/* Flug hinzufügen */}
         <div>
-          <label className="font-semibold hover:cursor-pointer mb-1 flex text-blue-100 gap-2">
-            Optional
-          </label>
-          <div className="w-full max-w-md">
-            <div className="flex mb-1 gap-2">
+          <label className="font-semibold hover:cursor-pointer flex text-blue-100 gap-2"></label>
+          <div className="w-full">
+            <div className="flex mb-1 items-center gap-2">
               <img
                 src={plane}
                 alt="icon: mountain and building"
                 className="h-4"
               />
-              <label className="font-semibold hover:cursor-pointer flex text-blue-100 gap-2">
+              <label className="font-semibold hover:cursor-pointer flex text-blue-800 gap-2">
                 Willst du fliegen?
               </label>
             </div>
             <input
               type="text"
               placeholder={t("search.addFlight") || "  +  Flug hinzufügen"}
-              className="w-full p-2 hover:cursor-pointer border rounded border-dashed border-gray-500 text-gray-600 placeholder-gray-600"
+              className="w-full p-2 hover:cursor-pointer border rounded border-dashed border-gray-800 text-gray-600 placeholder-gray-600"
             />
           </div>
         </div>
         <div>
           <label className="font-semibold mb-1 flex items-center gap-2">
             <FaCalendarAlt className="text-black" />
-            {t("search.whenTravel") || "Wann reisen?"}{" "}
+            {t("search.whenTravel") || "Wann reisen?"}
           </label>
           <div className="w-full">
             <DatePicker
@@ -386,10 +384,10 @@ export default function SearchForm() {
               customInput={
                 <input
                   style={{
-                    width: "451px", //hier size anpassen
+                    width: "100%", //hier size anpassen
                     padding: "8px",
                     border: "1px solid #1f2937",
-                    borderRadius: "6px",
+                    borderRadius: "3px",
                     outline: "none",
                     height: "40px",
                     boxSizing: "border-box",
@@ -402,21 +400,21 @@ export default function SearchForm() {
         </div>
         {/* Personenwahl */}
         <div className="relative" ref={dropdownRef}>
-          <div className="flex flex-row mb-1 ">
+          <div className="font-semibold flex flex-row mb-1 ">
             <img
               src={persons}
               alt="icon: group of 3 people"
               className="h-5 pr-2"
             />
-            {t("search.howManyPeople") || "Wie viele Personen reisen?"}{" "}
+            {t("search.howManyPeople") || "Wie viele Personen reisen?"}
           </div>
 
           <div
-            className="w-full p-2 rounded border border-gray-500 pl-4 bg-white cursor-pointer hover:bg-blue-200"
+            className="w-full p-2 rounded border border-gray-800 pl-4 bg-white cursor-pointer hover:bg-blue-200"
             onClick={() => setShowDropdown(!showDropdown)}
           >
-            {adults} {t("search.adults") || "Erwachsene"}, {children}{" "}
-            {t("search.children") || "Kinder (0 - 17 Jahre)"}{" "}
+            {adults} {t("search.adults") || "Erwachsene"}, {children}
+            {t("search.children") || " Kinder (0 - 17 Jahre)"}
           </div>
 
           <AnimatePresence>
@@ -427,8 +425,19 @@ export default function SearchForm() {
                 exit={{ opacity: 0, y: -10 }}
                 className="absolute z-15 bg-white border border-gray-500 rounded p-4 mt-2 w-full shadow-md"
               >
+                <div className="relative mb-2 h-6">
+                  <button className="absolute top-0 right-0 p-1 border-2 border-gray-500 rounded-md cursor-pointer">
+                    <img
+                      src={xButtonDelete}
+                      alt="Icon X"
+                      width={10}
+                      className="flex-end"
+                      onClick={() => setShowDropdown(false)}
+                    />
+                  </button>
+                </div>
                 <div className="flex justify-between items-center mb-3">
-                  <span>{t("search.adults") || "Erwachsene"}</span>{" "}
+                  <span>{t("search.adults") || "Erwachsene"}</span>
                   <div className="flex gap-2 items-center">
                     <button
                       className="px-2 py-1 border rounded bg-gray-200 text-gray-700 min-w-[33%] border-transparent font-bold text-lg hover:bg-gray-200 flex items-center justify-center"
@@ -446,7 +455,7 @@ export default function SearchForm() {
                   </div>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span>{t("search.children") || "Kinder (0 - 17 Jahre)"}</span>{" "}
+                  <span>{t("search.children") || "Kinder (0 - 17 Jahre)"}</span>
                   <div className="flex gap-2 items-center">
                     <button
                       className="px-2 py-1 border rounded bg-gray-200 text-gray-700 min-w-[33%] border-transparent font-bold text-lg hover:bg-gray-200 flex items-center justify-center"
@@ -468,9 +477,9 @@ export default function SearchForm() {
                 {children >= 1 && (
                   <>
                     <div className="pt-3 pb-2 w-full">
-                      <p className="pb-3 ">Alter bei Rückreise:</p>
+                      <p className="pb-3 ">Alter bei Hinreise:</p>
                       {/* Für jedes Kind ein Dropdown */}
-                      <div className="grid grid-cols-2 gap-7">
+                      <div className="grid md:grid-cols-2 xl:grid-cols-1 gap-7">
                         {Array.from({ length: children }).map((_, idx) => (
                           <div
                             key={idx}
@@ -490,8 +499,12 @@ export default function SearchForm() {
                             >
                               <option value="Alter">Alter wählen</option>
                               {Array.from({ length: 18 }).map((_, age) => (
-                                <option key={age} value={age}>
-                                  {age}
+                                <option
+                                  key={age}
+                                  value={age}
+                                  className="justify-center text-center"
+                                >
+                                  {age}&#32;Jahre
                                 </option>
                               ))}
                             </select>
@@ -514,7 +527,7 @@ export default function SearchForm() {
           </AnimatePresence>
         </div>
       </div>
-      <div className="mt-6 flex justify-end">
+      <div className="mt-6 flex w-full sm:w-full sm:justify-center md:justify-end xl:justify-end">
         <button
           onClick={() => {
             handleSearch();
@@ -530,7 +543,7 @@ export default function SearchForm() {
               setError("Bitte Reisedatum angeben!");
             }
           }}
-          className="text-white px-6 py-2 rounded transition font-semibold"
+          className="text-gray-800 w-full sm:w-full xl:w-1/7 px-6 py-2 mt-3 rounded transition font-semibold"
           style={{
             backgroundColor: "#a8d5e2",
           }}
@@ -541,7 +554,7 @@ export default function SearchForm() {
             e.target.style.backgroundColor = "#a8d5e2";
           }}
         >
-          {t("search.searchButton") || "Suchen"}{" "}
+          {t("search.searchButton") || "Suchen"}
         </button>
       </div>
       {/*hier ist Grid zu Ende! */}
@@ -554,9 +567,9 @@ export default function SearchForm() {
         </div>
       )}
       <div className="mt-6">
-        <h2 className="text-lg font-semibold mb-4">
+        {/* <h2 className="text-lg font-semibold mb-4">
           {t("search.foundHotels") || "Gefundene Hotels in"} {myCity}:
-        </h2>
+        </h2> */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-6">
           {/* ab hier Hotelcards-data */}
 
