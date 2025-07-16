@@ -608,6 +608,15 @@ html {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
+/* Last Search Styles */
+
+.last-search {
+  background: white;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-color);
+}
+
 /* Kontaktformular Styles */
 .contact-form {
   background: linear-gradient(135deg, #a8d5e2 0%, #a2cedaa9 50%, #a8d5e2 100%);
@@ -667,9 +676,32 @@ button.faq-category-active,
   margin-top: 0.5rem;
 }
 
-/* Reviews - Profile Styles */
+/* Profile */
+/* Personal Data - Profile */
+.personal-data {
+  display: flex;
+  height: 3rem;
+  align-items: center;
+  background: white;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  /* padding: 1rem; */
+  color: var(--text-color);
+}
+
+.personal-data strong {
+  width: 10rem;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding: 0 1rem 0 1rem;
+  margin-right: 1rem;
+  border-right: 1px solid var(--border-color);
+}
+
+/* Reviews - Profile */
 .review-form {
-  border: 2px solid var(--border-color);
+  border: 1px solid var(--border-color);
   border-radius: 8px;
   /* background: linear-gradient(135deg, #a8d5e2 0%, #a2cedaa9 50%, #a8d5e2 100%); */
   background: white;
@@ -688,24 +720,23 @@ button.faq-category-active,
   border-radius: 8px;
 }
 
-/* Change Password Form Styles */
+/* Change Password Form - Profile */
 .change-password-form {
   border: 1px solid var(--border-color);
   border-radius: 8px;
   background: white;
 }
 
-/* Last Search Styles */
+/* HotelDetailPage */
 
-.last-search {
-  background: white;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  color: var(--text-color);
+.hotel-detail-page {
+  display: flex;
+  flex-wrap: wrap;
+  min-height: 100vh;
+  padding: 100px 20px 20px 20px;
+  gap: 20px;
 }
 
 
 
-
-
-
+ 

@@ -54,7 +54,7 @@ const AddReviewForm = ({ tripId, onReviewAdded }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="border p-4 space-y-4 review-form">
+    <form onSubmit={handleSubmit} className="border p-4 space-y-4 review-form shadow-2xl">
       {/* Bewertungsauswahl */}
       <div>
         <label className="block font-medium"> Bewertung: </label>
@@ -76,7 +76,7 @@ const AddReviewForm = ({ tripId, onReviewAdded }) => {
       <button
         type="submit"
         disabled={loading} // blockieren des Buttons während des Ladens
-         className= "px-4 py-2 rounded-xl"
+         className= "px-4 py-2 rounded-md"
          style={{
               backgroundColor: "var(--accent-color)",
               color: "white",

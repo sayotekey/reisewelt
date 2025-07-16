@@ -58,21 +58,21 @@ const PersonalDaten = ({ user, onUserUpdate }) => {
 
       {!isEditing ? (
         <div className="space-y-2">
-          <p>
-            <strong>Name:</strong> {user.name}
+          <p className="personal-data shadow-md">
+            <strong className="ersonal-data">Name</strong> {user.name}
           </p>
-          <p>
-            <strong>Email:</strong> {user.email}
+          <p className="personal-data shadow-md">
+            <strong>Email</strong> {user.email}
           </p>
-          <p>
-            <strong>Registriert am:</strong>
+          <p className="personal-data shadow-md">
+            <strong>Registriert am</strong>
             {new Date(user.createdAt).toLocaleDateString()}
           </p>
 
           {/*Bearbeiten Button*/}
           <button
             onClick={() => setIsEditing(true)}
-            className="mt-4 px-4 py-2 bg-blue-500"
+            className="mt-4 px-4 py-2 rounded-md"
             style={{
               backgroundColor: "var(--accent-color)",
               color: "white",
