@@ -76,24 +76,28 @@ const BookingFormPage = () => {
                   Kirchenallee 34-36, St. Georg, 20099 Hamburg, Germany
                 </p>
                 <p className="text-blue-500 font-semibold">
-                  Excellent location — 9.4
+                  Hervorragende Lage — 9,4
                 </p>
                 <p className="bg-blue-400 text-white px-3 py-1 inline-block rounded text-sm">
-                  8.6 Excellent • 8,132 reviews
+                  8,6 Hervorragend • 8.132 Bewertungen
                 </p>
 
                 <div className="flex flex-wrap gap-2 mt-4">
                   <div className="flex items-center text-blue-400 border bg-white border-amber-500 px-3 py-1 rounded-full">
                     <FaDog className="mr-1" />
-                    <span className="text-sm font-medium">Pet friendly</span>
+                    <span className="text-sm font-medium">
+                      Haustiere erlaubt
+                    </span>
                   </div>
                   <div className="flex items-center text-blue-400 border bg-white border-amber-500 px-3 py-1 rounded-full">
                     <FaWifi className="mr-1" />
-                    <span className="text-sm font-medium">Free WiFi</span>
+                    <span className="text-sm font-medium">
+                      Kostenloses WLAN
+                    </span>
                   </div>
                   <div className="flex items-center text-blue-400 border bg-white border-amber-500 px-3 py-1 rounded-full">
                     <FaCar className="mr-1" />
-                    <span className="text-sm font-medium">Parking</span>
+                    <span className="text-sm font-medium">Parkplätze</span>
                   </div>
                   <div className="flex items-center text-blue-400 border bg-white border-amber-500 px-3 py-1 rounded-full">
                     <FaUtensils className="mr-1" />
@@ -106,26 +110,27 @@ const BookingFormPage = () => {
 
               <div className="text-sm space-y-3">
                 <h3 className="font-semibold text-gray-800 text-lg">
-                  Your booking details
+                  Ihre Buchungsdetails
                 </h3>
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <p className="mb-2">
-                    <strong>Check-in:</strong> Mon, Jul 28, 2025 <br />
-                    <span className="text-gray-600">From 3:00 PM</span>
+                    <strong>Check-in:</strong> Mo., 28. Juli 2025 <br />
+                    <span className="text-gray-600">Ab 15:00 Uhr</span>
                   </p>
                   <p className="mb-2">
-                    <strong>Check-out:</strong> Wed, Jul 30, 2025 <br />
-                    <span className="text-gray-600">Until 12:00 PM</span>
+                    <strong>Check-out:</strong> Mi., 30. Juli 2025 <br />
+                    <span className="text-gray-600">Bis 12:00 Uhr</span>
                   </p>
                   <p className="mb-2">
-                    Total length of stay: <strong>2 nights</strong>
+                    Gesamtdauer des Aufenthalts: <strong>2 Nächte</strong>
                   </p>
                   <p>
-                    You selected <strong>1 room for 2 adults</strong>
+                    Sie haben <strong>1 Zimmer für 2 Erwachsene</strong>{" "}
+                    ausgewählt
                   </p>
                 </div>
                 <button className="text-blue-600 text-sm underline hover:text-blue-800">
-                  Change your selection
+                  Auswahl ändern
                 </button>
               </div>
 
@@ -133,17 +138,17 @@ const BookingFormPage = () => {
 
               <div className="text-sm space-y-3">
                 <h3 className="font-semibold text-gray-800 text-lg">
-                  Your price summary
+                  Ihre Preisübersicht
                 </h3>
                 <div className="bg-gray-50 p-4 rounded-lg">
-                  <p className="text-gray-700">Original price: €351.20</p>
+                  <p className="text-gray-700">Originalpreis: 351,20 €</p>
                   <p className="text-blue-600 font-medium">
-                    Booking.com pays: – €35.12
+                    Booking.com zahlt: – 35,12 €
                   </p>
                   <div className="border-t border-gray-200 pt-3 mt-3">
-                    <p className="text-2xl font-bold text-blue-500">€316.08</p>
+                    <p className="text-2xl font-bold text-blue-500">316,08 €</p>
                     <p className="text-gray-600 text-xs">
-                      Additional charges may apply
+                      Zusätzliche Gebühren können anfallen
                     </p>
                   </div>
                 </div>
@@ -153,14 +158,14 @@ const BookingFormPage = () => {
             {/* Right panel - Form */}
             <div className="w-full lg:w-2/3 bg-white shadow-lg rounded-xl p-6 md:p-8">
               <h2 className="text-2xl font-bold mb-6 text-gray-700">
-                Enter your details
+                Geben Sie Ihre Daten ein
               </h2>
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="flex flex-col md:flex-row gap-4">
                   <div className="flex-1">
                     <label className="block font-semibold text-gray-700 mb-2">
-                      First name *
+                      Vorname *
                     </label>
                     <input
                       name="firstName"
@@ -169,29 +174,29 @@ const BookingFormPage = () => {
                       className={`w-full border ${
                         errors.firstName ? "border-red-500" : "border-gray-300"
                       } p-3  rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors`}
-                      placeholder="Enter your first name"
+                      placeholder="Geben Sie Ihren Vornamen ein"
                     />
                     {errors.firstName && (
-                      <p className="text-red-500 text-sm mt-1">Required</p>
+                      <p className="text-red-500 text-sm mt-1">Erforderlich</p>
                     )}
                   </div>
                   <div className="flex-1">
                     <label className="block font-semibold text-gray-700 mb-2">
-                      Last name
+                      Nachname
                     </label>
                     <input
                       name="lastName"
                       value={form.lastName}
                       onChange={handleChange}
                       className="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                      placeholder="Enter your last name"
+                      placeholder="Geben Sie Ihren Nachnamen ein"
                     />
                   </div>
                 </div>
 
                 <div>
                   <label className="block font-semibold  text-gray-700 mb-2">
-                    Email address
+                    E-Mail-Adresse
                   </label>
                   <input
                     name="email"
@@ -199,13 +204,13 @@ const BookingFormPage = () => {
                     onChange={handleChange}
                     className="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                     type="email"
-                    placeholder="Enter your email address"
+                    placeholder="Geben Sie Ihre E-Mail-Adresse ein"
                   />
                 </div>
 
                 <div>
                   <label className="block font-semibold text-gray-600 mb-2">
-                    Address *
+                    Adresse *
                   </label>
                   <input
                     name="address"
@@ -214,43 +219,43 @@ const BookingFormPage = () => {
                     className={`w-full border ${
                       errors.address ? "border-red-500" : "border-gray-300"
                     } p-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors`}
-                    placeholder="Enter your address"
+                    placeholder="Geben Sie Ihre Adresse ein"
                   />
                   {errors.address && (
-                    <p className="text-red-500 text-sm mt-1">Required</p>
+                    <p className="text-red-500 text-sm mt-1">Erforderlich</p>
                   )}
                 </div>
 
                 <div className="flex flex-col md:flex-row gap-4">
                   <div className="flex-1">
                     <label className="block font-semibold text-gray-700 mb-2">
-                      City
+                      Stadt
                     </label>
                     <input
                       name="city"
                       value={form.city}
                       onChange={handleChange}
                       className="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                      placeholder="Enter your city"
+                      placeholder="Geben Sie Ihre Stadt ein"
                     />
                   </div>
                   <div className="flex-1">
                     <label className="block font-semibold text-gray-700 mb-2">
-                      Zip Code
+                      Postleitzahl
                     </label>
                     <input
                       name="zip"
                       value={form.zip}
                       onChange={handleChange}
                       className="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                      placeholder="Enter your zip code"
+                      placeholder="Geben Sie Ihre Postleitzahl ein"
                     />
                   </div>
                 </div>
 
                 <div>
                   <label className="block font-semibold text-gray-700 mb-2">
-                    Phone number *
+                    Telefonnummer *
                   </label>
                   <input
                     name="phone"
@@ -259,10 +264,10 @@ const BookingFormPage = () => {
                     className={`w-full border ${
                       errors.phone ? "border-red-500" : "border-gray-300"
                     } p-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors`}
-                    placeholder="Enter your phone number"
+                    placeholder="Geben Sie Ihre Telefonnummer ein"
                   />
                   {errors.phone && (
-                    <p className="text-red-500 text-sm mt-1">Required</p>
+                    <p className="text-red-500 text-sm mt-1">Erforderlich</p>
                   )}
                 </div>
 
@@ -271,7 +276,7 @@ const BookingFormPage = () => {
                     type="submit"
                     className="w-full md:w-auto px-8 py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-400 transition-colors font-medium shadow-md hover:shadow-lg"
                   >
-                    Complete Booking
+                    Buchung abschließen
                   </button>
                 </div>
               </form>
