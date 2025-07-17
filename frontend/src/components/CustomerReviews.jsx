@@ -85,7 +85,7 @@ export default function CustomerReviews() {
       <div className="max-w-[1360px] mx-auto px-4 relative">
         <div className="flex justify-between items-center mb-6 relative">
           <h2
-            className="text-2xl font-bold text-left w-full mb-10 transition-all duration-500 hover:scale-105"
+            className="text-2xl font-medium text-left w-full mb-10 transition-all duration-500 hover:scale-105"
             style={{
               color: "var(--text-light)",
               textShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
@@ -99,7 +99,7 @@ export default function CustomerReviews() {
             style={{
               background: "linear-gradient(135deg, #ff7626, #ff5722)",
               color: "#ffffff",
-              boxShadow: "0 4px 20px rgba(255, 118, 38, 0.3)",
+              boxShadow: "grey",
             }}
             onMouseEnter={(e) => {
               e.target.style.background =
