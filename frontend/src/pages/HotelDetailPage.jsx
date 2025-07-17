@@ -263,8 +263,8 @@ const HotelDetailPage = () => {
               </div>
 
               <div
-                className="text-white px-4 py-3 rounded-lg font-bold text-base shadow-lg"
-                style={{ backgroundColor: "var(--blue-light)" }}
+                className="text-white px-4 py-3 rounded-lg font-bold text-base shadow-lg bg-blue-400"
+                // style={{ backgroundColor: "var(--blue-light)" }}
               >
                 {hotelData.ratingScore}
               </div>
@@ -337,7 +337,7 @@ const HotelDetailPage = () => {
           <div className="bg-white p-4 rounded-lg shadow-lg border border-gray-300 mt-7">
             <div className="text-center">
               <p className="text-base text-gray-600 mb-1">{hotelData.nights}</p>
-              <div className="text-2xl font-bold text-blue-600">
+              <div className="text-2xl font-bold text-blue-400">
                 {hotelData.price}
               </div>
             </div>
