@@ -175,7 +175,7 @@ const HeaderComponent = () => {
                 e.target.style.color = "var(--text-color)";
               }}
             >
-              {t("header.wishlist") || "Merkliste"}
+              {t("header.wishlist") || "Merkzettel"}
             </NavLink>
 
             {/* language selection */}

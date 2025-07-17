@@ -1,4 +1,4 @@
-import { useParams, useLocation } from "react-router-dom";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { useState, useRef } from "react";
 import hotels from "../data/hotels";
 import ReviewHotel from "../components/ReviewHotel";
@@ -27,6 +27,7 @@ const HotelDetailPage = () => {
   const hotelData = hotels.find((h) => h.id === parseInt(id)); // Finde das Hotel anhand der ID
   const [mainImage, setMainImage] = useState(hotelData?.image || "");
   const location = useLocation(); // Zugriff auf die aktuelle URL, um Parameter zu extrahieren
+  const navigate = useNavigate();
 
   // URL-Parameter für Datumsberechnung
   const searchParams = new URLSearchParams(location.search);
@@ -42,7 +43,7 @@ const HotelDetailPage = () => {
           (new Date(endDateParam) - new Date(startDateParam)) /
             (1000 * 60 * 60 * 24)
         )
-      : 0; 
+      : 0;
 
   // Datumsbestimmung, Fallback falls nicht übergeben
   const from = startDateParam ? new Date(startDateParam) : null;
@@ -76,6 +77,15 @@ const HotelDetailPage = () => {
       }
     }
     return "";
+  };
+
+  // Preis-Berechnung - Gesamt
+  const calculatePrice = () => {
+    if (nights > 0 && hotelData.priceValue) {
+      const totalPrice = hotelData.priceValue * nights;
+      return `Gesamt: ${totalPrice}€ `;
+    }
+    return hotelData.price;
   };
 
   // Label für die Bewertung basierend auf der Punktzahl
@@ -146,10 +156,8 @@ const HotelDetailPage = () => {
   return (
     <div className="pt-20 px-4 max-w-7xl mx-auto mt-8">
       <div className="flex gap-8 flex-wrap lg:flex-nowrap items-start">
-
         {/* Linke Seite */}
         <div className="flex-2 min-w-[400px]">
-
           {/* Hotelsname */}
           <div className="mb-6">
             <h2 className="text-3xl text-gray-700 font-bold mb-2">
@@ -184,7 +192,6 @@ const HotelDetailPage = () => {
 
           {/* Bildergalerie */}
           <div className="grid grid-cols-4 gap-x-4 gap-y-2 pt-5 max-h-[550px] overflow-hidden">
-
             {/* Hauptbild */}
             <div className="col-span-2 row-span-2 overflow-hidden rounded-lg shadow-lg h-full max-h-[550px] ">
               <img
@@ -306,7 +313,6 @@ const HotelDetailPage = () => {
 
         {/* Rechte Seite */}
         <div className="flex-1 min-w-[300px] space-y-5 mt-32 pt-3">
-          
           {/* Rating */}
           <a href="#bewertungen" className="block">
             <div className="flex items-center justify-between bg-white p-4 rounded-lg shadow-lg border border-gray-300 cursor-pointer hover:bg-gray-50 transition-colors">
@@ -379,6 +385,7 @@ const HotelDetailPage = () => {
                 backgroundColor: "var(--accent-color)",
                 color: "white",
               }}
+              onClick={() => navigate("/booking")}
               onMouseEnter={(e) => {
                 e.target.style.backgroundColor = "var(--accent-hover)";
               }}
@@ -409,7 +416,7 @@ const HotelDetailPage = () => {
                 </p>
               )}
               <div className="text-2xl font-bold text-blue-400">
-                {hotelData.price}
+                {calculatePrice()}
               </div>
             </div>
           </div>
