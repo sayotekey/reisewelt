@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import DatePicker from "react-datepicker";
 import { AnimatePresence } from "framer-motion";
 import { motion } from "framer-motion";
@@ -25,12 +26,7 @@ import travelGoal from "../icons/mountain-city-solid-black.svg";
 import plane from "../icons/plane-solid-black.svg";
 // import plane2 from "../icons/plane2-solid-black.png";
 import persons from "../icons/people-group-solid-black.svg";
-// import wishlistHeartFull from "../icons/heart-solid-black.svg";
-import wishlistHeartEmpty from "../icons/heart-regular-black.svg";
-
-// import finder from "../icons/finder.gif";
-import search from "../icons/search.gif";
-import gptExample from "../images/ChatGPT.png";
+import question from "../icons/question-solid-black.svg";
 
 export default function SearchForm() {
   const { t } = useTranslate();
@@ -46,15 +42,17 @@ export default function SearchForm() {
   const [dateRange, setDateRange] = useState([null, null]); // State for date range
   const [startDate, endDate] = dateRange;
   const [loading, setLoading] = useState(false);
+  const [showErrorInfo, setShowErrorInfo] = useState(false);
+  const navigate = useNavigate();
+  const dropdownRef = useRef();
 
+  // Daten aus localStorage holen
   useEffect(() => {
     const lastHotels = JSON.parse(localStorage.getItem("lastHotels")) || [];
     if (lastHotels.length > 0) {
       setHotels(lastHotels);
     }
   }, []);
-
-  const dropdownRef = useRef();
 
   //dropdown functionality
   useEffect(() => {
@@ -152,11 +150,9 @@ export default function SearchForm() {
           },
         }
       );
-      // const data = response.data;
       const myUuid = response.data.uuid;
 
       console.log("UUID:", myUuid); // Gibt die generierte UUID aus
-      // bis hier hin funktioniert alles
 
       // 2. Endpunkt: Abfrage der Anzahl der Hotels, die unter dieser UUID gespeichert sind
       await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -169,12 +165,6 @@ export default function SearchForm() {
       console.log("2.Endpunkt: aktueller Count", countRaw);
       console.log("2.Endpunkt: aktuelle flag", flag);
 
-      //
-      // while schleife
-      // solange flag = false => abfrage an mongo db nach count und hotels mit passender MyUuid
-      // wenn count > hotel.length => get hotels (UUID)=>
-      // }
-      //
       let allHotels = []; // Array für alle Hotels
       let newCount = 0; // Variable für neuen Count
 
@@ -199,8 +189,6 @@ export default function SearchForm() {
           console.log(hotelResponse.data.hotels);
           console.log(Array.isArray(hotelResponse.data.hotels));
 
-          // Array.prototype.push.apply(allHotels, hotelResponse.data.hotels);
-          // allHotels = [...allHotels, ...hotelResponse.data.hotels];
           hotelResponse.data.hotels.forEach((hotel) => {
             console.log(hotel);
             allHotels.push(hotel[0]);
@@ -553,7 +541,7 @@ export default function SearchForm() {
       </div>
       <div className="mt-6 flex w-full sm:w-full sm:justify-center md:justify-end xl:justify-end">
         <button
-          onClick={() => {
+          onClick={async () => {
             handleSearch();
             // Only fetch hotels if there is no error, myCity is valid, and both dates are selected
             if (
@@ -563,8 +551,18 @@ export default function SearchForm() {
               endDate
             ) {
               getCombinedData(myCity);
+              // navigate("/hotel-results");
+              navigate(
+                `/hotel-results?city=${encodeURIComponent(
+                  myCity
+                )}&start=${startDate.toISOString()}&end=${endDate.toISOString()}&adults=${adults}&children=${children}`
+              );
             } else if (!startDate || !endDate) {
-              setError("Bitte Reisedatum angeben!");
+              setError("Bitte ein Reisedatum angeben!");
+            } else if (!myCity) {
+              setError("Bitte einen Städtenamen eingeben.");
+            } else if (!validCities.includes(myCity)) {
+              setError("Ungültiger Städtename, bitte Eingabe überprüfen.");
             }
           }}
           className="text-gray-800 w-full sm:w-full xl:w-1/7 px-6 py-2 mt-3 rounded transition font-semibold"
@@ -583,188 +581,27 @@ export default function SearchForm() {
       </div>
       {/*hier ist Grid zu Ende! */}
       {/* Error Message */}
-      {error && <div className="text-green-600 mt-2">{error}</div>}
-      {loading && (
-        <div className="flex bg-white mt-4">
-          <p className="font-bold">Wir suchen gerade die besten Deals!</p>
-          <img src={search} width={200} alt="find-gif" />
-        </div>
-      )}
+
       <section className="w-full lg:w-3/4">
         <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <div className="grid grid-cols-1">
-            <h1 className="text-3xl font-bold text-gray-600 mb-2">
-              {(t("search.foundHotels") || "Gefundene Hotels in") +
-                (myCity ? ` ${myCity}` : "")}
-              :
-            </h1>
-            <p className="text-gray-600">
-              Es wurden {hotels.length} Hotels gefunden
-            </p>
-
-            {/* ab hier Hotelcards-data */}
-
-            {hotels.map((hotel) => (
-              <div key={hotel.hotel.dupeId}>
-                <div
-                  className="flex flex-col md:flex-row bg-white shadow-lg rounded-xl overflow-hidden hover:shadow-2xl transition-all duration-300 border border-gray-100"
-                  onClick={() =>
-                    (window.location.href = `/hotel/${hotel.hotel.dupeId}`)
-                  }
-                ></div>
-                <div className="w-full md:w-[320px] h-[250px] md:h-[220px] overflow-hidden rounded-lg ml-4 mt-4">
-                  <div className="flex absolute top-2 right-2">
-                    <img
-                      src={wishlistHeartEmpty}
-                      alt="icon: heart"
-                      className="h-5 w-5 z-10"
-                      // onClick={handleAddToWishlist} => kommt noch !!
-                    />
-                  </div>
-                  <img
-                    src={gptExample}
-                    alt="gpt-example-picture"
-                    className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
-                  />
+          {error && (
+            <div className="text-green-600 font-semibold">
+              {error}
+              <button
+                className="border border-gray-600 rounded-full ml-3 pr-2 pl-2 pt-1 pb-1 hover:bg-orange-500"
+                onClick={() => setShowErrorInfo((prev) => !prev)}
+              >
+                <img src={question} alt="icon info" width={10} />
+              </button>
+              {showErrorInfo && (
+                <div className="mt-2 text-sm text-gray-700 bg-orange-100 rounded p-2">
+                  Das Startdatum darf&nbsp;
+                  <span className="underline">nicht</span>&nbsp;in der
+                  Vergangenheit liegen.
                 </div>
-                <div className="p-8 flex flex-col justify-between flex-1 ml-4">
-                  <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <h3 className="text-xl font-bold text-gray-700">
-                        {hotel.hotel.name
-                          .toLowerCase()
-                          .replace(/\b\w/g, (char) => char.toUpperCase())}
-                      </h3>
-                      {/* <p>{Bewertung später}</p> */}
-
-                      <div className="flex items-center">
-                        {/*  {[...Array(hotel.stars)].map((_, i) => (
-                                            <FaStar key={i} className="text-yellow-400 text-lg" />
-                                          ))}
-                                        </div>
-                  */}
-                      </div>
-                      <p className="text-gray-600 mb-1 flex items-center">
-                        <FaMapMarkerAlt className="text-red-500 mr-2" />
-                        {/* {hotel.district}, {hotel.location} */}
-                      </p>
-                      <p className="text-blue-400 font-semibold mb-2 flex items-center">
-                        <FaThumbsUp className="text-blue-400 mr-2" />
-                        {/* {hotel.rating} */}positive Bewertungen
-                      </p>
-                      <p className="text-sm text-gray-500 mb-3">
-                        {hotel.offers?.[0]?.checkInDate
-                          ? new Date(
-                              hotel.offers[0].checkInDate
-                            ).toLocaleDateString("de-DE", {
-                              day: "2-digit",
-                              month: "2-digit",
-                              year: "numeric",
-                            })
-                          : ""}
-                        &#32; &#45;&#32;
-                        {hotel.offers?.[0]?.checkOutDate
-                          ? new Date(
-                              hotel.offers[0].checkOutDate
-                            ).toLocaleDateString("de-DE", {
-                              day: "2-digit",
-                              month: "2-digit",
-                              year: "numeric",
-                            })
-                          : ""}
-                      </p>
-
-                      <h4 className="block w-full">
-                        &#40;
-                        {
-                          // Finde den passenden Stadtnamen zum CityCode
-                          validCities.find((city) =>
-                            city
-                              .toLowerCase()
-                              .includes(hotel.hotel.cityCode.toLowerCase())
-                          ) || hotel.hotel.cityCode
-                        }
-                        &#41;&#44;
-                      </h4>
-                      {/* Anzahl + Erwachsene(r) */}
-                      <p>
-                        {hotel.offers[0].guests.adults}&#32;
-                        {hotel.offers[0].guests.adults > 1
-                          ? "Erwachsene"
-                          : "Erwachsener"}
-                      </p>
-                      {/* Kinder optional */}
-                      <p>
-                        Preis ab:&#32;
-                        {hotel.offers?.[0]?.price?.total
-                          ? hotel.offers[0].price.total.replace(".", ",")
-                          : ""}
-                        &#32;
-                        {hotel.offers[0]?.price.currency.replace("EUR", "€")}
-                      </p>
-                    </div>
-                    <div className="flex flex-wrap gap-2 mb-3">
-                      {/*} {hotel.amenities.map((amenity, index) => (
-                      <span
-                        key={index}
-                        className="px-3 py-1 bg-blue-50 text-blue-700 text-sm rounded-full border border-blue-200"
-                      >*/}
-                      {/* {amenity} */}
-                      {/* </span> */}
-                      {/* ))} */}
-
-                      <p className="text-sm text-gray-600 flex items-center">
-                        <FaBed className="text-gray-500 mr-2" />
-                        {hotel.roomType} •
-                        <FaUtensils className="text-gray-500 mx-2" />
-                        {hotel.breakfast}
-                      </p>
-                    </div>
-                    <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
-                      <div className="flex flex-wrap gap-3">
-                        {hotel.parking && (
-                          <div className="flex items-center text-blue-400 border bg-white border-amber-500 px-3 py-1 rounded-full">
-                            <FaCar className="mr-1" />
-                            <span className="text-sm font-medium">
-                              Parkplatz
-                            </span>
-                          </div>
-                        )}
-                        {hotel.petFriendly && (
-                          <div className="flex items-center text-blue-400 border bg-white border-amber-500 px-3 py-1 rounded-full">
-                            <FaDog className="mr-1" />
-                            <span className="text-sm font-medium">
-                              Haustierfreundlich
-                            </span>
-                          </div>
-                        )}
-                        {hotel.pool && (
-                          <div className="flex items-center text-blue-400 border bg-white border-amber-500 px-3 py-1 rounded-full">
-                            <FaSwimmingPool className="mr-1" />
-                            <span className="text-sm font-medium">Pool</span>
-                          </div>
-                        )}
-                        {hotel.wifi && (
-                          <div className="flex items-center text-blue-400 border bg-white border-amber-500 px-3 py-1 rounded-full">
-                            <FaWifi className="mr-1" />
-                            <span className="text-sm font-medium">WLAN</span>
-                          </div>
-                        )}
-                      </div>
-                      <div className="text-right">
-                        <div className="text-2xl font-bold text-blue-600">
-                          {hotel.price}
-                        </div>
-                        <button className="mt-2 px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-400 transition-colors font-medium shadow-md hover:shadow-lg">
-                          Buchen
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+              )}
+            </div>
+          )}
         </div>
       </section>
     </div>
