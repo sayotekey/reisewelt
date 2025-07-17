@@ -36,6 +36,8 @@ export default function SearchForm() {
   const [hotels, setHotels] = useState([]);
   const [myCity, setMyCity] = useState(""); // State for my city (von wo ?)
   const [error, setError] = useState("");
+  const [cityError, setCityError] = useState("");
+  const [dateError, setDateError] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
@@ -122,16 +124,17 @@ export default function SearchForm() {
   };
 
   const handleSearch = () => {
+    let valid = true;
     if (!myCity) {
-      setError("Bitte einen Städtenamen eingeben.");
-      return;
+      setCityError("Bitte einen Städtenamen eingeben.");
+      valid = false;
+    } else if (!validCities.includes(myCity)) {
+      setCityError("Ungültiger Städtename, bitte Eingabe überprüfen.");
+      valid = false;
+    } else {
+      setCityError("");
+      setShowSuggestions(false);
     }
-    if (!validCities.includes(myCity)) {
-      setError("Ungültiger Städtename, bitte Eingabe überprüfen.");
-      return;
-    }
-    setError("");
-    setShowSuggestions(false);
   };
 
   // 1.Endpunkt für UUID
@@ -325,6 +328,7 @@ export default function SearchForm() {
             onKeyDown={handleKeyDown}
             autoComplete="off"
           />
+
           {showSuggestions && suggestions.length > 0 && (
             <ul className="absolute z-20 bg-white border border-gray-500 w-full mt-1 rounded shadow max-h-48 overflow-y-auto">
               {suggestions.map((city, idx) => (
@@ -562,7 +566,7 @@ export default function SearchForm() {
             } else if (!myCity) {
               setError("Bitte einen Städtenamen eingeben.");
             } else if (!validCities.includes(myCity)) {
-              setError("Ungültiger Städtename, bitte Eingabe überprüfen.");
+              setError("Ungültigen Städtename gefunden!");
             }
           }}
           className="text-gray-800 w-full sm:w-full xl:w-1/7 px-6 py-2 mt-3 rounded transition font-semibold"
@@ -583,8 +587,8 @@ export default function SearchForm() {
       {/* Error Message */}
 
       <section className="w-full lg:w-3/4">
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          {error && (
+        {error && (
+          <div className="bg-white rounded-lg shadow-md p-6 mb-6">
             <div className="text-green-600 font-semibold">
               {error}
               <button
@@ -593,16 +597,27 @@ export default function SearchForm() {
               >
                 <img src={question} alt="icon info" width={10} />
               </button>
-              {showErrorInfo && (
+              {showErrorInfo && !startDate && (
                 <div className="mt-2 text-sm text-gray-700 bg-orange-100 rounded p-2">
                   Das Startdatum darf&nbsp;
                   <span className="underline">nicht</span>&nbsp;in der
                   Vergangenheit liegen.
                 </div>
               )}
-            </div>
-          )}
-        </div>
+              {showErrorInfo && !myCity && (
+                <div className="mt-2 text-sm text-gray-700 bg-orange-100 rounded p-2">
+                  Für die Suchanfrage wird ein Ziel benötigt. Wohin soll die
+                  Reise gehen?
+                </div>
+              )}
+              {showErrorInfo && !validCities.includes(myCity) && (
+                <div className="mt-2 text-sm text-gray-700 bg-orange-100 rounded p-2">
+                  Bitte die Eingabe nochmals überprüfen.
+                </div>
+              )}
+            </div>{" "}
+          </div>
+        )}
       </section>
     </div>
   );
