@@ -46,73 +46,168 @@ const HotelResultsPage = () => {
   useEffect(() => {
     const lastHotels = JSON.parse(localStorage.getItem("lastHotels")) || [];
     setHotels(lastHotels);
+    setLoading(false);
   }, []);
-
-  // 1. Hole die UUID und starte das Nachladen
-  useEffect(() => {
-    let interval;
-    let allHotels = [];
-    let flag = false;
-
-    async function fetchHotels() {
-      try {
-        // Schritt 1: UUID generieren
-        if (!myUuid) {
-          const response = await axios.get(
-            "http://localhost:3000/api/uuid/generate",
-            {
-              params: { cityName: myCity },
-            }
-          );
-          setMyUuid(response.data.uuid);
-          return; // Warte auf nächsten useEffect-Durchlauf mit gesetzter UUID
+  ///
+  // 1.Endpunkt für UUID
+  // onclick button anfrage an backend senden, um UUID zu generieren
+  // und die UUID in der MongoDB zu speichern
+  const getCombinedData = async (myCity) => {
+    try {
+      setError(""); // optional: reset error before fetch
+      setHotels([]); // optional: clear previous hotels
+      setLoading(true); // <-- Spinner sichtbar machen
+      const response = await axios.get(
+        "http://localhost:3000/api/uuid/generate",
+        {
+          params: {
+            cityName: myCity, // city-string zum backend schicken
+          },
         }
+      );
+      const myUuid = response.data.uuid;
 
-        // Schritt 2: Polling starten
-        const url = `http://localhost:3000/api/uuid/status/${myUuid}`;
-        interval = setInterval(async () => {
-          try {
-            const retryResponse = await axios.get(url);
-            const newCount = retryResponse.data.count;
-            flag = retryResponse.data.flag;
+      console.log("UUID:", myUuid); // Gibt die generierte UUID aus
 
-            if (newCount > allHotels.length) {
-              const hotelResponse = await axios.get(
-                "http://localhost:3000/api/uuid/hotels",
-                {
-                  params: {
-                    uuid: myUuid,
-                    count: allHotels.length,
-                    limit: newCount - allHotels.length,
-                  },
-                }
-              );
-              hotelResponse.data.hotels.forEach((hotel) =>
-                allHotels.push(hotel[0])
-              );
-              setHotels([...allHotels]);
-            }
+      // 2. Endpunkt: Abfrage der Anzahl der Hotels, die unter dieser UUID gespeichert sind
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
-            if (flag) {
-              setLoading(false);
-              clearInterval(interval);
-            }
-          } catch (err) {
-            setError("Fehler beim Nachladen der Hotels.", err);
-            setLoading(false);
-            clearInterval(interval);
-          }
-        }, 3000);
-      } catch (err) {
-        setError("Fehler beim Starten der Hotelsuche.", err);
+      const url = `http://localhost:3000/api/uuid/status/${myUuid}`;
+      const hotelCountResponse = await axios.get(url);
+      const countRaw = hotelCountResponse.data.count; // {"count":3 }
+      let flag = hotelCountResponse.data.flag; // false?
+
+      console.log("2.Endpunkt: aktueller Count", countRaw);
+      console.log("2.Endpunkt: aktuelle flag", flag);
+
+      let allHotels = []; // Array für alle Hotels
+      let newCount = 0; // Variable für neuen Count
+
+      while (flag === false) {
+        await new Promise((resolve) => setTimeout(resolve, 3000));
+        const retryResponse = await axios.get(url); // erneute Abfrage der Anzahl der Hotels
+        newCount = retryResponse.data.count; // aktualisiere neuen Count
+        console.log("newCount aus while-loop:", newCount);
+        flag = retryResponse.data.flag;
+
+        if (newCount > allHotels.length) {
+          //3. endpunkt
+          const hotelLength = allHotels.length;
+          const urlHotel = "http://localhost:3000/api/uuid/hotels";
+          const hotelResponse = await axios.get(urlHotel, {
+            params: {
+              uuid: myUuid,
+              count: hotelLength,
+              limit: newCount - hotelLength,
+            },
+          });
+          console.log(hotelResponse.data.hotels);
+          console.log(Array.isArray(hotelResponse.data.hotels));
+
+          hotelResponse.data.hotels.forEach((hotel) => {
+            console.log(hotel);
+            allHotels.push(hotel[0]);
+          });
+
+          setHotels([...allHotels]);
+        }
+      }
+      if (allHotels.length === 0) {
+        setError("Es wurden keine Hotels gefunden.");
+        setLoading(false);
+      } else {
+        // setHotels([...allHotels]);
         setLoading(false);
       }
+      console.log("allHotels", allHotels);
+
+      localStorage.setItem("lastHotels", JSON.stringify(allHotels));
+
+      // Lesen die zuletzt gespeicherten Suchen aus localStorage
+      const previousSearches =
+        JSON.parse(localStorage.getItem("lastSearches")) || [];
+      // Create a new search object
+      const newSearch = {
+        to: myCity,
+        startDate: startDate ? new Date(startDate).toISOString() : null,
+        endDate: endDate ? new Date(endDate).toISOString() : null,
+        adults,
+        children,
+      };
+      const updatedSearches = [newSearch, ...previousSearches].slice(0, 3); // Limit to 3 searches
+      localStorage.setItem("lastSearches", JSON.stringify(updatedSearches));
+    } catch (error) {
+      console.error("Error fetching hotels:", error.message);
+      return [];
     }
+  };
+  ///
+  // // 1. Hole die UUID und starte das Nachladen
+  // useEffect(() => {
+  //   let interval;
+  //   let allHotels = [];
+  //   let flag = false;
 
-    fetchHotels();
+  // async function fetchHotels() {
+  //   try {
+  //     // Schritt 1: UUID generieren
+  //     if (!myUuid) {
+  //       const response = await axios.get(
+  //         "http://localhost:3000/api/uuid/generate",
+  //         {
+  //           params: { cityName: myCity },
+  //           // hier query anpassen!!
+  //         }
+  //       );
+  //       setMyUuid(response.data.uuid);
+  //       return; // Warte auf nächsten useEffect-Durchlauf mit gesetzter UUID
+  //     }
 
-    return () => clearInterval(interval);
-  }, [myCity, myUuid]);
+  //     // Schritt 2: Polling starten
+  //     const url = `http://localhost:3000/api/uuid/status/${myUuid}`;
+  //     interval = setInterval(async () => {
+  //       try {
+  //         const retryResponse = await axios.get(url);
+  //         const newCount = retryResponse.data.count;
+  //         flag = retryResponse.data.flag;
+
+  //         if (newCount > allHotels.length) {
+  //           const hotelResponse = await axios.get(
+  //             "http://localhost:3000/api/uuid/hotels",
+  //             {
+  //               params: {
+  //                 uuid: myUuid,
+  //                 count: allHotels.length,
+  //                 limit: newCount - allHotels.length,
+  //               },
+  //             }
+  //           );
+  //           hotelResponse.data.hotels.forEach((hotel) =>
+  //             allHotels.push(hotel[0])
+  //           );
+  //           setHotels([...allHotels]);
+  //         }
+
+  //         if (flag) {
+  //           setLoading(false);
+  //           clearInterval(interval);
+  //         }
+  //       } catch (err) {
+  //         setError("Fehler beim Nachladen der Hotels.", err);
+  //         setLoading(false);
+  //         clearInterval(interval);
+  //       }
+  //     }, 3000);
+  //   } catch (err) {
+  //     setError("Fehler beim Starten der Hotelsuche.", err);
+  //     setLoading(false);
+  //   }
+  // }
+
+  // fetchHotels();
+
+  //   return () => clearInterval(interval);
+  // }, [myCity, myUuid]);
 
   return (
     <div className="block w-full mt-24">

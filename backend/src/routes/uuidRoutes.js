@@ -79,7 +79,6 @@ router.get("/generate", async (req, res) => {
   res.status(200).json({ uuid: uniqueId }); // für das Frontend
 
   try {
-    // const { cityName } = req.query; // Städtenamen auslesen
     ///
     const { cityName, startDate, endDate, adults, children } = req.query;
     ///

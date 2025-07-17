@@ -37,7 +37,6 @@ export default function SearchForm() {
   const [myCity, setMyCity] = useState(""); // State for my city (von wo ?)
   const [error, setError] = useState("");
   const [cityError, setCityError] = useState("");
-  const [dateError, setDateError] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
@@ -299,7 +298,7 @@ export default function SearchForm() {
 
   return (
     <div
-      className=" text-gray-600 p-6 rounded-2xl w-full max-w-7xl -mt-20 z-50 mx-auto shadow-md relative"
+      className="text-gray-600 p-6 rounded-2xl w-full max-w-7xl -mt-20 z-50 mx-auto shadow-md relative"
       style={{
         background: "linear-gradient(135deg, #ff7626, #ff7851)",
         boxShadow: "0 4px 20px rgba(255, 118, 38, 0.3)",
@@ -308,7 +307,7 @@ export default function SearchForm() {
       <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 md:gap-3 lg:grid-cols-2 xl:grid-cols-4 gap-6">
         {/* Reiseziel */}
         <div className="relative w-full">
-          <div className="flex mb-1 items-center gap-2 ">
+          <div className="flex mb-1 items-center gap-2">
             <img
               src={travelGoal}
               alt="icon: mountain and building"
@@ -396,6 +395,7 @@ export default function SearchForm() {
               wrapperClassName="w-full"
               placeholderText={t("search.selectDate") || "Datum auswählen"}
               dateFormat="dd.MM.yyyy"
+              monthsShown={2}
               isClearable
               customInput={
                 <input
@@ -416,7 +416,7 @@ export default function SearchForm() {
         </div>
         {/* Personenwahl */}
         <div className="relative" ref={dropdownRef}>
-          <div className="font-semibold flex flex-row mb-1 ">
+          <div className="font-semibold flex flex-row mb-1">
             <img
               src={persons}
               alt="icon: group of 3 people"
@@ -555,7 +555,6 @@ export default function SearchForm() {
               endDate
             ) {
               getCombinedData(myCity);
-              // navigate("/hotel-results");
               navigate(
                 `/hotel-results?city=${encodeURIComponent(
                   myCity
@@ -592,19 +591,18 @@ export default function SearchForm() {
             <div className="text-green-600 font-semibold">
               {error}
               <button
-                className="border border-gray-600 rounded-full ml-3 pr-2 pl-2 pt-1 pb-1 hover:bg-orange-500"
+                className="border border-gray-600 rounded-full ml-3 pr-2 pl-2 pt-1 pb-1 mt-3 hover:bg-orange-500"
                 onClick={() => setShowErrorInfo((prev) => !prev)}
               >
                 <img src={question} alt="icon info" width={10} />
               </button>
               {showErrorInfo && !startDate && (
                 <div className="mt-2 text-sm text-gray-700 bg-orange-100 rounded p-2">
-                  Das Startdatum darf&nbsp;
-                  <span className="underline">nicht</span>&nbsp;in der
-                  Vergangenheit liegen.
+                  Das Startdatum darf <span className="underline">nicht</span>{" "}
+                  in der Vergangenheit liegen.
                 </div>
               )}
-              {showErrorInfo && !myCity && (
+              {showErrorInfo && !myCity && startDate && (
                 <div className="mt-2 text-sm text-gray-700 bg-orange-100 rounded p-2">
                   Für die Suchanfrage wird ein Ziel benötigt. Wohin soll die
                   Reise gehen?
@@ -615,7 +613,7 @@ export default function SearchForm() {
                   Bitte die Eingabe nochmals überprüfen.
                 </div>
               )}
-            </div>{" "}
+            </div>
           </div>
         )}
       </section>
