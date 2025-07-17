@@ -422,9 +422,9 @@ export default function SearchForm() {
         </div>
       )}
       <div className="mt-6">
-        <h2 className="text-lg font-semibold mb-4">
+      {/*   <h2 className="text-lg font-semibold mb-4">
           {t("search.foundHotels") || "Gefundene Hotels in"} {myCity}:
-        </h2>
+        </h2> */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-6">
           {hotels.map((hotel) => (
             <div
