@@ -22,6 +22,7 @@ import HamburgHotelsPage from "./pages/HamburgHotelsPage.jsx";
 import HotelDetailPage from "./pages/HotelDetailPage.jsx";
 import { ThemeProvider } from "./context/ThemeContext.jsx"; // Theme context
 import { I18nProvider } from "./context/I18nContext.jsx"; //translation context
+import BookingFormPage from "./pages/BookingFormPage.jsx";
 
 
 function App() {
@@ -54,6 +55,7 @@ function App() {
             <Route path="/terms" element={<Terms />} />
             <Route path="/cookies" element={<Cookies />} />
             <Route path="*" element={<ErrorPage />} />
+            <Route path="/booking" element={<BookingFormPage />} /> 
           </Routes>
         </div>
         <FooterComponent />
