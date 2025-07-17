@@ -391,7 +391,14 @@ export default function SearchForm() {
             ) {
               // getCombinedData(myCity);
               if (myCity.toLowerCase() === "hamburg") {
-                window.location.href = "/hamburg-hotels";
+                const params = new URLSearchParams();
+                if (startDate)
+                  params.append("startDate", startDate.toISOString());
+                if (endDate) params.append("endDate", endDate.toISOString());
+                params.append("adults", adults);
+                params.append("children", children);
+
+                window.location.href = `/hamburg-hotels?${params.toString()}`;
               } else {
                 getCombinedData(myCity);
               }
