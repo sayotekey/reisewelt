@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import { useState, useRef } from "react";
 import hotels from "../data/hotels";
 import ReviewHotel from "../components/ReviewHotel";
@@ -26,6 +26,57 @@ const HotelDetailPage = () => {
   const { id } = useParams(); // Erhalte die Hotel-ID aus der URL
   const hotelData = hotels.find((h) => h.id === parseInt(id)); // Finde das Hotel anhand der ID
   const [mainImage, setMainImage] = useState(hotelData?.image || "");
+  const location = useLocation(); // Zugriff auf die aktuelle URL, um Parameter zu extrahieren
+
+  // URL-Parameter für Datumsberechnung
+  const searchParams = new URLSearchParams(location.search);
+  const startDateParam = searchParams.get("startDate");
+  const endDateParam = searchParams.get("endDate");
+  const adultsParam = searchParams.get("adults");
+  const childrenParam = searchParams.get("children");
+
+  // Anzahl der Nächte berechnen
+  const nights =
+    startDateParam && endDateParam
+      ? Math.round(
+          (new Date(endDateParam) - new Date(startDateParam)) /
+            (1000 * 60 * 60 * 24)
+        )
+      : 0; 
+
+  // Datumsbestimmung, Fallback falls nicht übergeben
+  const from = startDateParam ? new Date(startDateParam) : null;
+  const to = endDateParam ? new Date(endDateParam) : null;
+
+  const formatDate = (date) =>
+    date
+      ? `${String(date.getDate()).padStart(2, "0")}.${String(
+          date.getMonth() + 1
+        ).padStart(2, "0")}`
+      : "";
+
+  // String erstellen
+  const dateRange =
+    from && to
+      ? `${nights} Nächte vom ${formatDate(from)} bis ${formatDate(to)}`
+      : "";
+
+  // Personen-Informationen
+  const peopleInfo = () => {
+    if (adultsParam || childrenParam) {
+      const adults = parseInt(adultsParam) || 0;
+      const children = parseInt(childrenParam) || 0;
+
+      if (adults > 0 && children > 0) {
+        return `${adults} Erwachsene, ${children} Kinder`;
+      } else if (adults > 0) {
+        return `${adults} Erwachsene`;
+      } else if (children > 0) {
+        return `${children} Kinder`;
+      }
+    }
+    return "";
+  };
 
   // Label für die Bewertung basierend auf der Punktzahl
   const getRatingLabel = (score) => {
@@ -95,8 +146,10 @@ const HotelDetailPage = () => {
   return (
     <div className="pt-20 px-4 max-w-7xl mx-auto mt-8">
       <div className="flex gap-8 flex-wrap lg:flex-nowrap items-start">
+
         {/* Linke Seite */}
         <div className="flex-2 min-w-[400px]">
+
           {/* Hotelsname */}
           <div className="mb-6">
             <h2 className="text-3xl text-gray-700 font-bold mb-2">
@@ -131,6 +184,7 @@ const HotelDetailPage = () => {
 
           {/* Bildergalerie */}
           <div className="grid grid-cols-4 gap-x-4 gap-y-2 pt-5 max-h-[550px] overflow-hidden">
+
             {/* Hauptbild */}
             <div className="col-span-2 row-span-2 overflow-hidden rounded-lg shadow-lg h-full max-h-[550px] ">
               <img
@@ -156,6 +210,7 @@ const HotelDetailPage = () => {
                 />
               </div>
             ))}
+
             {/* Zweite 4 Bilder unter dem Hauptbild */}
             {hotelData.gallery?.slice(4, 8).map((img, index) => (
               <div
@@ -173,6 +228,7 @@ const HotelDetailPage = () => {
               </div>
             ))}
           </div>
+
           {/* Ausstattung und Beschreibung */}
           <div className="mt-8">
             {/* Ausstattung Grid */}
@@ -250,6 +306,7 @@ const HotelDetailPage = () => {
 
         {/* Rechte Seite */}
         <div className="flex-1 min-w-[300px] space-y-5 mt-32 pt-3">
+          
           {/* Rating */}
           <a href="#bewertungen" className="block">
             <div className="flex items-center justify-between bg-white p-4 rounded-lg shadow-lg border border-gray-300 cursor-pointer hover:bg-gray-50 transition-colors">
@@ -333,10 +390,24 @@ const HotelDetailPage = () => {
             </button>
           </div>
 
-          {/* Preis */}
+          {/* Preis, Personen und Zeitraum */}
           <div className="bg-white p-4 rounded-lg shadow-lg border border-gray-300 mt-7">
             <div className="text-center">
-              <p className="text-base text-gray-600 mb-1">{hotelData.nights}</p>
+              {peopleInfo() && (
+                <p className="text-base font-medium text-gray-700 mb-2">
+                  {peopleInfo()}
+                </p>
+              )}
+              {dateRange && (
+                <p className="text-base font-medium text-gray-700 mb-2">
+                  {dateRange}
+                </p>
+              )}
+              {!dateRange && !peopleInfo() && (
+                <p className="text-base text-gray-600 mb-1">
+                  {hotelData.nights}
+                </p>
+              )}
               <div className="text-2xl font-bold text-blue-400">
                 {hotelData.price}
               </div>

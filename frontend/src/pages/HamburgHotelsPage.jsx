@@ -22,6 +22,8 @@ const HamburgHotelsPage = () => {
   const searchParams = new URLSearchParams(location.search);
   const startDateParam = searchParams.get("startDate");
   const endDateParam = searchParams.get("endDate");
+  const adultsParam = searchParams.get("adults");
+  const childrenParam = searchParams.get("children");
 
   const [filters, setFilters] = useState({
     priceRange: "all",
@@ -43,6 +45,7 @@ const HamburgHotelsPage = () => {
 
   const filteredHotels = useMemo(() => {
     let filtered = hotels.filter((hotel) => {
+
       // Filterung nach Preiskategorie
       if (filters.priceRange === "under300" && hotel.priceValue >= 300)
         return false;
@@ -141,6 +144,7 @@ const HamburgHotelsPage = () => {
   return (
     <div className="pt-15">
       <div className="flex flex-col lg:flex-row p-4 gap-6 bg-gray-50 min-h-screen">
+
         {/* Filter */}
         <aside className="w-full lg:w-1/4 bg-white p-6 rounded-lg shadow-md h-fit">
           <div className="flex justify-between items-center mb-6">
@@ -154,6 +158,7 @@ const HamburgHotelsPage = () => {
           </div>
 
           <div className="space-y-6">
+
             {/* 1. Preiskategorie */}
             <div>
               <label className="block font-semibold text-gray-700 mb-2">
@@ -371,6 +376,7 @@ const HamburgHotelsPage = () => {
 
           <div className="grid gap-6">
             {filteredHotels.map((hotel) => {
+
               // Datums-Berechnungen aus URL Parameter oder Hotel-Daten
               const startDate = startDateParam
                 ? new Date(startDateParam)
@@ -394,7 +400,7 @@ const HamburgHotelsPage = () => {
                   date.getMonth() + 1
                 ).padStart(2, "0")}`;
 
-              const dateRangeText = `${nights} Nächte vom ${formatDate(
+              const dateRange = `${nights} Nächte vom ${formatDate(
                 from
               )} bis ${formatDate(to)}`;
 
@@ -404,7 +410,13 @@ const HamburgHotelsPage = () => {
                   className="flex flex-col md:flex-row bg-white shadow-lg rounded-xl overflow-hidden hover:shadow-2xl transition-all duration-300 border border-gray-100"
                 >
                   <Link
-                    to={`/hotel/${hotel.id}`}
+                    to={`/hotel/${hotel.id}${
+                      startDateParam && endDateParam
+                        ? `?startDate=${startDateParam}&endDate=${endDateParam}${
+                            adultsParam ? `&adults=${adultsParam}` : ""
+                          }${childrenParam ? `&children=${childrenParam}` : ""}`
+                        : ""
+                    }`}
                     className="flex flex-col md:flex-row flex-1"
                   >
                     <div className="w-full md:w-[320px] h-[250px] md:h-[220px] overflow-hidden rounded-lg ml-4 mt-4">
@@ -438,7 +450,7 @@ const HamburgHotelsPage = () => {
                           {hotel.rating} positive Bewertungen
                         </p>
                         <p className="text-sm text-gray-500 mb-3">
-                          {dateRangeText}
+                          {dateRange}
                         </p>
                         <div className="flex flex-wrap gap-2 mb-3">
                           {hotel.amenities.map((amenity, index) => (
@@ -496,6 +508,7 @@ const HamburgHotelsPage = () => {
                             onClick={(e) => {
                               e.preventDefault();
                               e.stopPropagation();
+                              
                               // Buchungslogik hier
                               console.log("Booking hotel:", hotel.name);
                             }}
