@@ -44,10 +44,10 @@ const AboutUs = () => {
               "Wir machen sie zugänglich, bequem und wirklich spannend. Unser Ziel ist es, Ihnen zu helfen, ganz einfach die beste Reise zu finden, auszuwählen und zu buchen, die Ihnen unvergessliche Eindrücke und neue Entdeckungen bringt. Wir sind nicht nur ein Reisebüro, sondern eine moderne digitale Plattform für selbstständige und komfortable Reiseplanung. Eine benutzerfreundliche Oberfläche, intelligente Suche und personalisierte Angebote helfen Ihnen, Ihre Traumreise schnell und ohne Aufwand zu finden. Die Technik arbeitet für Sie – Sie genießen den Urlaub! Wenn Sie jedoch persönliche Betreuung wünschen, können Sie sich jederzeit an unser Team wenden. Hinterlassen Sie eine Anfrage über das Kontaktformular, rufen Sie uns an oder schreiben Sie uns eine E-Mail – wir helfen Ihnen gerne, die perfekte Reise auszuwählen. Jede Reise wird von uns mit besonderer Aufmerksamkeit zum Detail zusammengestellt – sei es ein Familienurlaub, eine romantische Reise oder ein Abenteuer mit Freunden. Bei uns können Sie sicher sein, dass alles mit Herz, Fürsorge und Professionalität organisiert wird."}
           </p>
 
-          <p className="font-semibold text-center">
+       {/*    <p className="font-semibold text-center">
             {t("aboutUs.closingText") ||
               "Entdecken Sie neue Horizonte mit uns – wir machen Ihre Reise unvergesslich!"}
-          </p>
+          </p> */}
         </div>
       </div>
     </section>
