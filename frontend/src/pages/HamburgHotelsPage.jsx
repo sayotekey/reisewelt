@@ -404,6 +404,15 @@ const HamburgHotelsPage = () => {
                 from
               )} bis ${formatDate(to)}`;
 
+              // Preis
+              const calculatePrice = () => {
+                if (startDate && endDate && hotel.priceValue) {
+                  const totalPrice = hotel.priceValue * nights;
+                  return `${totalPrice}€`;
+                }
+                return hotel.price; 
+              };
+
               return (
                 <div
                   key={hotel.id}
@@ -502,7 +511,7 @@ const HamburgHotelsPage = () => {
                         </div>
                         <div className="text-right">
                           <div className="text-2xl font-bold text-blue-600">
-                            {hotel.price}
+                            {calculatePrice()}
                           </div>
                           <button
                             onClick={(e) => {
