@@ -30,7 +30,7 @@ const LastSearch = () => {
 
   return (
     <div className="mt-12 px-4">
-      <h2 className="text-2xl font-bold mb-8 text-center text-gray-600">
+      <h2 className="text-2xl font-bold mb-8 text-left text-gray-600">
         {t("lastSearch.title") || "Ihre letzten Suchen"}
       </h2>
 

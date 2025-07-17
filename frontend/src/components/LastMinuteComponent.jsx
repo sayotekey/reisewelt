@@ -9,46 +9,50 @@ const LastMinuteComponent = () => {
   const { t } = useTranslate();
 
   return (
-    <div className="my-10 ">
-      <h2 className=" px-7 text-left text-2xl mt-10">
+    <div className="my-12 px-4 max-w-screen-xl mx-auto">
+      <h2 className="text-3xl font-bold mb-5 text-left text-gray-600">
         {t("lastMinute.title") || "Jetzt buchen und bis zu 50% sparen!"}
       </h2>
-      <div className="flex">
-        <div className="py-10">
-          <div className="relative">
-            <img
-              src={LuggageLastMinute}
-              alt="Reisekoffer mit Aufklebern"
-              className="w-auto px-7"
-            />
-            <h3 className="absolute left-16 top-10 text-black text-2xl">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* Card 1 */}
+        <div className="relative rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 group cursor-pointer bg-white">
+          <img
+            src={LuggageLastMinute}
+            alt="Reisekoffer mit Aufklebern"
+            className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent"></div>
+          <div className="absolute left-8 top-8">
+            <h3 className="text-white text-2xl font-semibold drop-shadow">
               {t("lastMinute.superLastMinute") || "Super Last Minute"}
             </h3>
-            <button
-              className="absolute right-16 bottom-5 bg-gray-800 rounded px-2 py-2 cursor-pointer"
-              onClick={() => navigate("/lastminute-deals")} // = case sensitiv - lieber lowercase
-            >
-              {t("lastMinute.discoverNow") || "Jetzt entdecken"}
-            </button>
           </div>
+          <button
+            className="absolute right-8 bottom-8 bg-orange-500 hover:bg-orange-400 text-white font-semibold rounded-lg px-5 py-3 shadow-lg transition-all duration-200"
+            onClick={() => navigate("/lastminute-deals")}
+          >
+            {t("lastMinute.discoverNow") || "Jetzt entdecken"}
+          </button>
         </div>
-        <div className="py-10">
-          <div className="relative">
-            <img
-              src={beachFivehundredDeals}
-              alt="Strand und Meer mit Badeschuhen und Hut"
-              className="w-auto px-7"
-            />
-            <h3 className="absolute left-16 top-10 text-black text-2xl">
+        {/* Card 2 */}
+        <div className="relative rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 group cursor-pointer bg-white">
+          <img
+            src={beachFivehundredDeals}
+            alt="Strand und Meer mit Badeschuhen und Hut"
+            className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent"></div>
+          <div className="absolute left-8 top-8">
+            <h3 className="text-white text-2xl font-semibold drop-shadow">
               {t("lastMinute.vacationUnder500") || "Urlaub unter 500€"}
             </h3>
-            <button
-              className="absolute right-16 bottom-5  bg-gray-800 rounded px-2 py-2 cursor-pointer"
-              onClick={() => navigate("/fivehundredeuro-deals")} // = case sensitiv - lieber lowercase
-            >
-              {t("lastMinute.discoverNow") || "Jetzt entdecken"}
-            </button>
           </div>
+          <button
+            className="absolute right-8 bottom-8 bg-orange-600 hover:bg-orange-500 text-white font-semibold rounded-lg px-5 py-3 shadow-lg transition-all duration-200"
+            onClick={() => navigate("/fivehundredeuro-deals")}
+          >
+            {t("lastMinute.discoverNow") || "Jetzt entdecken"}
+          </button>
         </div>
       </div>
     </div>
