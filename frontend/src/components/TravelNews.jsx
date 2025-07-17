@@ -56,7 +56,7 @@ const TravelNews = () => {
       }}
     >
       <div className="flex justify-between items-center mb-6 relative">
-        <h2
+  {/*       <h2
           className="text-3xl font-bold text-left  w-full mb-5 transition-all duration-500 hover:scale-105"
           style={{
             color: "var(--text-light)",
@@ -64,7 +64,7 @@ const TravelNews = () => {
           }}
         >
           {t("travelNews.title") || "Reise-Nachrichten"}
-        </h2>
+        </h2> */}
       </div>
 
       <div className="relative">
