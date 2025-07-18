@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useLocation } from "react-router-dom";
+import hotels from "../data/hotels";
 import {
   FaMapMarkerAlt,
   FaThumbsUp,
@@ -7,9 +9,64 @@ import {
   FaDog,
   FaWifi,
   FaUtensils,
+  FaSwimmingPool,
+  FaSnowflake,
+  FaSpa,
+  FaDumbbell,
+  FaBuilding,
 } from "react-icons/fa";
 
 const BookingFormPage = () => {
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+
+  // Parameter aus der URL abrufen
+  const hotelId = searchParams.get("hotelId");
+  const startDateParam = searchParams.get("startDate");
+  const endDateParam = searchParams.get("endDate");
+  const adultsParam = searchParams.get("adults");
+  const childrenParam = searchParams.get("children");
+
+  // Hotel anhand der ID finden
+  const selectedHotel =
+    hotels.find((h) => h.id === parseInt(hotelId)) || hotels[0]; // Fallback zum ersten Hotel
+
+  // Berechnung der Daten und der Nächte
+  const startDate = startDateParam ? new Date(startDateParam) : null;
+  const endDate = endDateParam ? new Date(endDateParam) : null;
+  const nights =
+    startDate && endDate
+      ? Math.round((endDate - startDate) / (1000 * 60 * 60 * 24))
+      : 2;
+
+  // Datumsformatierung
+  const formatDate = (date) => {
+    if (!date) return "";
+    const options = {
+      weekday: "short",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    };
+    return date.toLocaleDateString("de-DE", options);
+  };
+
+  // Informationen über Personen
+  const adults = parseInt(adultsParam) || 2;
+  const children = parseInt(childrenParam) || 0;
+
+  // Preisberechnung
+  const totalPrice = selectedHotel.priceValue * nights;
+
+  // Bewertungslabel abrufen
+  const getRatingLabel = (score) => {
+    if (score >= 9) return "Hervorragend";
+    if (score >= 8) return "Sehr gut";
+    if (score >= 7) return "Gut";
+    if (score >= 6) return "Befriedigend";
+    return "Ausreichend";
+  };
+
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",
@@ -48,61 +105,84 @@ const BookingFormPage = () => {
   return (
     <div className="pt-15 bg-gray-50 min-h-screen">
       <div className="p-4 md:p-8">
-        {/* Header */}
+        {/* Kopfzeile */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-6">
           <h1 className="text-3xl font-bold text-gray-600 mb-2">
             Buchung bestätigen
           </h1>
           <p className="text-gray-600">
-            Vervollständigen Sie Ihre Buchung für das Reichshof Hotel Hamburg
+            Vervollständigen Sie Ihre Buchung für das {selectedHotel.name}
           </p>
         </div>
 
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col lg:flex-row gap-8">
-            {/* Left panel - Hotel Info */}
+            {/* Linke Seite - Hotelinfos */}
             <div className="w-full lg:w-1/3 bg-white shadow-lg rounded-xl p-6 h-fit">
               <div className="space-y-4 mb-6">
                 <h2 className="text-2xl font-bold text-gray-700">
-                  Reichshof Hotel Hamburg
+                  {selectedHotel.name}
                 </h2>
                 <div className="flex items-center">
-                  {[...Array(4)].map((_, i) => (
+                  {[...Array(selectedHotel.stars)].map((_, i) => (
                     <FaStar key={i} className="text-yellow-400 text-lg" />
                   ))}
                 </div>
                 <p className="text-gray-600 flex items-center">
                   <FaMapMarkerAlt className="text-red-500 mr-2" />
-                  Kirchenallee 34-36, St. Georg, 20099 Hamburg, Germany
+                  {selectedHotel.district}, {selectedHotel.location}
                 </p>
                 <p className="text-blue-500 font-semibold">
-                  Hervorragende Lage — 9,4
+                  {getRatingLabel(selectedHotel.ratingScore)} —{" "}
+                  {selectedHotel.ratingScore}
                 </p>
                 <p className="bg-blue-400 text-white px-3 py-1 inline-block rounded text-sm">
-                  8,6 Hervorragend • 8.132 Bewertungen
+                  {selectedHotel.ratingScore}{" "}
+                  {getRatingLabel(selectedHotel.ratingScore)} •{" "}
+                  {selectedHotel.reviewsCount} Bewertungen
                 </p>
 
                 <div className="flex flex-wrap gap-2 mt-4">
-                  <div className="flex items-center text-blue-400 border bg-white border-amber-500 px-3 py-1 rounded-full">
-                    <FaDog className="mr-1" />
-                    <span className="text-sm font-medium">
-                      Haustiere erlaubt
-                    </span>
-                  </div>
-                  <div className="flex items-center text-blue-400 border bg-white border-amber-500 px-3 py-1 rounded-full">
-                    <FaWifi className="mr-1" />
-                    <span className="text-sm font-medium">
-                      Kostenloses WLAN
-                    </span>
-                  </div>
-                  <div className="flex items-center text-blue-400 border bg-white border-amber-500 px-3 py-1 rounded-full">
-                    <FaCar className="mr-1" />
-                    <span className="text-sm font-medium">Parkplätze</span>
-                  </div>
-                  <div className="flex items-center text-blue-400 border bg-white border-amber-500 px-3 py-1 rounded-full">
-                    <FaUtensils className="mr-1" />
-                    <span className="text-sm font-medium">Restaurant</span>
-                  </div>
+                  {selectedHotel.petFriendly && (
+                    <div className="flex items-center text-blue-400 border bg-white border-amber-500 px-3 py-1 rounded-full">
+                      <FaDog className="mr-1" />
+                      <span className="text-sm font-medium">
+                        Haustiere erlaubt
+                      </span>
+                    </div>
+                  )}
+                  {selectedHotel.wifi && (
+                    <div className="flex items-center text-blue-400 border bg-white border-amber-500 px-3 py-1 rounded-full">
+                      <FaWifi className="mr-1" />
+                      <span className="text-sm font-medium">
+                        Kostenloses WLAN
+                      </span>
+                    </div>
+                  )}
+                  {selectedHotel.parking && (
+                    <div className="flex items-center text-blue-400 border bg-white border-amber-500 px-3 py-1 rounded-full">
+                      <FaCar className="mr-1" />
+                      <span className="text-sm font-medium">Parkplätze</span>
+                    </div>
+                  )}
+                  {selectedHotel.amenities.includes("Restaurant") && (
+                    <div className="flex items-center text-blue-400 border bg-white border-amber-500 px-3 py-1 rounded-full">
+                      <FaUtensils className="mr-1" />
+                      <span className="text-sm font-medium">Restaurant</span>
+                    </div>
+                  )}
+                  {selectedHotel.pool && (
+                    <div className="flex items-center text-blue-400 border bg-white border-amber-500 px-3 py-1 rounded-full">
+                      <FaSwimmingPool className="mr-1" />
+                      <span className="text-sm font-medium">Pool</span>
+                    </div>
+                  )}
+                  {selectedHotel.spa && (
+                    <div className="flex items-center text-blue-400 border bg-white border-amber-500 px-3 py-1 rounded-full">
+                      <FaSpa className="mr-1" />
+                      <span className="text-sm font-medium">Spa</span>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -114,18 +194,31 @@ const BookingFormPage = () => {
                 </h3>
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <p className="mb-2">
-                    <strong>Check-in:</strong> Mo., 28. Juli 2025 <br />
-                    <span className="text-gray-600">Ab 15:00 Uhr</span>
+                    <strong>Check-in:</strong>{" "}
+                    {startDate ? formatDate(startDate) : selectedHotel.checkIn}{" "}
+                    <br />
+                    <span className="text-gray-600">
+                      Ab {selectedHotel.checkIn}
+                    </span>
                   </p>
                   <p className="mb-2">
-                    <strong>Check-out:</strong> Mi., 30. Juli 2025 <br />
-                    <span className="text-gray-600">Bis 12:00 Uhr</span>
+                    <strong>Check-out:</strong>{" "}
+                    {endDate ? formatDate(endDate) : selectedHotel.checkOut}{" "}
+                    <br />
+                    <span className="text-gray-600">
+                      Bis {selectedHotel.checkOut}
+                    </span>
                   </p>
                   <p className="mb-2">
-                    Gesamtdauer des Aufenthalts: <strong>2 Nächte</strong>
+                    Gesamtdauer des Aufenthalts:{" "}
+                    <strong>{nights} Nächte</strong>
                   </p>
                   <p>
-                    Sie haben <strong>1 Zimmer für 2 Erwachsene</strong>{" "}
+                    Sie haben{" "}
+                    <strong>
+                      1 Zimmer für {adults} Erwachsene
+                      {children > 0 ? `, ${children} Kinder` : ""}
+                    </strong>{" "}
                     ausgewählt
                   </p>
                 </div>
@@ -141,12 +234,10 @@ const BookingFormPage = () => {
                   Ihre Preisübersicht
                 </h3>
                 <div className="bg-gray-50 p-4 rounded-lg">
-                  <p className="text-gray-700">Originalpreis: 351,20 €</p>
-                  <p className="text-blue-600 font-medium">
-                    Booking.com zahlt: – 35,12 €
-                  </p>
-                  <div className="border-t border-gray-200 pt-3 mt-3">
-                    <p className="text-2xl font-bold text-blue-500">316,08 €</p>
+                  <div className="pt-1 mt-1">
+                    <p className="text-2xl font-bold text-blue-500 pb-1">
+                      {totalPrice}€
+                    </p>
                     <p className="text-gray-600 text-xs">
                       Zusätzliche Gebühren können anfallen
                     </p>
@@ -155,7 +246,7 @@ const BookingFormPage = () => {
               </div>
             </div>
 
-            {/* Right panel - Form */}
+            {/* Rechte Seite - Formular */}
             <div className="w-full lg:w-2/3 bg-white shadow-lg rounded-xl p-6 md:p-8">
               <h2 className="text-2xl font-bold mb-6 text-gray-700">
                 Geben Sie Ihre Daten ein

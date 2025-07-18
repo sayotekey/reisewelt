@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   FaMapMarkerAlt,
   FaThumbsUp,
@@ -19,6 +19,7 @@ import hotels from "../data/hotels";
 
 const HamburgHotelsPage = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const searchParams = new URLSearchParams(location.search);
   const startDateParam = searchParams.get("startDate");
   const endDateParam = searchParams.get("endDate");
@@ -45,7 +46,6 @@ const HamburgHotelsPage = () => {
 
   const filteredHotels = useMemo(() => {
     let filtered = hotels.filter((hotel) => {
-
       // Filterung nach Preiskategorie
       if (filters.priceRange === "under300" && hotel.priceValue >= 300)
         return false;
@@ -144,7 +144,6 @@ const HamburgHotelsPage = () => {
   return (
     <div className="pt-15">
       <div className="flex flex-col lg:flex-row p-4 gap-6 bg-gray-50 min-h-screen">
-
         {/* Filter */}
         <aside className="w-full lg:w-1/4 bg-white p-6 rounded-lg shadow-md h-fit">
           <div className="flex justify-between items-center mb-6">
@@ -158,7 +157,6 @@ const HamburgHotelsPage = () => {
           </div>
 
           <div className="space-y-6">
-
             {/* 1. Preiskategorie */}
             <div>
               <label className="block font-semibold text-gray-700 mb-2">
@@ -376,7 +374,6 @@ const HamburgHotelsPage = () => {
 
           <div className="grid gap-6">
             {filteredHotels.map((hotel) => {
-
               // Datums-Berechnungen aus URL Parameter oder Hotel-Daten
               const startDate = startDateParam
                 ? new Date(startDateParam)
@@ -410,7 +407,7 @@ const HamburgHotelsPage = () => {
                   const totalPrice = hotel.priceValue * nights;
                   return `${totalPrice}€`;
                 }
-                return hotel.price; 
+                return hotel.price;
               };
 
               return (
@@ -517,9 +514,13 @@ const HamburgHotelsPage = () => {
                             onClick={(e) => {
                               e.preventDefault();
                               e.stopPropagation();
-                              
-                              // Buchungslogik hier
-                              console.log("Booking hotel:", hotel.name);
+                              const params = new URLSearchParams();
+                              params.append("hotelId", hotel.id);
+                              if (startDateParam) params.append("startDate", startDateParam);
+                              if (endDateParam) params.append("endDate", endDateParam);
+                              if (adultsParam) params.append("adults", adultsParam);
+                              if (childrenParam) params.append("children", childrenParam);
+                              navigate(`/booking?${params.toString()}`);
                             }}
                             className="mt-2 px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-400 transition-colors font-medium shadow-md hover:shadow-lg"
                           >
