@@ -153,7 +153,7 @@ const TopTravelDestinations = () => {
     >
       <div className="mb-8">
         <h2
-          className="text-3xl font-bold mb-4 pl-4"
+          className="text-3xl font-medium mb-4 pl-4"
           style={{ color: "var(--text-color)" }}
         >
           {t("topTravel.title") || "Top Reiseziele"} –{" "}

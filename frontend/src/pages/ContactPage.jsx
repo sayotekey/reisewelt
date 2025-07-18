@@ -2,13 +2,25 @@ import faqData from "../data/faqData";
 import ContactForm from "../components/Contact/ContactForm";
 import FaqComponent from "../components/Contact/FaqComponent";
 import contactBild from "../images/contact.png";
+import { useTheme } from "../context/ThemeContext";
 
 const ContactPage = () => {
+  const { isDark } = useTheme();
+
   return (
-    <>
+    <div
+      style={{
+        backgroundColor: "var(--bg-primary)",
+        color: "var(--text-color)",
+        minHeight: "100vh",
+      }}
+    >
       {/* Kontaktinformation Section */}
-      <section className="max-w-7xl mx-auto px-4 py-12 mt-18 ">
-        <h2 className="text-xl font-semibold text-center text-black lg:text-2xl mb-6">
+      <section className="max-w-7xl mx-auto px-4 py-12 mt-18">
+        <h2
+          className="text-xl font-semibold text-center lg:text-2xl mb-6"
+          style={{ color: "var(--text-color)" }}
+        >
           Hilfe und Kontakt
         </h2>
         <div className="flex flex-col lg:flex-row gap-10 items-start">
@@ -22,7 +34,10 @@ const ContactPage = () => {
           </div>
 
           {/* Recht Kolumne */}
-          <div className="w-full lg:w-7/12 text-gray-800 space-y-3 text-justify">
+          <div
+            className="w-full lg:w-7/12 space-y-3 text-justify"
+            style={{ color: "var(--text-color)" }}
+          >
             <p>Herzlich willkommen bei Reisewelt!</p>
             <p>
               Wir sind rund um die Uhr für Sie da - 24 Stunden am Tag, 7 Tage
@@ -58,6 +73,7 @@ const ContactPage = () => {
                   strokeWidth={1.5}
                   stroke="currentColor"
                   className="size-6"
+                  style={{ color: "var(--text-color)" }}
                 >
                   <path
                     strokeLinecap="round"
@@ -81,6 +97,7 @@ const ContactPage = () => {
                   strokeWidth={1.5}
                   stroke="currentColor"
                   className="size-6"
+                  style={{ color: "var(--text-color)" }}
                 >
                   <path
                     strokeLinecap="round"
@@ -99,6 +116,7 @@ const ContactPage = () => {
                   strokeWidth={1.5}
                   stroke="currentColor"
                   className="size-6"
+                  style={{ color: "var(--text-color)" }}
                 >
                   <path
                     strokeLinecap="round"
@@ -119,7 +137,7 @@ const ContactPage = () => {
 
       {/* FAQ Section */}
       <FaqComponent faqData={faqData} />
-    </>
+    </div>
   );
 };
 

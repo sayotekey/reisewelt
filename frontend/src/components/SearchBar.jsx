@@ -120,6 +120,20 @@ export default function SearchForm() {
       setError(""); // optional: reset error before fetch
       setHotels([]); // optional: clear previous hotels
       setLoading(true); // <-- Spinner sichtbar machen
+
+      // Speichern der letzten Suchanfrage im Local Storage
+      const previousSearches =
+        JSON.parse(localStorage.getItem("lastSearches")) || [];
+      const newSearch = {
+        to: myCity,
+        startDate: startDate ? startDate.toISOString() : null,
+        endDate: endDate ? endDate.toISOString() : null,
+        adults,
+        children,
+      };
+      const updatedSearches = [newSearch, ...previousSearches].slice(0, 3); // Limit to 3 searches
+      localStorage.setItem("lastSearches", JSON.stringify(updatedSearches));
+
       const response = await axios.get(
         "http://localhost:3000/api/uuid/generate",
         {
@@ -278,16 +292,18 @@ export default function SearchForm() {
       localStorage.setItem("lastSearches", JSON.stringify(updatedSearches));
     } catch (error) {
       console.error("Error fetching hotels:", error.message);
+      setLoading(false); // <-- Spinner ausblenden bei Fehler
+      setError("Fehler beim Laden der Hotels. Bitte versuchen Sie es erneut.");
       return [];
     }
   };
 
   return (
     <div
-      className=" text-gray-600 p-6 rounded-2xl w-full max-w-7xl -mt-20 z-50 mx-auto shadow-md relative"
+      className=" text-gray-700 p-6 rounded-2xl w-full max-w-5xl -mt-20 z-50 mx-auto shadow-md relative"
       style={{
         background: "linear-gradient(135deg, #ff7626, #ff7851)",
-        boxShadow: "0 4px 20px rgba(255, 118, 38, 0.3)",
+        boxShadow: "0 4px 20px rgba(0, 0, 0, 0.2)",
       }}
     >
       <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 md:gap-3 lg:grid-cols-2 xl:grid-cols-4 gap-6">
@@ -532,13 +548,46 @@ export default function SearchForm() {
           onClick={() => {
             handleSearch();
             // Only fetch hotels if there is no error, myCity is valid, and both dates are selected
+
             if (
               myCity &&
               validCities.includes(myCity) &&
               startDate &&
               endDate
             ) {
-              getCombinedData(myCity);
+              // getCombinedData(myCity);
+              if (myCity.toLowerCase() === "hamburg") {
+                // Hamburg Suche in localStorage speichern
+                const previousSearches =
+                  JSON.parse(localStorage.getItem("lastSearches")) || [];
+                const newSearch = {
+                  to: "Hamburg",
+                  startDate: startDate ? startDate.toISOString() : null,
+                  endDate: endDate ? endDate.toISOString() : null,
+                  adults,
+                  children,
+                };
+                const updatedSearches = [newSearch, ...previousSearches].slice(
+                  0,
+                  3
+                );
+                localStorage.setItem(
+                  "lastSearches",
+                  JSON.stringify(updatedSearches)
+                );
+
+                // Weiterleitung zur Hamburg Seite
+                const params = new URLSearchParams();
+                if (startDate)
+                  params.append("startDate", startDate.toISOString());
+                if (endDate) params.append("endDate", endDate.toISOString());
+                params.append("adults", adults);
+                params.append("children", children);
+
+                window.location.href = `/hamburg-hotels?${params.toString()}`;
+              } else {
+                getCombinedData(myCity);
+              }
             } else if (!startDate || !endDate) {
               setError("Bitte Reisedatum angeben!");
             }
@@ -567,9 +616,10 @@ export default function SearchForm() {
         </div>
       )}
       <div className="mt-6">
-        {/* <h2 className="text-lg font-semibold mb-4">
+        {/*   {/* <h2 className="text-lg font-semibold mb-4">
           {t("search.foundHotels") || "Gefundene Hotels in"} {myCity}:
-        </h2> */}
+        </h2> */}{" "}
+        */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-6">
           {/* ab hier Hotelcards-data */}
 

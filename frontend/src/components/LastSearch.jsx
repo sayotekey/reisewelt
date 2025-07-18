@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import lastSearchImg from "../images/lastSearchImg.png";
 import { useTranslate } from "../locales/index.js";
 
 const LastSearch = () => {
   const [lastSearches, setLastSearches] = useState([]);
   const { t } = useTranslate();
-
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Beim Laden der Komponente, Daten aus localStorage abrufen
     const storedSearches = localStorage.getItem("lastSearches");
 
     if (storedSearches) {
@@ -18,12 +18,25 @@ const LastSearch = () => {
 
   const formatDate = (isoDate) => {
     if (!isoDate) return "-";
-    const date = new Date(isoDate); // Konvertiere den ISO-Datum-String in ein Date-Objekt
+    const date = new Date(isoDate);
     return date.toLocaleDateString("de-DE", {
-      day: "2-digit", // Tag in zweistelliger Form (z.B. 01, 02, ..., 31)
-      month: "2-digit", // Monat in zweistelliger Form (z.B. 01, 02, ..., 12)
-      year: "numeric", // Jahr in numerischer Form (z.B. 2025)
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
     });
+  };
+
+  const handleSearchClick = (search) => {
+    if (search.to.toLowerCase() === "hamburg") {
+      //  Navigate to Hamburg hotels
+      const params = new URLSearchParams();
+      if (search.startDate) params.append("startDate", search.startDate);
+      if (search.endDate) params.append("endDate", search.endDate);
+      if (search.adults) params.append("adults", search.adults);
+      if (search.children) params.append("children", search.children);
+
+      navigate(`/hamburg-hotels?${params.toString()}`);
+    }
   };
 
   if (!lastSearches || lastSearches.length === 0) {
@@ -31,30 +44,75 @@ const LastSearch = () => {
   }
 
   return (
-    <div className="mt-10 px-">
-      <h2 className="text-xl font-bold mb-4 text-center">
+    <div className="mt-12 px-4">
+      <h2 className="text-2xl font-medium mb-8 text-left text-gray-600">
         {t("lastSearch.title") || "Ihre letzten Suchen"}
       </h2>
 
-      <div className="flex flex-wrap gap-6 justify-center">
-        {lastSearches.map((search, index) => (
-          <div key={index} className="flex w-80 last-search shadow-xl " >
-            <div className="w-32 flex-shrink-0 bg-gray-200">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 max-w-screen-xl mx-auto">
+        {lastSearches.slice(0, 4).map((search, index) => (
+          <div
+            key={index}
+            className="bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-200 hover:border-blue-300 cursor-pointer transform hover:-translate-y-1"
+            onClick={() => handleSearchClick(search)}
+          >
+            <div className="relative h-20 bg-gradient-to-br from-blue-400 to-indigo-600">
               <img
                 src={lastSearchImg}
                 alt="Reiseziel"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover opacity-80"
               />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
             </div>
 
-            <div className="flex flex-col justify-center p-4 text-sm text-gray-800">
-              <p className="font-bold mb-3">{search.to || "-"}</p>
-              <p className="mb-1">
-                {formatDate(search.startDate)} - {formatDate(search.endDate)}
-              </p>
-              <p>
-                {search.adults} {t("lastSearch.adults") || "Erwachsene"} | {search.children} {t("lastSearch.children") || "Kinder"}
-              </p>
+            <div className="p-2">
+              <h3 className="font-bold text-sm text-gray-800 mb-2 truncate">
+                {search.to || "Unbekanntes Ziel"}
+              </h3>
+
+              <div className="flex items-center text-gray-600 mb-1">
+                <svg
+                  className="w-3 h-3 mr-1"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
+                </svg>
+                <span className="text-xs">
+                  {formatDate(search.startDate)} - {formatDate(search.endDate)}
+                </span>
+              </div>
+
+              <div className="flex justify-between text-xs text-gray-600">
+                <div className="flex items-center">
+                  <svg
+                    className="w-3 h-3 mr-1"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                    />
+                  </svg>
+                  <span className="pr-2">
+                    {search.adults} {t("lastSearch.adults") || "Erw."}
+                  </span>
+
+                  <span>
+                    {search.children} {t("lastSearch.children") || "Kinder"}
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
         ))}

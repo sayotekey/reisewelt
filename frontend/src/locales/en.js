@@ -1,3 +1,5 @@
+import CustomerReviews from "../components/CustomerReviews";
+
 export const en = {
   // Header navigation
   header: {
@@ -134,6 +136,11 @@ export const en = {
     validEmail: "Please enter a valid email address.",
     subscribeSuccess: "Thank you! You have successfully subscribed to our newsletter.",
     subscribeError: "An error occurred. Please try again later."
+  },
+
+  //customer reviews
+  customerReviews:{
+kunden: "Customer Reviews",
   }
 
 };
