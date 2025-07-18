@@ -148,7 +148,12 @@ export default function SearchForm() {
         "http://localhost:3000/api/uuid/generate",
         {
           params: {
-            cityName: myCity, // city-string zum backend schicken
+            //zum backend schicken
+            cityName: myCity,
+            startDate: startDate,
+            endDate: endDate,
+            adults: adults,
+            children: children,
           },
         }
       );
@@ -209,73 +214,7 @@ export default function SearchForm() {
       console.log("allHotels", allHotels);
 
       localStorage.setItem("lastHotels", JSON.stringify(allHotels));
-      //
-      // let currentCount = countRaw;
-      // let elapsed = 0;
-      // const maxWait = 50000; // 50 Sekunden
-      // while (currentCount === 0 && elapsed < maxWait) {
-      //   await new Promise((resolve) => setTimeout(resolve, 3000));
-      //   elapsed += 3000;
-      //   // solange bis mindestens 1 Hotel gefunden wurde
-      //   // oder nach 50sekunden abgebrochen wird
-      //   const retryResponse = await axios.get(url);
-      //   currentCount = parseInt(retryResponse.data.count, 10);
-      //   flag = retryResponse.data.flag;
-      //   console.log("Retry Count:", retryResponse.data.count);
-      //   console.log("retry flag", flag);
 
-      //   if (currentCount > 0) {
-      //     // 3. Endpunkt: Abfrage der Hotels, die unter dieser UUID gespeichert sind
-      //     let allHotels = [];
-      //     let offset = 0;
-      //     // Hole immer nur 3 Hotels pro Durchgang
-      //     while (flag === false) {
-      //       try {
-      //         const urlHotel = "http://localhost:3000/api/uuid/hotels";
-      //         const hotelResponse = await axios.get(urlHotel, {
-      //           params: {
-      //             limit: 3,
-      //             count: offset,
-      //             uuid: myUuid,
-      //           },
-      //         });
-      //         const hotelData = hotelResponse.data.hotels;
-      //         console.log("hotelData:", hotelData);
-
-      //         flag = hotelResponse.data.flag;
-      //         console.log("Hotels aus der MongoDB:", hotelData);
-
-      //         // Füge neue Hotels zu allHotels hinzu, ohne Duplikate
-      //         allHotels = [...allHotels, ...hotelData].filter(
-      //           (hotel, idx, arr) =>
-      //             arr.findIndex(
-      //               (h) =>
-      //                 h.hotel &&
-      //                 hotel.hotel &&
-      //                 h.hotel.dupeId === hotel.hotel.dupeId
-      //             ) === idx
-      //         );
-      //         offset += hotelData.length;
-      //         // Breche die Schleife ab, wenn flag true ist oder keine neuen Hotels mehr kommen
-      //         if (flag === true || hotelData.length === 0) {
-      //           break;
-      //         }
-      //         // if (flag === true) {
-      //         //   break;
-      //         // }
-      //         await new Promise((resolve) => setTimeout(resolve, 500));
-      //       } catch (error) {
-      //         console.log("Fehler beim Abrufen der Hotels:", error.message);
-      //         setLoading(false);
-      //         break; // Break the loop if an error occurs
-      //       }
-      //     }
-      //     setHotels([...allHotels]); // Zeige alle geladenen Hotels nach dem Laden an
-      //     setLoading(false); // <-- Spinner ausblenden
-      //   }
-      // }
-
-      //
       // Lesen die zuletzt gespeicherten Suchen aus localStorage
       const previousSearches =
         JSON.parse(localStorage.getItem("lastSearches")) || [];

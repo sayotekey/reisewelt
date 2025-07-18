@@ -17,7 +17,6 @@ import validCities from "../utils/validCities.js";
 import { useTranslate } from "../locales/index.js"; // Import the translation context
 
 const MiniSearchbar = () => {
-  // const [myUuid, setMyUuid] = useState(null);
   const [adults, setAdults] = useState(2);
   const [children, setChildren] = useState(0);
   const [childrenAges, setChildrenAges] = useState([]);

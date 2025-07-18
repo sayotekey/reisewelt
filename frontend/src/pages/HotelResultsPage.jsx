@@ -60,7 +60,7 @@ const HotelResultsPage = () => {
   const [startDate, endDate] = dateRange;
   const [loading, setLoading] = useState(false);
   // const [loading, setLoading] = useState(true);
-  const [showErrorInfo, setShowErrorInfo] = useState(false);
+  const [errorInfo, setErrorInfo] = useState("");
   const [error, setError] = useState("");
   const dropdownRef = useRef();
   const navigate = useNavigate();
@@ -120,8 +120,14 @@ const HotelResultsPage = () => {
 
   ///
   useEffect(() => {
-    // Nur ausführen, wenn alle Parameter vorhanden sind
-    if (myCity && startDate && endDate && adults && children) {
+    // Nur ausführen, wenn alle Parameter vorhanden sind (children kann auch 0 sein)
+    if (
+      myCity &&
+      startDate &&
+      endDate &&
+      typeof adults === "number" &&
+      typeof children === "number"
+    ) {
       setLoading(true);
       setError("");
       setHotels([]);
@@ -346,7 +352,11 @@ const HotelResultsPage = () => {
               <div className="bg-white w-2/3 p-6 rounded-xl shadow-xl justify-center">
                 <div className="w-full border flex border-pink-300">
                   <div className="w-3/4 border border-amber-500">
-                    <p>Error</p>
+                    <p>
+                      {errorInfo && (
+                        <div className="text-red-600 mt-2">{errorInfo}</div>
+                      )}
+                    </p>
                   </div>
                   <button
                     onClick={togglePopup}
@@ -648,11 +658,11 @@ const HotelResultsPage = () => {
                         );
                       } else if (!startDate || !endDate) {
                         // setError("Bitte ein Reisedatum angeben!");
-                        setShowErrorInfo("Bitte ein Reisedatum angeben!");
+                        setErrorInfo("Bitte ein Reisedatum angeben!");
                       } else if (!myCity) {
-                        setShowErrorInfo("Bitte einen Städtenamen eingeben.");
+                        setErrorInfo("Bitte einen Städtenamen eingeben.");
                       } else if (!validCities.includes(myCity)) {
-                        setShowErrorInfo("Ungültigen Städtename gefunden!");
+                        setErrorInfo("Ungültigen Städtename gefunden!");
                       }
                     }}
                     style={{
@@ -805,7 +815,7 @@ const HotelResultsPage = () => {
                           Preis ab:{" "}
                           {hotel.offers[0].price.total
                             ? hotel.offers[0].price.total.replace(".", ",")
-                            : ""}
+                            : ""}{" "}
                           {hotel.offers[0].price.currency}{" "}
                           {hotel.offers[0]?.price.currency.replace("EUR", "€")}
                         </p>{" "}
