@@ -385,7 +385,15 @@ const HotelDetailPage = () => {
                 backgroundColor: "var(--accent-color)",
                 color: "white",
               }}
-              onClick={() => navigate("/booking")}
+              onClick={() => {
+                const params = new URLSearchParams();
+                params.append("hotelId", hotelData.id);
+                if (startDateParam) params.append("startDate", startDateParam);
+                if (endDateParam) params.append("endDate", endDateParam);
+                if (adultsParam) params.append("adults", adultsParam);
+                if (childrenParam) params.append("children", childrenParam);
+                navigate(`/booking?${params.toString()}`);
+              }}
               onMouseEnter={(e) => {
                 e.target.style.backgroundColor = "var(--accent-hover)";
               }}
