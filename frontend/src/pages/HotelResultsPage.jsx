@@ -21,10 +21,14 @@ import {
   FaBed,
   FaUtensils,
   FaSpinner,
-  // FaCar,
-  // FaDog,
-  // FaSwimmingPool,
-  // FaWifi,
+  FaCar,
+  FaDog,
+  FaSwimmingPool,
+  FaWifi,
+  FaBuilding,
+  FaSnowflake,
+  FaSpa,
+  FaDumbbell,
 } from "react-icons/fa";
 import validCities from "../utils/validCities.js";
 import hotelRooms from "../data/hotelRooms";
@@ -115,7 +119,9 @@ const HotelResultsPage = () => {
     setMyCity(e.target.value);
     setShowSuggestions(true);
     setSelectedIndex(-1);
-    // setError("");
+    if (e.target.value.trim() !== "") {
+      setErrorInfo("");
+    }
   };
 
   ///
@@ -182,13 +188,10 @@ const HotelResultsPage = () => {
   };
 
   const handleSearch = () => {
-    let valid = true;
     if (!myCity) {
       setCityError("Bitte einen Städtenamen eingeben.");
-      valid = false;
     } else if (!validCities.includes(myCity)) {
       setCityError("Ungültiger Städtename, bitte Eingabe überprüfen.");
-      valid = false;
     } else {
       setCityError("");
       setShowSuggestions(false);
@@ -349,9 +352,9 @@ const HotelResultsPage = () => {
           {showPopup && (
             <div className="fixed inset-0 bg-white/10 backdrop-blur-md border border-white/40 h-2/3 bg-opacity-50 z-50 flex items-center justify-center">
               {/*  bg-gray-500  w-full */}
-              <div className="bg-white w-2/3 p-6 rounded-xl shadow-xl justify-center">
-                <div className="w-full border flex border-pink-300">
-                  <div className="w-3/4 border border-amber-500">
+              <div className="bg-white w-2/3 p-6 rounded-xl shadow-xl border border-gray-200 justify-center">
+                <div className="w-full flex relative">
+                  <div className="w-3/4">
                     <p>
                       {errorInfo && (
                         <div className="text-red-600 mt-2">{errorInfo}</div>
@@ -360,9 +363,9 @@ const HotelResultsPage = () => {
                   </div>
                   <button
                     onClick={togglePopup}
-                    className="text-gray-400 hover:text-black relative w-fit border border-gray-300"
+                    className="text-gray-400 p-2 hover:text-black absolute top-0 right-0 w-fit border border-gray-300"
                   >
-                    <img src={xButtonDelete} alt="" width={15} />
+                    <img src={xButtonDelete} alt="icon: x" width={15} />
                   </button>
                 </div>
                 {/* Reiseziel */}
@@ -452,6 +455,10 @@ const HotelResultsPage = () => {
                         endDate={endDate}
                         onChange={(update) => {
                           setDateRange(update);
+                          // Fehler ausblenden, wenn beide Daten gesetzt sind
+                          if (update[0] && update[1]) {
+                            setErrorInfo("");
+                          }
                         }}
                         className="w-full mt-1 border rounded px-3 py-2"
                         wrapperClassName="w-full"
@@ -683,7 +690,218 @@ const HotelResultsPage = () => {
           )}
         </div>
       </div>
-      <aside>{/* Filter */}</aside>
+      {/* Filter */}
+      <aside className="w-full lg:w-1/4 bg-white p-6 rounded-lg shadow-md h-fit">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold text-gray-600">Filter</h2>
+          <button
+            // onClick={resetFilters}
+            className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+          >
+            Zurücksetzen
+          </button>
+        </div>
+
+        <div className="space-y-6">
+          {/* 1. Preiskategorie */}
+          <div>
+            <label className="block font-semibold text-gray-700 mb-2">
+              Preiskategorie
+            </label>
+            <select
+              // value={filters.priceRange}
+              // onChange={(e) => handleFilterChange("priceRange", e.target.value)}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-300"
+            >
+              <option value="all">Alle Preise</option>
+              <option value="under300">Unter 300€</option>
+              <option value="300-350">300€ - 350€</option>
+              <option value="over350">Über 350€</option>
+            </select>
+          </div>
+
+          {/* 2. Sterne */}
+          <div>
+            <label className="block font-semibold text-gray-700 mb-2">
+              Sterne
+            </label>
+            <select
+              // value={filters.stars}
+              // onChange={(e) => handleFilterChange("stars", e.target.value)}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="all">Alle Sterne</option>
+              <option value="3">3 Sterne</option>
+              <option value="4">4 Sterne</option>
+              <option value="5">5 Sterne</option>
+            </select>
+          </div>
+
+          {/* 3. Bewertung */}
+          <div>
+            <label className="block font-semibold text-gray-700 mb-2">
+              Bewertung
+            </label>
+            <select
+              // value={filters.rating}
+              // onChange={(e) => handleFilterChange("rating", e.target.value)}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="all">Alle Bewertungen</option>
+              <option value="above80">Ab 80%</option>
+              <option value="above90">Ab 90%</option>
+              <option value="above95">Ab 95%</option>
+            </select>
+          </div>
+
+          {/* 4. Stadtteil */}
+          <div>
+            <label className="block font-semibold text-gray-700 mb-2">
+              Stadtteil
+            </label>
+            <select
+              // value={filters.district}
+              // onChange={(e) => handleFilterChange("district", e.target.value)}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="all">Alle Stadtteile</option>
+              <option value="Altstadt">Altstadt</option>
+              <option value="Speicherstadt">Speicherstadt</option>
+              <option value="St. Pauli">St. Pauli</option>
+              <option value="Rotherbaum">Rotherbaum</option>
+              <option value="Neustadt">Neustadt</option>
+              <option value="Harburg">Harburg</option>
+            </select>
+          </div>
+
+          {/* 5. Verpflegung */}
+          <div>
+            <label className="block font-semibold text-gray-700 mb-2">
+              Verpflegung
+            </label>
+            <select
+              // value={filters.breakfast}
+              // onChange={(e) => handleFilterChange("breakfast", e.target.value)}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="all">Alle Optionen</option>
+              <option value="Frühstück">Frühstück</option>
+              <option value="Halbpension">Halbpension</option>
+              <option value="All-Inclusive">All-Inclusive</option>
+            </select>
+          </div>
+
+          {/* 6. Zimmertyp */}
+          <div>
+            <label className="block font-semibold text-gray-600 mb-2">
+              Zimmertyp
+            </label>
+            <select
+              // value={filters.roomType}
+              // onChange={(e) => handleFilterChange("roomType", e.target.value)}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="all">Alle Zimmertypen</option>
+              <option value="Economy">Economy</option>
+              <option value="Standard">Standard</option>
+              <option value="Deluxe">Deluxe</option>
+              <option value="Suite">Suite</option>
+            </select>
+          </div>
+
+          {/* Ausstattung */}
+          <div>
+            <label className="block font-semibold text-gray-600 mb-3">
+              Ausstattung
+            </label>
+            <div className="space-y-3">
+              {[
+                {
+                  key: "parking",
+                  label: "Parkplatz",
+                  // value: filters.parking,
+                  icon: <FaCar className="text-blue-400" />,
+                },
+                {
+                  key: "petFriendly",
+                  label: "Haustierfreundlich",
+                  // value: filters.petFriendly,
+                  icon: <FaDog className="text-blue-400" />,
+                },
+                {
+                  key: "businessCenter",
+                  label: "Business Center",
+                  // value: filters.businessCenter,
+                  icon: <FaBuilding className="text-blue-400" />,
+                },
+                {
+                  key: "pool",
+                  label: "Pool",
+                  // value: filters.pool,
+                  icon: <FaSwimmingPool className="text-blue-400" />,
+                },
+                {
+                  key: "wifi",
+                  label: "WLAN",
+                  // value: filters.wifi,
+                  icon: <FaWifi className="text-blue-400" />,
+                },
+                {
+                  key: "airConditioning",
+                  label: "Klimaanlage",
+                  // value: filters.airConditioning,
+                  icon: <FaSnowflake className="text-blue-400" />,
+                },
+                {
+                  key: "spa",
+                  label: "Spa",
+                  // value: filters.spa,
+                  icon: <FaSpa className="text-blue-400" />,
+                },
+                {
+                  key: "fitness",
+                  label: "Fitnessstudio",
+                  // value: filters.fitness,
+                  icon: <FaDumbbell className="text-blue-400" />,
+                },
+              ].map((filter) => (
+                <label
+                  key={filter.key}
+                  className="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors"
+                >
+                  <input
+                    type="checkbox"
+                    // checked={filter.value}
+                    // onChange={(e) =>
+                    //   handleFilterChange(filter.key, e.target.checked)
+                    // }
+                    className="appearance-none w-4 h-4 border-2 border-orange-400 rounded checked:bg-blue-400 checked:border-blue-200 focus:ring-blue-500"
+                  />
+                  {filter.icon}
+                  <span className="text-gray-600">{filter.label}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          {/* Sortierung */}
+          <div>
+            <label className="block font-semibold text-gray-700 mb-2">
+              Sortieren nach
+            </label>
+            <select
+              // value={filters.sortBy}
+              // onChange={(e) => handleFilterChange("sortBy", e.target.value)}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="rating">Bewertung (höchste zuerst)</option>
+              <option value="price_low">Preis (niedrigste zuerst)</option>
+              <option value="price_high">Preis (höchste zuerst)</option>
+              <option value="stars">Sterne (höchste zuerst)</option>
+            </select>
+          </div>
+        </div>
+      </aside>
 
       <div className="p-6">
         <h1 className="text-2xl font-bold mb-4">Gefundene Hotels</h1>
@@ -700,8 +918,12 @@ const HotelResultsPage = () => {
         ) : (
           hotels.map((hotel) => (
             <div key={hotel.hotel.dupeId}>
+              <p className="text-gray-600">
+                {hotels.length} Angebote für Hotels in{" "}
+                {myCity || lastSearches[0]?.to} verfügbar
+              </p>
               <div
-                className="flex flex-col md:flex-row bg-white shadow-lg rounded-xl overflow-hidden hover:shadow-2xl transition-all duration-300 border border-gray-100"
+                className="flex flex-col md:flex-row bg-gray-50 shadow-lg rounded-xl overflow-hidden hover:shadow-2xl transition-all duration-300 border border-gray-100"
                 onClick={() =>
                   (window.location.href = `/hotel/${hotel.hotel.dupeId}`)
                 }
