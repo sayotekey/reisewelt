@@ -264,7 +264,7 @@ const ProfilePage = () => {
         </ul>
 
         {/* Logout Button */}
-        <div className="mt-auto p-4">
+{/*         <div className="mt-auto p-4">
           <button
             onClick={handleLogout}
             className="w-full py-2 px-4 flex items-center justify-center rounded-xl transition-all duration-500"
@@ -297,7 +297,7 @@ const ProfilePage = () => {
             </svg>
             Logout
           </button>
-        </div>
+        </div> */}
       </div>
 
       {/* Rechter Bereich - Inhalt basierend auf dem aktiven Tab */}
