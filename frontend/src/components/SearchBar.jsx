@@ -121,6 +121,20 @@ export default function SearchForm() {
       setError(""); // optional: reset error before fetch
       setHotels([]); // optional: clear previous hotels
       setLoading(true); // <-- Spinner sichtbar machen
+
+      // Speichern der letzten Suchanfrage im Local Storage
+      const previousSearches =
+        JSON.parse(localStorage.getItem("lastSearches")) || [];
+      const newSearch = {
+        to: myCity,
+        startDate: startDate ? startDate.toISOString() : null,
+        endDate: endDate ? endDate.toISOString() : null,
+        adults,
+        children,
+      };
+      const updatedSearches = [newSearch, ...previousSearches].slice(0, 3); // Limit to 3 searches
+      localStorage.setItem("lastSearches", JSON.stringify(updatedSearches));
+
       const response = await axios.get(
         "http://localhost:3000/api/amadeus/combined",
         {
@@ -134,22 +148,10 @@ export default function SearchForm() {
       setHotels(response.data);
       setLoading(false); // <-- Spinner ausblenden
 
-      // Lesen die zuletzt gespeicherten Suchen aus localStorage
-      const previousSearches =
-        JSON.parse(localStorage.getItem("lastSearches")) || [];
-      // Create a new search object
-      const newSearch = {
-        to: myCity,
-        startDate: startDate ? startDate.toISOString() : null,
-        endDate: endDate ? endDate.toISOString() : null,
-        adults,
-        children,
-      };
-      //
-      const updatedSearches = [newSearch, ...previousSearches].slice(0, 3); // Limit to 3 searches
-      localStorage.setItem("lastSearches", JSON.stringify(updatedSearches));
     } catch (error) {
       console.error("Error fetching hotels:", error.message);
+      setLoading(false); // <-- Spinner ausblenden bei Fehler
+      setError("Fehler beim Laden der Hotels. Bitte versuchen Sie es erneut.");
       return [];
     }
   };
@@ -391,6 +393,20 @@ export default function SearchForm() {
             ) {
               // getCombinedData(myCity);
               if (myCity.toLowerCase() === "hamburg") {
+                // Hamburg Suche in localStorage speichern
+                const previousSearches =
+                  JSON.parse(localStorage.getItem("lastSearches")) || [];
+                const newSearch = {
+                  to: "Hamburg",
+                  startDate: startDate ? startDate.toISOString() : null,
+                  endDate: endDate ? endDate.toISOString() : null,
+                  adults,
+                  children,
+                };
+                const updatedSearches = [newSearch, ...previousSearches].slice(0, 3);
+                localStorage.setItem("lastSearches", JSON.stringify(updatedSearches));
+
+                // Weiterleitung zur Hamburg Seite
                 const params = new URLSearchParams();
                 if (startDate)
                   params.append("startDate", startDate.toISOString());

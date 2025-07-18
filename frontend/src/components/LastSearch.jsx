@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import lastSearchImg from "../images/lastSearchImg.png";
 import { useTranslate } from "../locales/index.js";
 
 const LastSearch = () => {
   const [lastSearches, setLastSearches] = useState([]);
   const { t } = useTranslate();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const storedSearches = localStorage.getItem("lastSearches");
@@ -24,6 +26,19 @@ const LastSearch = () => {
     });
   };
 
+  const handleSearchClick = (search) => {
+    if (search.to.toLowerCase() === "hamburg") {
+      //  Navigate to Hamburg hotels
+      const params = new URLSearchParams();
+      if (search.startDate) params.append("startDate", search.startDate);
+      if (search.endDate) params.append("endDate", search.endDate);
+      if (search.adults) params.append("adults", search.adults);
+      if (search.children) params.append("children", search.children);
+
+      navigate(`/hamburg-hotels?${params.toString()}`);
+    }
+  };
+
   if (!lastSearches || lastSearches.length === 0) {
     return null;
   }
@@ -39,6 +54,7 @@ const LastSearch = () => {
           <div
             key={index}
             className="bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-200 hover:border-blue-300 cursor-pointer transform hover:-translate-y-1"
+            onClick={() => handleSearchClick(search)}
           >
             <div className="relative h-20 bg-gradient-to-br from-blue-400 to-indigo-600">
               <img
@@ -91,7 +107,7 @@ const LastSearch = () => {
                   <span className="pr-2">
                     {search.adults} {t("lastSearch.adults") || "Erw."}
                   </span>
-                
+
                   <span>
                     {search.children} {t("lastSearch.children") || "Kinder"}
                   </span>
