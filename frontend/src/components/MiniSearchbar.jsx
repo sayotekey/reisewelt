@@ -137,7 +137,7 @@ const MiniSearchbar = () => {
   // 1.Endpunkt für UUID
   // onclick button anfrage an backend senden, um UUID zu generieren
   // und die UUID in der MongoDB zu speichern
-  const getCombinedData = async (myCity, query) => {
+  const getCombinedData = async () => {
     try {
       setError(""); // optional: reset error before fetch
       setHotels([]); // optional: clear previous hotels
@@ -146,9 +146,10 @@ const MiniSearchbar = () => {
         "http://localhost:3000/api/uuid/generate",
         {
           params: {
-            cityName: myCity, // city-string zum backend schicken
-            start: startDate.toISOString(),
-            end: endDate.toISOString(),
+            //zum backend schicken
+            cityName: myCity,
+            startDate: startDate,
+            endDate: endDate,
             adults: adults,
             children: children,
           },
@@ -383,17 +384,12 @@ const MiniSearchbar = () => {
                       className="w-full mt-1 border rounded px-3 py-2"
                       wrapperClassName="w-full"
                       placeholderText={
-                        lastSearches[0]?.startDate && lastSearches[0]?.endDate
-                          ? `${new Date(
-                              lastSearches[0].startDate
-                            ).toLocaleDateString()} – ${new Date(
-                              lastSearches[0].endDate
-                            ).toLocaleDateString()}`
-                          : ""
+                        t("search.selectDate") || "Datum auswählen"
                       }
                       dateFormat="dd.MM.yyyy"
                       monthsShown={2}
                       isClearable
+                      // selected={startDate}
                       selected={startDate}
                       customInput={
                         <input
@@ -560,6 +556,7 @@ const MiniSearchbar = () => {
                   className="bg-indigo-900 text-black px-6 py-2 rounded hover:bg-indigo-800 w-full"
                   onClick={async () => {
                     handleSearch();
+
                     // Only fetch hotels if there is no error, myCity is valid, and both dates are selected
                     if (
                       myCity &&
@@ -567,10 +564,24 @@ const MiniSearchbar = () => {
                       startDate &&
                       endDate
                     ) {
-                      const query = `city=${encodeURIComponent(
-                        myCity
-                      )}&start=${startDate.toISOString()}&end=${endDate.toISOString()}&adults=${adults}&children=${children}`;
-                      getCombinedData(myCity, query);
+                      getCombinedData();
+
+                      togglePopup();
+
+                      //Tag bei Zeitzonenverschiebung sonst falsch
+                      const transformStartDate =
+                        startDate.toLocaleDateString("sv-SE");
+                      console.log("check of startDate:", transformStartDate);
+
+                      const transformEndDate =
+                        endDate.toLocaleDateString("sv-SE");
+                      console.log("check of endDate:", transformEndDate);
+
+                      navigate(
+                        `/hotel-results?cityName=${encodeURIComponent(
+                          myCity
+                        )}&startDate=${transformStartDate}&endDate=${transformEndDate}&adults=${adults}&children=${children}`
+                      );
                     } else if (!startDate || !endDate) {
                       setError("Bitte ein Reisedatum angeben!");
                     } else if (!myCity) {

@@ -81,8 +81,32 @@ router.get("/generate", async (req, res) => {
   try {
     ///
     const { cityName, startDate, endDate, adults, children } = req.query;
+    function formatDate(date) {
+      return (
+        date.getFullYear() +
+        "-" +
+        String(date.getMonth() + 1).padStart(2, "0") +
+        "-" +
+        String(date.getDate()).padStart(2, "0")
+      );
+    }
+    const startDateObj = new Date(startDate);
+    const endDateObj = new Date(endDate);
+    const startDateFormatted = formatDate(startDateObj); // "2025-07-19"
+    const endDateFormatted = formatDate(endDateObj);
+
+    // Kinder sind API-Pay-Option
+    const combinedTravellers = Number(adults) + Number(children);
     ///
     console.log("Received cityName:", cityName);
+    console.log("startDate", startDate);
+    console.log("typeof startDate", typeof startDate); //string
+    console.log("endDate", endDate);
+    console.log("startDateFormatted", startDateFormatted);
+    console.log("endDateFormatted", endDateFormatted);
+    console.log("adults", adults);
+    console.log("travellers", combinedTravellers);
+
     // CityCode suchen
     const cityCode = cityNameToCode[cityName];
     if (!cityCode) {
@@ -124,7 +148,8 @@ router.get("/generate", async (req, res) => {
       console.log("Frage Hotel-IDs an:", batch);
 
       const result = await fetchFromAmadeus(
-        `/v3/shopping/hotel-offers?hotelIds=${batch}`,
+        `/v3/shopping/hotel-offers?hotelIds=${batch}&checkInDate=${startDateFormatted}&checkOutDate=${endDateFormatted}&adults=${combinedTravellers}`,
+        // `/v3/shopping/hotel-offers?hotelIds=${batch}`,
         token
       );
 
