@@ -277,19 +277,20 @@ export default function SearchForm() {
 
       //
       // Lesen die zuletzt gespeicherten Suchen aus localStorage
-      const previousSearches =
-        JSON.parse(localStorage.getItem("lastSearches")) || [];
-      // Create a new search object
-      const newSearch = {
-        to: myCity,
-        startDate: startDate ? startDate.toISOString() : null,
-        endDate: endDate ? endDate.toISOString() : null,
-        adults,
-        children,
-      };
+      //   const previousSearches =
+      //     JSON.parse(localStorage.getItem("lastSearches")) || [];
+      //   // Create a new search object
+      //   const newSearch = {
+      //     to: myCity,
+      //     startDate: startDate ? startDate.toISOString() : null,
+      //     endDate: endDate ? endDate.toISOString() : null,
+      //     adults,
+      //     children,
+      //   };
+      //   //
+      //   const updatedSearches = [newSearch, ...previousSearches].slice(0, 3); // Limit to 3 searches
+      //   localStorage.setItem("lastSearches", JSON.stringify(updatedSearches));
       //
-      const updatedSearches = [newSearch, ...previousSearches].slice(0, 3); // Limit to 3 searches
-      localStorage.setItem("lastSearches", JSON.stringify(updatedSearches));
     } catch (error) {
       console.error("Error fetching hotels:", error.message);
       setLoading(false); // <-- Spinner ausblenden bei Fehler
@@ -300,7 +301,7 @@ export default function SearchForm() {
 
   return (
     <div
-      className=" text-gray-700 p-6 rounded-2xl w-full max-w-5xl -mt-20 z-50 mx-auto shadow-md relative"
+      className=" text-gray-700 p-6 rounded-2xl w-full max-w-7xl -mt-20 z-50 mx-auto shadow-md relative"
       style={{
         background: "linear-gradient(135deg, #ff7626, #ff7851)",
         boxShadow: "0 4px 20px rgba(0, 0, 0, 0.2)",
@@ -616,10 +617,9 @@ export default function SearchForm() {
         </div>
       )}
       <div className="mt-6">
-        {/*   {/* <h2 className="text-lg font-semibold mb-4">
+        {/* <h2 className="text-lg font-semibold mb-4">
           {t("search.foundHotels") || "Gefundene Hotels in"} {myCity}:
         </h2> */}{" "}
-        */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-6">
           {/* ab hier Hotelcards-data */}
 
