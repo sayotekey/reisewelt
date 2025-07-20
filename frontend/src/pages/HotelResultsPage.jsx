@@ -12,7 +12,7 @@ import travelGoal from "../icons/mountain-city-solid-black.svg";
 import calendar from "../icons/calendar-days-solid-black.svg";
 // import pencil from "../icons/pencil-solid-black.svg";
 import pencil2 from "../icons/pencil-solid-white.svg";
-// import wishlistHeartFull from "../icons/heart-solid-black.svg";
+import wishlistHeartFull from "../icons/heart-solid-black.svg";
 import wishlistHeartEmpty from "../icons/heart-regular-black.svg";
 import {
   // FaCalendarAlt,
@@ -295,7 +295,7 @@ const HotelResultsPage = () => {
         setError("Es wurden keine Hotels gefunden.");
         setLoading(false);
       } else {
-        // setHotels([...allHotels]);
+        setHotels([...allHotels]);
         setLoading(false);
       }
       console.log("allHotels", allHotels);
@@ -716,7 +716,7 @@ const HotelResultsPage = () => {
         </div>
       </div>
       {/* Filter */}
-      <main className="flex">
+      <main className="flex flex-col lg:flex-row p-4 gap-6 bg-gray-50 min-h-screen">
         <aside className="w-full lg:w-1/4 bg-white p-6 rounded-lg shadow-md h-fit">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-gray-600">Filter</h2>
@@ -929,9 +929,12 @@ const HotelResultsPage = () => {
           </div>
         </aside>
 
-        <section className="p-6">
-          <div className="bg-white rounded-lg shadow-md pl-5 pb-4 mb-1">
-            <h1 className="text-3xl font-bold text-gray-600 pb-2">
+        <section className="w-full lg:w-3/4">
+          {/* pl-6 pr-6 pb-6 */}
+          <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+            {/* pl-5 pb-2 mb-3 */}
+            <h1 className="text-3xl font-bold text-gray-600 mb-2 ">
+              {/* pb-2 pt-2 */}
               Gefundene Hotels
             </h1>{" "}
             <p className="text-gray-600">
@@ -951,143 +954,191 @@ const HotelResultsPage = () => {
             {hotels.length === 0 ? (
               <p>Keine Hotels gefunden.</p>
             ) : (
-              hotels.map((hotel) => (
-                <div
-                  key={hotel.hotel.dupeId}
-                  className="flex bg-white shadow-lg rounded-xl overflow-hidden hover:shadow-2xl transition-all duration-300 border border-gray-100"
-                  onClick={() =>
-                    (window.location.href = `/hotel/${hotel.hotel.dupeId}`)
-                  }
-                >
-                  <div className="w-full relative md:w-[320px] h-[250px] md:h-[220px] overflow-hidden rounded-lg ml-4 mt-4">
-                    <div className="flex absolute top-2 right-2 z-10">
-                      <button className="justify-center items-center p-2">
-                        <img
-                          src={wishlistHeartEmpty}
-                          alt="icon: heart"
-                          className="h-6 w-6"
-                          // onClick={handleAddToWishlist} => kommt noch !!
-                        />
-                      </button>
-                    </div>
-                    <img
-                      src={gptExample}
-                      alt="gpt-example-picture"
-                      className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
-                    />
-                  </div>
-                  <div className="p-8 flex flex-1 justify-between ml-4">
-                    <div>
-                      <div className="flex flex-wrap items-center justify-between mb-2">
-                        <h3 className="text-xl font-bold text-gray-700">
-                          {hotel.hotel.name
-                            .toLowerCase()
-                            .replace(/\b\w/g, (char) => char.toUpperCase())}
-                        </h3>
-
-                        <div className="flex items-center">
-                          <p>Sternebewertung</p>
-                          {/*  {[...Array(hotel.stars)].map((_, i) => (
-                                            <FaStar key={i} className="text-yellow-400 text-lg" />
-                                          ))}
-                                        </div>
-                  */}
-                        </div>
-                        <p className="text-gray-600 mb-1 flex w-full items-center">
-                          <FaMapMarkerAlt className="text-red-500 mr-2" />
-                          {
-                            // Finde den passenden Stadtnamen zum CityCode
-                            findCityByCode(hotel.hotel.citycode) ||
-                              lastSearches[0].to
-                          }
-                          &#44;{" "}
-                          {
-                            // Finde den passenden Ländernamen zum CityCode
-                            findCountryByCode(hotel.hotel.cityCode)
-                          }{" "}
-                        </p>
-                        <p className="text-blue-400 font-semibold mb-2 flex w-full items-center">
-                          <FaThumbsUp className="text-blue-400 mr-2" />
-                          {/* Bewertungen */}
-                          <span className="p-1">"95%"</span>
-                          {/* {hotel.rating} */}positive Bewertungen
-                        </p>
-                        <p className="text-sm text-gray-500 mb-3">
-                          {hotel.offers?.[0]?.checkInDate
-                            ? new Date(
-                                hotel.offers[0].checkInDate
-                              ).toLocaleDateString("de-DE", {
-                                day: "2-digit",
-                                month: "2-digit",
-                                year: "numeric",
-                              })
-                            : ""}
-                          &#32; &#45;&#32;
-                          {hotel.offers?.[0]?.checkOutDate
-                            ? new Date(
-                                hotel.offers[0].checkOutDate
-                              ).toLocaleDateString("de-DE", {
-                                day: "2-digit",
-                                month: "2-digit",
-                                year: "numeric",
-                              })
-                            : ""}
-                        </p>
-
-                        {/* Anzahl + Erwachsene(r) */}
-                        {/* Kinder und Erwachsene zusammen als Personen zählen */}
-                        <p className="w-full text-sm text-gray-500 mb-3">
-                          {hotel.offers[0].guests.adults}{" "}
-                          {hotel.offers[0].guests.adults > 1
-                            ? "Personen"
-                            : "Person"}
-                        </p>
-                        {/* Kinder normalerweise extra */}
+              hotels.map((hotel) => {
+                // check if wishlist entry
+                const wishlist = JSON.parse(
+                  localStorage.getItem("wishlist") || "[]"
+                );
+                const offerId = hotel.offers?.[0]?.id;
+                const isWishlisted = wishlist.some(
+                  (item) => item.offers?.[0]?.id === offerId
+                );
+                return (
+                  <div
+                    key={hotel.hotel.dupeId}
+                    className="flex bg-white shadow-lg rounded-xl overflow-hidden hover:shadow-2xl transition-all duration-300 border border-gray-100"
+                  >
+                    <div className="w-full relative md:w-[320px] h-[250px] md:h-[220px] overflow-hidden rounded-lg ml-4 mt-4">
+                      <div className="flex absolute top-2 right-2 z-10">
+                        <button
+                          className="justify-center items-center p-2"
+                          onClick={() => {
+                            // Hotel zur Wishlist im localStorage hinzufügen/entfernen
+                            const wishlist = JSON.parse(
+                              localStorage.getItem("wishlist") || "[]"
+                            );
+                            const offerId = hotel.offers?.[0]?.id;
+                            const alreadyExists = wishlist.some(
+                              (item) => item.offers?.[0]?.id === offerId
+                            );
+                            let newWishlist;
+                            if (!alreadyExists) {
+                              newWishlist = [...wishlist, hotel];
+                            } else {
+                              newWishlist = wishlist.filter(
+                                (item) => item.offers?.[0]?.id !== offerId
+                              );
+                            }
+                            localStorage.setItem(
+                              "wishlist",
+                              JSON.stringify(newWishlist)
+                            );
+                            // Trigger re-render by updating state
+                            setHotels((prevHotels) => [...prevHotels]);
+                          }}
+                        >
+                          <img
+                            src={
+                              isWishlisted
+                                ? wishlistHeartFull
+                                : wishlistHeartEmpty
+                            }
+                            alt="icon: heart"
+                            className="h-6 w-6"
+                          />
+                        </button>
                       </div>
-                      <div className="flex flex-wrap gap-2 mb-3">
-                        {/*} {hotel.amenities.map((amenity, index) => (
-                      <span
-                        key={index}
-                        className="px-3 py-1 bg-blue-50 text-blue-700 text-sm rounded-full border border-blue-200"
-                      >*/}
-                        {/* {amenity} */}
-                        {/* </span> */}
-                        <p className="text-sm text-gray-600 flex items-center">
-                          <FaBed className="text-gray-500 mr-2" />
-                          {/* passender Wert aus hotelRooms basierend auf category */}
-                          {hotelRooms[
-                            hotel.offers[0].roomEstimated?.category
-                          ] || hotelRooms.STANDARD_ROOM}
+                      <img
+                        src={gptExample}
+                        alt="gpt-example-picture"
+                        className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
+                      />
+                    </div>
+                    <div className="p-8 flex flex-1 justify-between ml-4">
+                      <div>
+                        <div className="flex flex-wrap items-center justify-between mb-2">
+                          <h3 className="text-xl font-bold text-gray-700">
+                            {hotel.hotel.name
+                              .toLowerCase()
+                              .replace(/\b\w/g, (char) => char.toUpperCase())}
+                          </h3>
 
-                          <FaUtensils className="text-gray-500 mx-2" />
-                          {hotel.offers[0].boardType?.toLowerCase() ==
-                          "breakfast"
-                            ? "Frühstück inklusive"
-                            : ""}
-                        </p>
-                        <div className="text-right">
-                          <div className="text-2xl font-bold text-blue-600">
-                            <p>
-                              Preis ab:{" "}
-                              {hotel.offers[0].price.total
-                                ? hotel.offers[0].price.total.replace(".", ",")
-                                : ""}{" "}
-                              {hotel.offers[0]?.price.currency.replace(
-                                "EUR",
-                                "€"
-                              )}
-                            </p>{" "}
+                          <div className="flex items-center">
+                            <p>Sternebewertung</p>
+                            {/*  {[...Array(hotel.stars)].map((_, i) => (
+                          <FaStar key={i} className="text-yellow-400 text-lg" />
+                          ))}
                           </div>
+                    */}
+                          </div>
+                          <p className="text-gray-600 mb-1 flex w-full items-center">
+                            <FaMapMarkerAlt className="text-red-500 mr-2" />
+                            {
+                              // Finde den passenden Stadtnamen zum CityCode
+                              findCityByCode(hotel.hotel.citycode) ||
+                                lastSearches[0].to
+                            }
+                            &#44;{" "}
+                            {
+                              // Finde den passenden Ländernamen zum CityCode
+                              findCountryByCode(hotel.hotel.cityCode)
+                            }{" "}
+                          </p>
+                          <p className="text-blue-400 font-semibold mb-2 flex w-full items-center">
+                            <FaThumbsUp className="text-blue-400 mr-2" />
+                            {/* Bewertungen */}
+                            <span className="p-1">"95%"</span>
+                            {/* {hotel.rating} */}positive Bewertungen
+                          </p>
+                          <p className="text-sm text-gray-500 mb-3">
+                            {hotel.offers?.[0]?.checkInDate
+                              ? new Date(
+                                  hotel.offers[0].checkInDate
+                                ).toLocaleDateString("de-DE", {
+                                  day: "2-digit",
+                                  month: "2-digit",
+                                  year: "numeric",
+                                })
+                              : ""}
+                            &#32; &#45;&#32;
+                            {hotel.offers?.[0]?.checkOutDate
+                              ? new Date(
+                                  hotel.offers[0].checkOutDate
+                                ).toLocaleDateString("de-DE", {
+                                  day: "2-digit",
+                                  month: "2-digit",
+                                  year: "numeric",
+                                })
+                              : ""}
+                          </p>
 
-                          <button className="mt-2 px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-400 transition-colors font-medium shadow-md hover:shadow-lg">
-                            Buchen
-                          </button>
+                          {/* Anzahl + Erwachsene(r) */}
+                          {/* Kinder und Erwachsene zusammen als Personen zählen */}
+                          <div className="w-full flex">
+                            <div className="text-sm text-gray-500 mb-3 flex">
+                              <img
+                                src={persons}
+                                alt="icon:group of 3 people"
+                                width={22}
+                              />
+                              <p className="pl-2">
+                                {hotel.offers[0].guests.adults}{" "}
+                                {hotel.offers[0].guests.adults > 1
+                                  ? "Personen"
+                                  : "Person"}
+                              </p>
+                            </div>
+                          </div>
+                          {/* Kinder normalerweise extra */}
+                        </div>
+                        <div className="flex flex-wrap gap-2 mb-3">
+                          {/*} {hotel.amenities.map((amenity, index) => (
+                    <span
+                    key={index}
+                    className="px-3 py-1 bg-blue-50 text-blue-700 text-sm rounded-full border border-blue-200"
+                    >*/}
+                          {/* {amenity} */}
+                          {/* </span> */}
+                          <p className="text-sm text-gray-600 flex items-center">
+                            <FaBed className="text-gray-500 mr-2" />
+                            {/* passender Wert aus hotelRooms basierend auf category */}
+                            {hotelRooms[
+                              hotel.offers[0].roomEstimated?.category
+                            ] || hotelRooms.STANDARD_ROOM}
+
+                            <FaUtensils className="text-gray-500 mx-2" />
+                            {hotel.offers[0].boardType?.toLowerCase() ==
+                            "breakfast"
+                              ? "Frühstück inklusive"
+                              : "Frühstück mit Aufpreis"}
+                          </p>
+                          <div className="text-right">
+                            <div className="text-2xl font-bold text-blue-600">
+                              <p>
+                                Preis ab:{" "}
+                                {hotel.offers[0].price.total
+                                  ? hotel.offers[0].price.total.replace(
+                                      ".",
+                                      ","
+                                    )
+                                  : ""}{" "}
+                                {hotel.offers[0]?.price.currency.replace(
+                                  "EUR",
+                                  "€"
+                                )}
+                              </p>{" "}
+                            </div>
+
+                            <button className="mt-2 px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-400 transition-colors font-medium shadow-md hover:shadow-lg">
+                              Buchen
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))
+                );
+              })
             )}
           </section>
         </section>

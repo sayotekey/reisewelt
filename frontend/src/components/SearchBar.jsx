@@ -43,6 +43,7 @@ export default function SearchForm() {
   const [dateRange, setDateRange] = useState([null, null]); // State for date range
   const [startDate, endDate] = dateRange;
   const [loading, setLoading] = useState(false);
+  // const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [showErrorInfo, setShowErrorInfo] = useState(false);
   const navigate = useNavigate();
   const dropdownRef = useRef();
@@ -142,6 +143,7 @@ export default function SearchForm() {
       setHotels([]); // optional: clear previous hotels
       setLoading(true); // <-- Spinner sichtbar machen
 
+      ///
       // Speichern der letzten Suchanfrage im Local Storage
       const previousSearches =
         JSON.parse(localStorage.getItem("lastSearches")) || [];
@@ -154,7 +156,7 @@ export default function SearchForm() {
       };
       const updatedSearches = [newSearch, ...previousSearches].slice(0, 3); // Limit to 3 searches
       localStorage.setItem("lastSearches", JSON.stringify(updatedSearches));
-
+      ///
       const response = await axios.get(
         "http://localhost:3000/api/uuid/generate",
         {
@@ -501,21 +503,13 @@ export default function SearchForm() {
           onClick={async () => {
             handleSearch();
             // Only fetch hotels if there is no error, myCity is valid, and both dates are selected
-
             if (
               myCity &&
               validCities.includes(myCity) &&
               startDate &&
               endDate
             ) {
-              getCombinedData(myCity);
-              navigate(
-                `/hotel-results?city=${encodeURIComponent(
-                  myCity
-                )}&start=${startDate.toISOString()}&end=${endDate.toISOString()}&adults=${adults}&children=${children}`
-              );
               ///
-              // getCombinedData(myCity);
               if (myCity.toLowerCase() === "hamburg") {
                 // Hamburg Suche in localStorage speichern
                 const previousSearches =
@@ -535,7 +529,6 @@ export default function SearchForm() {
                   "lastSearches",
                   JSON.stringify(updatedSearches)
                 );
-
                 // Weiterleitung zur Hamburg Seite
                 const params = new URLSearchParams();
                 if (startDate)
@@ -546,7 +539,13 @@ export default function SearchForm() {
 
                 window.location.href = `/hamburg-hotels?${params.toString()}`;
               } else {
+                // hier KEIN await!
                 getCombinedData(myCity);
+                navigate(
+                  `/hotel-results?city=${encodeURIComponent(
+                    myCity
+                  )}&start=${startDate.toISOString()}&end=${endDate.toISOString()}&adults=${adults}&children=${children}`
+                );
               }
               ///
             } else if (!startDate || !endDate) {
@@ -576,7 +575,7 @@ export default function SearchForm() {
 
       <section className="w-full lg:w-3/4">
         {error && (
-          <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+          <div className="bg-white rounded-lg shadow-md pb-4 pl-4 pt-1 pr-4 mb-6 mt-6 w-full">
             <div className="text-green-600 font-semibold">
               {error}
               <button

@@ -68,12 +68,14 @@ const validCityNames = {
   Irland: {
     Dublin: "DUB",
   },
-  Vereinigtes_Königreich: {
+  Schottland: {
     Aberdeen: "ABZ",
     Dundee: "DND",
     Edinburgh: "EDI",
     Glasgow: "GLA",
     Inverness: "INV",
+  },
+  England: {
     London: "LON",
   },
 };
