@@ -63,8 +63,7 @@ const HotelResultsPage = () => {
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [dateRange, setDateRange] = useState([null, null]); // State for date range
   const [startDate, endDate] = dateRange;
-  const [loading, setLoading] = useState(false);
-  // const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [errorInfo, setErrorInfo] = useState("");
   const [error, setError] = useState("");
   const dropdownRef = useRef();
@@ -80,6 +79,7 @@ const HotelResultsPage = () => {
   };
   // Daten aus localStorage holen
   useEffect(() => {
+    setLoading(true);
     const lastHotels = JSON.parse(localStorage.getItem("lastHotels")) || [];
     setHotels(lastHotels);
     setLoading(false);
@@ -185,7 +185,7 @@ const HotelResultsPage = () => {
     setMyCity(city);
     setShowSuggestions(false);
     setSelectedIndex(-1);
-    // setError("");
+    setError("");
   };
 
   const findCountryByCode = (iataCode) => {
@@ -382,7 +382,7 @@ const HotelResultsPage = () => {
                   <div className="w-3/4">
                     <p>
                       {errorInfo && (
-                        <div className="text-red-600 mt-2">{errorInfo}</div>
+                        <span className="text-red-600 mt-2">{errorInfo}</span>
                       )}
                     </p>
                   </div>
@@ -394,22 +394,24 @@ const HotelResultsPage = () => {
                   </button>
                 </div>
                 {/* Reiseziel */}
-                <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-2 gap-4 pt-10">
                   <div className="relative">
-                    <img
-                      src={travelGoal}
-                      alt="icon: mountain and building"
-                      className="h-4"
-                    />
-                    <label className="text-sm font-medium">
-                      {t("search.whereTravel") || "Wohin möchtest du reisen?"}
-                    </label>
+                    <div className="flex">
+                      <img
+                        src={travelGoal}
+                        alt="icon: mountain and building"
+                        className="h-4"
+                      />
+                      <label className="text-sm font-semibold pl-2">
+                        {t("search.whereTravel") || "Wohin möchtest du reisen?"}
+                      </label>
+                    </div>
                     <input
                       type="text"
                       placeholder={
                         t("search.enterDestination") || "Reiseziel eingeben"
                       }
-                      className="w-full mt-1 border rounded px-3 py-2"
+                      className="w-full mt-1 border rounded px-3 py-2 hover:bg-blue-200"
                       value={myCity}
                       onChange={handleInputChange}
                       onFocus={() => setShowSuggestions(true)}
@@ -434,7 +436,7 @@ const HotelResultsPage = () => {
                     {myCity && (
                       <button
                         type="button"
-                        className="absolute -right-1 top-16 -translate-y-1/2 text-gray-300 cursor-pointer min-w-2"
+                        className="absolute -right-1 top-11 -translate-y-1/2 text-gray-300 cursor-pointer min-w-2"
                         onClick={() => setMyCity("")}
                         tabIndex={-1}
                         aria-label="Eingabe löschen"
@@ -447,14 +449,12 @@ const HotelResultsPage = () => {
                   </div>
 
                   <div>
-                    <img
-                      src={plane}
-                      alt="icon: mountain and building"
-                      className="h-4"
-                    />
-                    <label className="text-sm font-medium">
-                      Willst du fliegen?
-                    </label>
+                    <div className="flex">
+                      <img src={plane} alt="icon: plane" className="h-4" />
+                      <label className="text-sm font-semibold pl-2">
+                        Willst du fliegen?
+                      </label>
+                    </div>
                     <input
                       type="text"
                       placeholder={
@@ -465,14 +465,16 @@ const HotelResultsPage = () => {
                   </div>
 
                   <div>
-                    <label className="text-sm font-medium">
+                    <div className="flex">
                       <img
                         src={calendar}
                         alt="icon: mountain and building"
-                        className="h-4"
+                        className="h-4 pr-2"
                       />
-                      {t("search.whenTravel") || "Wann reisen?"}
-                    </label>
+                      <label className="text-sm font-semibold">
+                        {t("search.whenTravel") || "Wann reisen?"}
+                      </label>{" "}
+                    </div>
                     <div className="w-full">
                       <DatePicker
                         selectsRange
@@ -485,7 +487,7 @@ const HotelResultsPage = () => {
                             setErrorInfo("");
                           }
                         }}
-                        className="w-full mt-1 border rounded px-3 py-2"
+                        className="w-full mt-1 border rounded px-3 py-2 hover:bg-blue-200 cursor-pointer"
                         wrapperClassName="w-full"
                         placeholderText={
                           t("search.selectDate") || "Datum auswählen"
@@ -493,7 +495,6 @@ const HotelResultsPage = () => {
                         dateFormat="dd.MM.yyyy"
                         monthsShown={2}
                         isClearable
-                        // selected={startDate}
                         selected={startDate}
                         customInput={
                           <input
@@ -514,18 +515,20 @@ const HotelResultsPage = () => {
                   </div>
 
                   <div className="relative" ref={dropdownRef}>
-                    <div className="font-semibold flex flex-row mb-1">
-                      <img
-                        src={persons}
-                        alt="icon: group of 3 people"
-                        className="h-5 pr-2"
-                      />
-                      <label className="text-sm font-medium">
-                        {t("search.howManyPeople") ||
-                          "Wie viele Personen reisen?"}
-                      </label>
+                    <div>
+                      <div className="w-full flex mb-2">
+                        <img
+                          src={persons}
+                          alt="icon: group of 3 people"
+                          className="h-5 pr-2"
+                        />
+                        <label className="text-sm font-semibold">
+                          {t("search.howManyPeople") ||
+                            "Wie viele Personen reisen?"}
+                        </label>
+                      </div>
                       <div
-                        className="w-full p-2 rounded border border-gray-800 pl-4 bg-white cursor-pointer hover:bg-blue-200"
+                        className="p-2 rounded border border-gray-800 pl-4 bg-white cursor-pointer hover:bg-blue-200"
                         onClick={() => setShowDropdown(!showDropdown)}
                       >
                         {adults} {t("search.adults") || "Erwachsene"},{" "}
@@ -555,7 +558,7 @@ const HotelResultsPage = () => {
                               <span>{t("search.adults") || "Erwachsene"}</span>
                               <div className="flex gap-2 items-center">
                                 <button
-                                  className="px-2 py-1 border rounded bg-gray-200 text-gray-700 min-w-[33%] border-transparent font-bold text-lg hover:bg-gray-200 flex items-center justify-center"
+                                  className="px-2 py-1 border rounded bg-gray-200 text-gray-700 min-w-[33%] border-transparent text-lg hover:bg-gray-200 flex items-center justify-center"
                                   onClick={() =>
                                     setAdults(Math.max(1, adults - 1))
                                   }
@@ -993,7 +996,6 @@ const HotelResultsPage = () => {
                               "wishlist",
                               JSON.stringify(newWishlist)
                             );
-                            // Trigger re-render by updating state
                             setHotels((prevHotels) => [...prevHotels]);
                           }}
                         >
