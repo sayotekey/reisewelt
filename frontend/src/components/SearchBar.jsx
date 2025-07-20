@@ -1,8 +1,19 @@
 import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import DatePicker from "react-datepicker";
 import { AnimatePresence } from "framer-motion";
 import { motion } from "framer-motion";
-import { FaCalendarAlt } from "react-icons/fa";
+import {
+  FaCalendarAlt,
+  FaMapMarkerAlt,
+  FaThumbsUp,
+  FaBed,
+  FaUtensils,
+  FaCar,
+  FaDog,
+  FaSwimmingPool,
+  FaWifi,
+} from "react-icons/fa";
 import "react-datepicker/dist/react-datepicker.css";
 import axios from "axios";
 import { useTranslate } from "../locales/index.js"; // Import the translation context
@@ -15,12 +26,7 @@ import travelGoal from "../icons/mountain-city-solid-black.svg";
 import plane from "../icons/plane-solid-black.svg";
 // import plane2 from "../icons/plane2-solid-black.png";
 import persons from "../icons/people-group-solid-black.svg";
-import wishlistHeartFull from "../icons/heart-solid-black.svg";
-import wishlistHeartEmpty from "../icons/heart-regular-black.svg";
-
-// import finder from "../icons/finder.gif";
-import search from "../icons/search.gif";
-import gptExample from "../images/ChatGPT.png";
+import question from "../icons/question-solid-black.svg";
 
 export default function SearchForm() {
   const { t } = useTranslate();
@@ -30,14 +36,25 @@ export default function SearchForm() {
   const [hotels, setHotels] = useState([]);
   const [myCity, setMyCity] = useState(""); // State for my city (von wo ?)
   const [error, setError] = useState("");
+  const [cityError, setCityError] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [dateRange, setDateRange] = useState([null, null]); // State for date range
   const [startDate, endDate] = dateRange;
   const [loading, setLoading] = useState(false);
-
+  // const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const [showErrorInfo, setShowErrorInfo] = useState(false);
+  const navigate = useNavigate();
   const dropdownRef = useRef();
+
+  // Daten aus localStorage holen
+  useEffect(() => {
+    const lastHotels = JSON.parse(localStorage.getItem("lastHotels")) || [];
+    if (lastHotels.length > 0) {
+      setHotels(lastHotels);
+    }
+  }, []);
 
   //dropdown functionality
   useEffect(() => {
@@ -55,6 +72,13 @@ export default function SearchForm() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [showDropdown]);
+
+  // localStorage last-search-Hotellist
+  useEffect(() => {
+    if (hotels.length > 0) {
+      localStorage.setItem("lastHotels", JSON.stringify(hotels));
+    }
+  }, [hotels]);
 
   // Filtere Vorschläge nach Eingabe (case-insensitive, enthält den Text)
   const suggestions = myCity
@@ -101,15 +125,13 @@ export default function SearchForm() {
 
   const handleSearch = () => {
     if (!myCity) {
-      setError("Bitte einen Städtenamen eingeben.");
-      return;
+      setCityError("Bitte einen Städtenamen eingeben.");
+    } else if (!validCities.includes(myCity)) {
+      setCityError("Ungültiger Städtename, bitte Eingabe überprüfen.");
+    } else {
+      setCityError("");
+      setShowSuggestions(false);
     }
-    if (!validCities.includes(myCity)) {
-      setError("Ungültiger Städtename, bitte Eingabe überprüfen.");
-      return;
-    }
-    setError("");
-    setShowSuggestions(false);
   };
 
   // 1.Endpunkt für UUID
@@ -121,6 +143,7 @@ export default function SearchForm() {
       setHotels([]); // optional: clear previous hotels
       setLoading(true); // <-- Spinner sichtbar machen
 
+      ///
       // Speichern der letzten Suchanfrage im Local Storage
       const previousSearches =
         JSON.parse(localStorage.getItem("lastSearches")) || [];
@@ -133,20 +156,23 @@ export default function SearchForm() {
       };
       const updatedSearches = [newSearch, ...previousSearches].slice(0, 3); // Limit to 3 searches
       localStorage.setItem("lastSearches", JSON.stringify(updatedSearches));
-
+      ///
       const response = await axios.get(
         "http://localhost:3000/api/uuid/generate",
         {
           params: {
-            cityName: myCity, // city-string zum backend schicken
+            //zum backend schicken
+            cityName: myCity,
+            startDate: startDate,
+            endDate: endDate,
+            adults: adults,
+            children: children,
           },
         }
       );
-      // const data = response.data;
       const myUuid = response.data.uuid;
 
       console.log("UUID:", myUuid); // Gibt die generierte UUID aus
-      // bis hier hin funktioniert alles
 
       // 2. Endpunkt: Abfrage der Anzahl der Hotels, die unter dieser UUID gespeichert sind
       await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -159,12 +185,6 @@ export default function SearchForm() {
       console.log("2.Endpunkt: aktueller Count", countRaw);
       console.log("2.Endpunkt: aktuelle flag", flag);
 
-      //
-      // while schleife
-      // solange flag = false => abfrage an mongo db nach count und hotels mit passender MyUuid
-      // wenn count > hotel.length => get hotels (UUID)=>
-      // }
-      //
       let allHotels = []; // Array für alle Hotels
       let newCount = 0; // Variable für neuen Count
 
@@ -189,93 +209,25 @@ export default function SearchForm() {
           console.log(hotelResponse.data.hotels);
           console.log(Array.isArray(hotelResponse.data.hotels));
 
-          // Array.prototype.push.apply(allHotels, hotelResponse.data.hotels);
-          // allHotels = [...allHotels, ...hotelResponse.data.hotels];
           hotelResponse.data.hotels.forEach((hotel) => {
             console.log(hotel);
             allHotels.push(hotel[0]);
           });
 
           setHotels([...allHotels]);
-          // anzeige hier einbauen/neu rendern
         }
       }
       if (allHotels.length === 0) {
         setError("Es wurden keine Hotels gefunden.");
         setLoading(false);
       } else {
-        setHotels([...allHotels]);
+        // setHotels([...allHotels]);
         setLoading(false);
       }
       console.log("allHotels", allHotels);
 
-      //
-      // let currentCount = countRaw;
-      // let elapsed = 0;
-      // const maxWait = 50000; // 50 Sekunden
-      // while (currentCount === 0 && elapsed < maxWait) {
-      //   await new Promise((resolve) => setTimeout(resolve, 3000));
-      //   elapsed += 3000;
-      //   // solange bis mindestens 1 Hotel gefunden wurde
-      //   // oder nach 50sekunden abgebrochen wird
-      //   const retryResponse = await axios.get(url);
-      //   currentCount = parseInt(retryResponse.data.count, 10);
-      //   flag = retryResponse.data.flag;
-      //   console.log("Retry Count:", retryResponse.data.count);
-      //   console.log("retry flag", flag);
+      localStorage.setItem("lastHotels", JSON.stringify(allHotels));
 
-      //   if (currentCount > 0) {
-      //     // 3. Endpunkt: Abfrage der Hotels, die unter dieser UUID gespeichert sind
-      //     let allHotels = [];
-      //     let offset = 0;
-      //     // Hole immer nur 3 Hotels pro Durchgang
-      //     while (flag === false) {
-      //       try {
-      //         const urlHotel = "http://localhost:3000/api/uuid/hotels";
-      //         const hotelResponse = await axios.get(urlHotel, {
-      //           params: {
-      //             limit: 3,
-      //             count: offset,
-      //             uuid: myUuid,
-      //           },
-      //         });
-      //         const hotelData = hotelResponse.data.hotels;
-      //         console.log("hotelData:", hotelData);
-
-      //         flag = hotelResponse.data.flag;
-      //         console.log("Hotels aus der MongoDB:", hotelData);
-
-      //         // Füge neue Hotels zu allHotels hinzu, ohne Duplikate
-      //         allHotels = [...allHotels, ...hotelData].filter(
-      //           (hotel, idx, arr) =>
-      //             arr.findIndex(
-      //               (h) =>
-      //                 h.hotel &&
-      //                 hotel.hotel &&
-      //                 h.hotel.dupeId === hotel.hotel.dupeId
-      //             ) === idx
-      //         );
-      //         offset += hotelData.length;
-      //         // Breche die Schleife ab, wenn flag true ist oder keine neuen Hotels mehr kommen
-      //         if (flag === true || hotelData.length === 0) {
-      //           break;
-      //         }
-      //         // if (flag === true) {
-      //         //   break;
-      //         // }
-      //         await new Promise((resolve) => setTimeout(resolve, 500));
-      //       } catch (error) {
-      //         console.log("Fehler beim Abrufen der Hotels:", error.message);
-      //         setLoading(false);
-      //         break; // Break the loop if an error occurs
-      //       }
-      //     }
-      //     setHotels([...allHotels]); // Zeige alle geladenen Hotels nach dem Laden an
-      //     setLoading(false); // <-- Spinner ausblenden
-      //   }
-      // }
-
-      //
       // Lesen die zuletzt gespeicherten Suchen aus localStorage
       //   const previousSearches =
       //     JSON.parse(localStorage.getItem("lastSearches")) || [];
@@ -301,7 +253,7 @@ export default function SearchForm() {
 
   return (
     <div
-      className=" text-gray-700 p-6 rounded-2xl w-full max-w-7xl -mt-20 z-50 mx-auto shadow-md relative"
+      className="text-gray-600 p-6 rounded-2xl w-full max-w-7xl -mt-20 z-50 mx-auto shadow-md relative"
       style={{
         background: "linear-gradient(135deg, #ff7626, #ff7851)",
         boxShadow: "0 4px 20px rgba(0, 0, 0, 0.2)",
@@ -310,7 +262,7 @@ export default function SearchForm() {
       <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 md:gap-3 lg:grid-cols-2 xl:grid-cols-4 gap-6">
         {/* Reiseziel */}
         <div className="relative w-full">
-          <div className="flex mb-1 items-center gap-2 ">
+          <div className="flex mb-1 items-center gap-2">
             <img
               src={travelGoal}
               alt="icon: mountain and building"
@@ -330,6 +282,7 @@ export default function SearchForm() {
             onKeyDown={handleKeyDown}
             autoComplete="off"
           />
+
           {showSuggestions && suggestions.length > 0 && (
             <ul className="absolute z-20 bg-white border border-gray-500 w-full mt-1 rounded shadow max-h-48 overflow-y-auto">
               {suggestions.map((city, idx) => (
@@ -397,6 +350,7 @@ export default function SearchForm() {
               wrapperClassName="w-full"
               placeholderText={t("search.selectDate") || "Datum auswählen"}
               dateFormat="dd.MM.yyyy"
+              monthsShown={2}
               isClearable
               customInput={
                 <input
@@ -417,7 +371,7 @@ export default function SearchForm() {
         </div>
         {/* Personenwahl */}
         <div className="relative" ref={dropdownRef}>
-          <div className="font-semibold flex flex-row mb-1 ">
+          <div className="font-semibold flex flex-row mb-1">
             <img
               src={persons}
               alt="icon: group of 3 people"
@@ -546,17 +500,16 @@ export default function SearchForm() {
       </div>
       <div className="mt-6 flex w-full sm:w-full sm:justify-center md:justify-end xl:justify-end">
         <button
-          onClick={() => {
+          onClick={async () => {
             handleSearch();
             // Only fetch hotels if there is no error, myCity is valid, and both dates are selected
-
             if (
               myCity &&
               validCities.includes(myCity) &&
               startDate &&
               endDate
             ) {
-              // getCombinedData(myCity);
+              ///
               if (myCity.toLowerCase() === "hamburg") {
                 // Hamburg Suche in localStorage speichern
                 const previousSearches =
@@ -576,7 +529,6 @@ export default function SearchForm() {
                   "lastSearches",
                   JSON.stringify(updatedSearches)
                 );
-
                 // Weiterleitung zur Hamburg Seite
                 const params = new URLSearchParams();
                 if (startDate)
@@ -587,10 +539,21 @@ export default function SearchForm() {
 
                 window.location.href = `/hamburg-hotels?${params.toString()}`;
               } else {
+                // hier KEIN await!
                 getCombinedData(myCity);
+                navigate(
+                  `/hotel-results?city=${encodeURIComponent(
+                    myCity
+                  )}&start=${startDate.toISOString()}&end=${endDate.toISOString()}&adults=${adults}&children=${children}`
+                );
               }
+              ///
             } else if (!startDate || !endDate) {
-              setError("Bitte Reisedatum angeben!");
+              setError("Bitte ein Reisedatum angeben!");
+            } else if (!myCity) {
+              setError("Bitte einen Städtenamen eingeben.");
+            } else if (!validCities.includes(myCity)) {
+              setError("Ungültigen Städtename gefunden!");
             }
           }}
           className="text-gray-800 w-full sm:w-full xl:w-1/7 px-6 py-2 mt-3 rounded transition font-semibold"
@@ -609,106 +572,39 @@ export default function SearchForm() {
       </div>
       {/*hier ist Grid zu Ende! */}
       {/* Error Message */}
-      {error && <div className="text-green-600 mt-2">{error}</div>}
-      {loading && (
-        <div className="flex bg-white mt-4">
-          <p className="font-bold">Wir suchen gerade die besten Deals!</p>
-          <img src={search} width={200} alt="find-gif" />
-        </div>
-      )}
-      <div className="mt-6">
-        {/* <h2 className="text-lg font-semibold mb-4">
-          {t("search.foundHotels") || "Gefundene Hotels in"} {myCity}:
-        </h2> */}{" "}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-6">
-          {/* ab hier Hotelcards-data */}
 
-          {hotels.map((hotel) => (
-            <div key={hotel.hotel.dupeId}>
-              <div
-                className="flex gap-4 my-4 mx-2 transform transition-transform duration-500 hover:scale-105 cursor-pointer"
-                onClick={() =>
-                  (window.location.href = `/hotel/${hotel.hotel.dupeId}`)
-                }
+      <section className="w-full lg:w-3/4">
+        {error && (
+          <div className="bg-white rounded-lg shadow-md pb-4 pl-4 pt-1 pr-4 mb-6 mt-6 w-full">
+            <div className="text-green-600 font-semibold">
+              {error}
+              <button
+                className="border border-gray-600 rounded-full ml-3 pr-2 pl-2 pt-1 pb-1 mt-3 hover:bg-orange-500"
+                onClick={() => setShowErrorInfo((prev) => !prev)}
               >
-                <div className="w-2/5 relative">
-                  <div className="flex absolute top-2 right-2">
-                    <img
-                      src={wishlistHeartEmpty}
-                      alt="icon: heart"
-                      className="h-5 w-5 z-10"
-                      // onClick={handleAddToWishlist} => kommt noch !!
-                    />
-                  </div>
-                  <img
-                    src={gptExample}
-                    alt="gpt-example-picture"
-                    className="rounded-tl-xl rounded-bl-xl"
-                  />
+                <img src={question} alt="icon info" width={10} />
+              </button>
+              {showErrorInfo && !startDate && (
+                <div className="mt-2 text-sm text-gray-700 bg-orange-100 rounded p-2">
+                  Das Startdatum darf <span className="underline">nicht</span>{" "}
+                  in der Vergangenheit liegen.
                 </div>
-
-                <div className="flex flex-wrap w-1/2">
-                  <h3 className="font-bold w-full">
-                    {hotel.hotel.name
-                      .toLowerCase()
-                      .replace(/\b\w/g, (char) => char.toUpperCase())}
-                  </h3>
-                  {/* <p>{Bewertung später}</p> */}
-                  <h4 className="block w-full">
-                    &#40;
-                    {
-                      // Finde den passenden Stadtnamen zum CityCode
-                      validCities.find((city) =>
-                        city
-                          .toLowerCase()
-                          .includes(hotel.hotel.cityCode.toLowerCase())
-                      ) || hotel.hotel.cityCode
-                    }
-                    &#41;&#44;
-                  </h4>
-                  <p className="block">
-                    {hotel.offers?.[0]?.checkInDate
-                      ? new Date(
-                          hotel.offers[0].checkInDate
-                        ).toLocaleDateString("de-DE", {
-                          day: "2-digit",
-                          month: "2-digit",
-                          year: "numeric",
-                        })
-                      : ""}
-                    &#32; &#45;&#32;
-                    {hotel.offers?.[0]?.checkOutDate
-                      ? new Date(
-                          hotel.offers[0].checkOutDate
-                        ).toLocaleDateString("de-DE", {
-                          day: "2-digit",
-                          month: "2-digit",
-                          year: "numeric",
-                        })
-                      : ""}
-                  </p>
-                  {/* Anzahl + Erwachsene(r) */}
-                  <p>
-                    {hotel.offers[0].guests.adults}&#32;
-                    {hotel.offers[0].guests.adults > 1
-                      ? "Erwachsene"
-                      : "Erwachsener"}
-                  </p>
-                  {/* Kinder optional */}
-                  <p>
-                    Preis ab:&#32;
-                    {hotel.offers?.[0]?.price?.total
-                      ? hotel.offers[0].price.total.replace(".", ",")
-                      : ""}
-                    &#32;
-                    {hotel.offers[0]?.price.currency.replace("EUR", "€")}
-                  </p>
+              )}
+              {showErrorInfo && !myCity && startDate && (
+                <div className="mt-2 text-sm text-gray-700 bg-orange-100 rounded p-2">
+                  Für die Suchanfrage wird ein Ziel benötigt. Wohin soll die
+                  Reise gehen?
                 </div>
-              </div>
+              )}
+              {showErrorInfo && !validCities.includes(myCity) && (
+                <div className="mt-2 text-sm text-gray-700 bg-orange-100 rounded p-2">
+                  Bitte die Eingabe nochmals überprüfen.
+                </div>
+              )}
             </div>
-          ))}
-        </div>
-      </div>
+          </div>
+        )}
+      </section>
     </div>
   );
 }

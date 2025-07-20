@@ -17,6 +17,7 @@ const validCities = [
   "Glasgow",
   "Granada",
   "Graz",
+  "Hamburg",
   "Innsbruck",
   "Inverness",
   "Klagenfurt",

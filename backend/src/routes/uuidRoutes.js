@@ -79,8 +79,33 @@ router.get("/generate", async (req, res) => {
   res.status(200).json({ uuid: uniqueId }); // für das Frontend
 
   try {
-    const { cityName } = req.query; // Städtenamen auslesen
+    ///
+    const { cityName, startDate, endDate, adults, children } = req.query;
+    function formatDate(date) {
+      return (
+        date.getFullYear() +
+        "-" +
+        String(date.getMonth() + 1).padStart(2, "0") +
+        "-" +
+        String(date.getDate()).padStart(2, "0")
+      );
+    }
+    const startDateObj = new Date(startDate);
+    const endDateObj = new Date(endDate);
+    const startDateFormatted = formatDate(startDateObj); // "2025-07-19"
+    const endDateFormatted = formatDate(endDateObj);
+
+    // Kinder sind API-Pay-Option
+    const combinedTravellers = Number(adults) + Number(children);
+    ///
     console.log("Received cityName:", cityName);
+    console.log("startDate", startDate);
+    console.log("typeof startDate", typeof startDate); //string
+    console.log("endDate", endDate);
+    console.log("startDateFormatted", startDateFormatted);
+    console.log("endDateFormatted", endDateFormatted);
+    console.log("adults", adults);
+    console.log("travellers", combinedTravellers);
 
     // CityCode suchen
     const cityCode = cityNameToCode[cityName];
@@ -102,6 +127,72 @@ router.get("/generate", async (req, res) => {
     }));
     console.log("hotelIdList-Length", hotelIdList.length);
 
+    ///neue logik für 10citycodes bei multioffers amadeus abfrage
+    /*
+    eine flache kopie von hotelIDList machen
+    for schleife mit hotelidList.length
+    mit splice() immer 10 ausschneiden und an die amadeus url hängen
+    oder: als parameter mitgeben?
+    multioffers-pfad sollte schneller ein ergebnis schicken als 10 einzelne abfragen
+    ergebnis => auf available true prüfen => falls true in mongo db speichern
+    dann die nächsten 10 hotelids ausschneiden und prüfen
+    */
+    let newCountList = 0;
+    const newHotelIdList = [...hotelIdList];
+    while (newHotelIdList.length > 0) {
+      // Schneide die nächsten 10 Hotel-IDs aus dem Array heraus
+      const batch = newHotelIdList
+        .splice(0, 50)
+        .map((h) => h.hotelIds)
+        .join(",");
+      console.log("Frage Hotel-IDs an:", batch);
+
+      const result = await fetchFromAmadeus(
+        `/v3/shopping/hotel-offers?hotelIds=${batch}&checkInDate=${startDateFormatted}&checkOutDate=${endDateFormatted}&adults=${combinedTravellers}`,
+        // `/v3/shopping/hotel-offers?hotelIds=${batch}`,
+        token
+      );
+
+      if (
+        result &&
+        result.data &&
+        Array.isArray(result.data) &&
+        result.data.length > 0
+      ) {
+        // Nur Hotels mit available: true speichern (optional, je nach API-Response)
+        const availableHotels = result.data.filter(
+          (hotel) => hotel.available === true
+        );
+        if (availableHotels.length > 0) {
+          await UuidModel.findOneAndUpdate(
+            { uuid: uniqueId },
+            { $addToSet: { hotels: { $each: availableHotels } } }
+          );
+          newCountList += availableHotels.length;
+          console.log(
+            `${availableHotels.length} Angebote in Mongo DB gespeichert`
+          );
+          // Optional: Abbruch nach 5 gefundenen Hotels
+          if (newCountList >= 5) {
+            await UuidModel.findOneAndUpdate(
+              { uuid: uniqueId },
+              { flag: true }
+            );
+            console.log("5 Angebote gefunden");
+            break;
+          }
+        }
+      }
+
+      // Wenn keine weiteren Hotels mehr übrig sind, flag setzen
+      if (newHotelIdList.length === 0) {
+        await UuidModel.findOneAndUpdate({ uuid: uniqueId }, { flag: true });
+        console.log("Liste fertig, keine weiteren Angebote verfügbar");
+        break;
+      }
+    }
+    ///
+    /*
     let countList = 0;
     for (let i = 0; i < hotelIdList.length; i++) {
       console.log("Frage Hotel-ID an:", hotelIdList[i]); // Ausgabe im Terminal zur Kontrolle
@@ -140,7 +231,7 @@ router.get("/generate", async (req, res) => {
         console.log("Liste fertig, keine weiteren Angebote verfügbar");
         break;
       }
-    }
+    }*/
   } catch (error) {
     console.error("Error fetching hotel data:", error);
   }

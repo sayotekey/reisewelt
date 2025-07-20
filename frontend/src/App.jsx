@@ -10,6 +10,8 @@ import RegisterPage from "./pages/RegisterPage.jsx";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage.jsx";
 import ResetPasswordPage from "./pages/ResetPasswordPage.jsx";
 import ProfilePage from "./pages/ProfilePage.jsx";
+import SearchForm from "./components/SearchBar.jsx";
+import HotelResultsPage from "./pages/HotelResultsPage.jsx";
 import LastMinuteDeals from "./pages/LastMinuteDeals.jsx";
 import FivehundredEuroDeals from "./pages/FivehundredEuroDeals.jsx";
 import SingleNews from "./pages/SingleNews.jsx";
@@ -23,7 +25,6 @@ import HotelDetailPage from "./pages/HotelDetailPage.jsx";
 import { ThemeProvider } from "./context/ThemeContext.jsx"; // Theme context
 import { I18nProvider } from "./context/I18nContext.jsx"; //translation context
 import BookingFormPage from "./pages/BookingFormPage.jsx";
-
 
 function App() {
   return (
@@ -43,13 +44,14 @@ function App() {
             <Route path="/lastminute-deals" element={<LastMinuteDeals />} />
             <Route path="/news" element={<AllNews />} />
             <Route path="/news/:id" element={<SingleNews />} />
-           <Route path="/hamburg-hotels" element={<HamburgHotelsPage />} />
+            <Route path="/hamburg-hotels" element={<HamburgHotelsPage />} />
             <Route
               path="/fivehundredeuro-deals"
               element={<FivehundredEuroDeals />}
             />
-           <Route path="/hotel/:id" element={<HotelDetailPage />} />
-          {/* Legal pages */}
+            <Route path="/hotel-results" element={<HotelResultsPage />} />
+            <Route path="/hotel/:id" element={<HotelDetailPage />} />
+            {/* Legal pages */}
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/imprint" element={<Imprint />} />
             <Route path="/terms" element={<Terms />} />
