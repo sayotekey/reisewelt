@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { useTheme } from "../../context/ThemeContext";
 
 const PersonalDaten = ({ user, onUserUpdate }) => {
+  const { isDark } = useTheme();
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -54,34 +56,79 @@ const PersonalDaten = ({ user, onUserUpdate }) => {
 
   return (
     <section className="space-y-4">
-      <h2 className="text-xl font-semibold">Persönliche Daten</h2>
+      <h2
+        className="text-xl font-semibold"
+        style={{ color: "var(--text-color)" }}
+      >
+        Persönliche Daten
+      </h2>
 
       {!isEditing ? (
         <div className="space-y-2">
-          <p className="personal-data shadow-md">
-            <strong className="ersonal-data">Name</strong> {user.name}
+          <p
+            className="personal-data shadow-md p-3 rounded-lg"
+            style={{
+              backgroundColor: "var(--bg-secondary)",
+              color: "var(--text-color)",
+              border: `1px solid ${isDark ? "var(--border-color)" : "#e5e7eb"}`,
+            }}
+          >
+            <strong
+              className="block mb-1"
+              style={{ color: "var(--text-color)" }}
+            >
+              Name
+            </strong>
+            {user.name}
           </p>
-          <p className="personal-data shadow-md">
-            <strong>Email</strong> {user.email}
+          <p
+            className="personal-data shadow-md p-3 rounded-lg"
+            style={{
+              backgroundColor: "var(--bg-secondary)",
+              color: "var(--text-color)",
+              border: `1px solid ${isDark ? "var(--border-color)" : "#e5e7eb"}`,
+            }}
+          >
+            <strong
+              className="block mb-1"
+              style={{ color: "var(--text-color)" }}
+            >
+              Email
+            </strong>
+            {user.email}
           </p>
-          <p className="personal-data shadow-md">
-            <strong>Registriert am</strong>
+          <p
+            className="personal-data shadow-md p-3 rounded-lg"
+            style={{
+              backgroundColor: "var(--bg-secondary)",
+              color: "var(--text-color)",
+              border: `1px solid ${isDark ? "var(--border-color)" : "#e5e7eb"}`,
+            }}
+          >
+            <strong
+              className="block mb-1"
+              style={{ color: "var(--text-color)" }}
+            >
+              Registriert am
+            </strong>
             {new Date(user.createdAt).toLocaleDateString()}
           </p>
 
           {/*Bearbeiten Button*/}
           <button
             onClick={() => setIsEditing(true)}
-            className="mt-4 px-4 py-2 rounded-md"
+            className="mt-4 px-4 py-2 rounded-md transition-all duration-200"
             style={{
               backgroundColor: "var(--accent-color)",
               color: "white",
             }}
             onMouseEnter={(e) => {
               e.target.style.backgroundColor = "var(--accent-hover)";
+              e.target.style.transform = "translateY(-2px)";
             }}
             onMouseLeave={(e) => {
               e.target.style.backgroundColor = "var(--accent-color)";
+              e.target.style.transform = "translateY(0)";
             }}
           >
             Bearbeiten
@@ -89,49 +136,108 @@ const PersonalDaten = ({ user, onUserUpdate }) => {
         </div>
       ) : (
         // Wenn im Bearbeitungsmodus
-        <div className="space-y-2">
+        <div className="space-y-4">
           <div>
-            <label className="block mb-1 font-medium"> Name</label>
+            <label
+              className="block mb-2 font-medium"
+              style={{ color: "var(--text-color)" }}
+            >
+              Name
+            </label>
             <input
               type="text"
               value={name}
               name="name"
               onChange={(e) => setName(e.target.value)}
-              className="mt-1 block w-full border border-gray-300 rounded px-3 py-2 text-gray-500"
+              className="mt-1 block w-full rounded-lg px-3 py-2 transition-all duration-200"
+              style={{
+                backgroundColor: "var(--bg-secondary)",
+                color: "var(--text-color)",
+                border: `2px solid ${
+                  isDark ? "var(--border-color)" : "#d1d5db"
+                }`,
+              }}
+              onFocus={(e) => {
+                e.target.style.borderColor = "var(--accent-color)";
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = isDark
+                  ? "var(--border-color)"
+                  : "#d1d5db";
+              }}
             />
           </div>
 
           <div>
-            <label className="block mb-1 font-medium"> Email</label>
+            <label
+              className="block mb-2 font-medium"
+              style={{ color: "var(--text-color)" }}
+            >
+              Email
+            </label>
             <input
               type="email"
               value={email}
               name="email"
               onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 block w-full border border-gray-300 rounded px-3 py-2 text-gray-500"
+              className="mt-1 block w-full rounded-lg px-3 py-2 transition-all duration-200"
+              style={{
+                backgroundColor: "var(--bg-secondary)",
+                color: "var(--text-color)",
+                border: `2px solid ${
+                  isDark ? "var(--border-color)" : "#d1d5db"
+                }`,
+              }}
+              onFocus={(e) => {
+                e.target.style.borderColor = "var(--accent-color)";
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = isDark
+                  ? "var(--border-color)"
+                  : "#d1d5db";
+              }}
             />
           </div>
-          <div className="flex gap-4">
+          <div className="flex gap-4 pt-4">
             <button
               onClick={handleSaveClick}
               disabled={loading}
-              className="w-full px-4 py-2"
+              className="flex-1 px-4 py-2 rounded-lg transition-all duration-200"
               style={{
-                backgroundColor: "var(--accent-color)",
+                backgroundColor: loading ? "#9ca3af" : "var(--accent-color)",
                 color: "white",
+                cursor: loading ? "not-allowed" : "pointer",
               }}
               onMouseEnter={(e) => {
-                e.target.style.backgroundColor = "var(--accent-hover)";
+                if (!loading) {
+                  e.target.style.backgroundColor = "var(--accent-hover)";
+                  e.target.style.transform = "translateY(-2px)";
+                }
               }}
               onMouseLeave={(e) => {
-                e.target.style.backgroundColor = "var(--accent-color)";
+                if (!loading) {
+                  e.target.style.backgroundColor = "var(--accent-color)";
+                  e.target.style.transform = "translateY(0)";
+                }
               }}
             >
-              Speichern
+              {loading ? "Speichern..." : "Speichern"}
             </button>
             <button
               onClick={handleCancelClick}
-              className="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-300 transition"
+              className="px-4 py-2 rounded-lg transition-all duration-200"
+              style={{
+                backgroundColor: isDark ? "#6b7280" : "#9ca3af",
+                color: "white",
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.backgroundColor = isDark ? "#4b5563" : "#6b7280";
+                e.target.style.transform = "translateY(-2px)";
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.backgroundColor = isDark ? "#6b7280" : "#9ca3af";
+                e.target.style.transform = "translateY(0)";
+              }}
             >
               Abbrechen
             </button>

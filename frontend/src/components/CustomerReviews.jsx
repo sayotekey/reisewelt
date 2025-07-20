@@ -2,6 +2,9 @@ import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useTheme } from "../context/ThemeContext.jsx";
+import { AiFillStar, AiOutlineStar } from "react-icons/ai";
+import { useTranslate } from "../locales/index.js";
+
 
 export default function CustomerReviews() {
   const { isDark } = useTheme();
@@ -12,6 +15,7 @@ export default function CustomerReviews() {
   const scrollRef = useRef(null);
   const navigate = useNavigate();
   const [successMessage, setSuccessMessage] = useState("");
+  const { t } = useTranslate();
 
   useEffect(() => {
     fetch("/api/reviews")
@@ -19,6 +23,8 @@ export default function CustomerReviews() {
       .then((data) => setReviews(data))
       .catch(console.error);
   }, []);
+
+ 
 
   const scrollLeft = () => {
     scrollRef.current.scrollBy({ left: -1320, behavior: "smooth" });
@@ -74,6 +80,8 @@ export default function CustomerReviews() {
       console.error(err);
       alert("Netzwerkfehler. Bitte versuchen Sie es später erneut.");
     }
+
+    
   };
 
   return (
@@ -85,13 +93,13 @@ export default function CustomerReviews() {
       <div className="max-w-[1360px] mx-auto px-4 relative">
         <div className="flex justify-between items-center mb-6 relative">
           <h2
-            className="text-3xl font-bold text-center w-full mb-10 transition-all duration-500 hover:scale-105"
+            className="text-2xl font-medium text-left w-full mb-10 transition-all duration-500 hover:scale-105"
             style={{
               color: "var(--text-light)",
               textShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
             }}
           >
-            Das sagen unsere Kunden
+            {t("customerReviews.kunden") || "Was sagen unsere Kunden?"}
           </h2>
           <button
             onClick={handleReviewClick}
@@ -99,7 +107,7 @@ export default function CustomerReviews() {
             style={{
               background: "linear-gradient(135deg, #ff7626, #ff5722)",
               color: "#ffffff",
-              boxShadow: "0 4px 20px rgba(255, 118, 38, 0.3)",
+              boxShadow: "grey",
             }}
             onMouseEnter={(e) => {
               e.target.style.background =
@@ -146,7 +154,7 @@ export default function CustomerReviews() {
                 rows="4"
               />
             </label>
-            <label className="block mb-4">
+            <div className="block mb-4">
               <span
                 className="font-medium"
                 style={{
@@ -155,28 +163,29 @@ export default function CustomerReviews() {
               >
                 Bewertung:
               </span>
-              <select
-                value={rating}
-                onChange={(e) => setRating(Number(e.target.value))}
-                className="border rounded p-2 mt-1 ml-2"
-                style={{
-                  backgroundColor: isDark ? "#1a1a1a" : "#ffffff",
-                  color: isDark ? "rgba(255, 255, 255, 0.87)" : "#000000",
-                  borderColor: isDark ? "#444" : "#d1d5db",
-                }}
-              >
-                {[5, 4, 3, 2, 1].map((r) => (
-                  <option key={r} value={r}>
-                    {r} Sterne
-                  </option>
+              <div className="flex items-center mt-1 ml-2">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button
+                    type="button"
+                    key={star}
+                    onClick={() => setRating(star)}
+                    className="focus:outline-none"
+                    tabIndex={-1}
+                  >
+                    {star <= rating ? (
+                      <AiFillStar className="text-yellow-400 text-2xl" />
+                    ) : (
+                      <AiOutlineStar className="text-yellow-400 text-2xl" />
+                    )}
+                  </button>
                 ))}
-              </select>
-            </label>
+              </div>
+            </div>
             <button
               type="submit"
               className="px-4 py-2 rounded font-semibold hover:opacity-90 transition-opacity"
               style={{
-                backgroundColor: isDark ? "#ff7626" : "#2563eb",
+                backgroundColor: isDark ? "#ff7626" : "#ff7626",
                 color: "#ffffff",
               }}
             >
@@ -244,8 +253,15 @@ export default function CustomerReviews() {
                   </div>
                 </div>
                 <div className="flex items-center text-yellow-400 mb-2">
-                  {"★".repeat(review.rating)}
-                  {"☆".repeat(5 - review.rating)}
+                  {Array.from({ length: review.rating }).map((_, i) => (
+                    <AiFillStar key={`fill-${i}`} className="text-yellow-400" />
+                  ))}
+                  {Array.from({ length: 5 - review.rating }).map((_, i) => (
+                    <AiOutlineStar
+                      key={`outline-${i}`}
+                      className="text-yellow-400"
+                    />
+                  ))}
                 </div>
                 <p
                   className="text-sm"
