@@ -1,37 +1,34 @@
 import React, { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import hotels from "../data/hotels";
 import {
   FaMapMarkerAlt,
-  FaThumbsUp,
   FaStar,
   FaCar,
   FaDog,
   FaWifi,
   FaUtensils,
   FaSwimmingPool,
-  FaSnowflake,
   FaSpa,
-  FaDumbbell,
-  FaBuilding,
 } from "react-icons/fa";
 
 const BookingFormPage = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const searchParams = new URLSearchParams(location.search);
 
-  // Parameter aus der URL abrufen
+  // erhaltene Parameter
   const hotelId = searchParams.get("hotelId");
   const startDateParam = searchParams.get("startDate");
   const endDateParam = searchParams.get("endDate");
   const adultsParam = searchParams.get("adults");
   const childrenParam = searchParams.get("children");
 
-  // Hotel anhand der ID finden
+  // SUCHE HOTEL
   const selectedHotel =
-    hotels.find((h) => h.id === parseInt(hotelId)) || hotels[0]; // Fallback zum ersten Hotel
+    hotels.find((h) => h.id === parseInt(hotelId)) || hotels[0];
 
-  // Berechnung der Daten und der Nächte
+  // Daten und Nächte
   const startDate = startDateParam ? new Date(startDateParam) : null;
   const endDate = endDateParam ? new Date(endDateParam) : null;
   const nights =
@@ -39,7 +36,7 @@ const BookingFormPage = () => {
       ? Math.round((endDate - startDate) / (1000 * 60 * 60 * 24))
       : 2;
 
-  // Datumsformatierung
+  // Format Datum
   const formatDate = (date) => {
     if (!date) return "";
     const options = {
@@ -51,14 +48,14 @@ const BookingFormPage = () => {
     return date.toLocaleDateString("de-DE", options);
   };
 
-  // Informationen über Personen
+  // Erwachsene und Kinder
   const adults = parseInt(adultsParam) || 2;
   const children = parseInt(childrenParam) || 0;
 
-  // Preisberechnung
+  // Preis
   const totalPrice = selectedHotel.priceValue * nights;
 
-  // Bewertungslabel abrufen
+  // Bewertung
   const getRatingLabel = (score) => {
     if (score >= 9) return "Hervorragend";
     if (score >= 8) return "Sehr gut";
@@ -98,7 +95,19 @@ const BookingFormPage = () => {
     setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length === 0) {
-      console.log("Form Submitted:", form);
+      // Übergang zur Zahlungsseite mit Datenübergabe
+      navigate("/payment", {
+        state: {
+          hotel: selectedHotel,
+          startDate: startDateParam,
+          endDate: endDateParam,
+          nights,
+          adults,
+          children,
+          totalPrice,
+          form,
+        },
+      });
     }
   };
 
@@ -117,7 +126,7 @@ const BookingFormPage = () => {
 
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col lg:flex-row gap-8">
-            {/* Linke Seite - Hotelinfos */}
+            {/* Linke Spalte */}
             <div className="w-full lg:w-1/3 bg-white shadow-lg rounded-xl p-6 h-fit">
               <div className="space-y-4 mb-6">
                 <h2 className="text-2xl font-bold text-gray-700">
@@ -246,7 +255,7 @@ const BookingFormPage = () => {
               </div>
             </div>
 
-            {/* Rechte Seite - Formular */}
+            {/* Rechte Spalte */}
             <div className="w-full lg:w-2/3 bg-white shadow-lg rounded-xl p-6 md:p-8">
               <h2 className="text-2xl font-bold mb-6 text-gray-700">
                 Geben Sie Ihre Daten ein
@@ -264,7 +273,7 @@ const BookingFormPage = () => {
                       onChange={handleChange}
                       className={`w-full border ${
                         errors.firstName ? "border-red-500" : "border-gray-300"
-                      } p-3  rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors`}
+                      } p-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors`}
                       placeholder="Geben Sie Ihren Vornamen ein"
                     />
                     {errors.firstName && (
