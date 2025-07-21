@@ -11,10 +11,12 @@ import {
   FaSwimmingPool,
   FaSpa,
 } from "react-icons/fa";
+import { useTheme } from "../context/ThemeContext";
 
 const BookingFormPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { isDark } = useTheme();
   const searchParams = new URLSearchParams(location.search);
 
   // erhaltene Parameter
@@ -112,14 +114,24 @@ const BookingFormPage = () => {
   };
 
   return (
-    <div className="pt-15 bg-gray-50 min-h-screen">
+    <div
+      className={`pt-15 min-h-screen ${isDark ? "bg-[#242424]" : "bg-gray-50"}`}
+    >
       <div className="p-4 md:p-8">
         {/* Kopfzeile */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h1 className="text-3xl font-bold text-gray-600 mb-2">
+        <div
+          className={`rounded-lg shadow-md p-6 mb-6 ${
+            isDark ? "bg-[#232323] text-white" : "bg-white"
+          }`}
+        >
+          <h1
+            className={`text-3xl font-bold mb-2 ${
+              isDark ? "text-gray-200" : "text-gray-600"
+            }`}
+          >
             Buchung bestätigen
           </h1>
-          <p className="text-gray-600">
+          <p className={isDark ? "text-gray-300" : "text-gray-600"}>
             Vervollständigen Sie Ihre Buchung für das {selectedHotel.name}
           </p>
         </div>
@@ -127,9 +139,17 @@ const BookingFormPage = () => {
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col lg:flex-row gap-8">
             {/* Linke Spalte */}
-            <div className="w-full lg:w-1/3 bg-white shadow-lg rounded-xl p-6 h-fit">
+            <div
+              className={`w-full lg:w-1/3 shadow-lg rounded-xl p-6 h-fit ${
+                isDark ? "bg-[#232323] text-white" : "bg-white"
+              }`}
+            >
               <div className="space-y-4 mb-6">
-                <h2 className="text-2xl font-bold text-gray-700">
+                <h2
+                  className={`text-2xl font-bold ${
+                    isDark ? "text-gray-200" : "text-gray-700"
+                  }`}
+                >
                   {selectedHotel.name}
                 </h2>
                 <div className="flex items-center">
@@ -137,7 +157,11 @@ const BookingFormPage = () => {
                     <FaStar key={i} className="text-yellow-400 text-lg" />
                   ))}
                 </div>
-                <p className="text-gray-600 flex items-center">
+                <p
+                  className={`flex items-center ${
+                    isDark ? "text-gray-400" : "text-gray-600"
+                  }`}
+                >
                   <FaMapMarkerAlt className="text-red-500 mr-2" />
                   {selectedHotel.district}, {selectedHotel.location}
                 </p>
@@ -153,60 +177,149 @@ const BookingFormPage = () => {
 
                 <div className="flex flex-wrap gap-2 mt-4">
                   {selectedHotel.petFriendly && (
-                    <div className="flex items-center text-blue-400 border bg-white border-amber-500 px-3 py-1 rounded-full">
+                    <div
+                      className={`flex items-center text-blue-400 border px-3 py-1 rounded-full
+                      ${
+                        isDark
+                          ? "bg-[#232323] border-amber-700"
+                          : "bg-white border-amber-500"
+                      }`}
+                    >
                       <FaDog className="mr-1" />
-                      <span className="text-sm font-medium">
+                      <span
+                        className={`text-sm font-medium ${
+                          isDark ? "text-gray-200" : ""
+                        }`}
+                      >
                         Haustiere erlaubt
                       </span>
                     </div>
                   )}
                   {selectedHotel.wifi && (
-                    <div className="flex items-center text-blue-400 border bg-white border-amber-500 px-3 py-1 rounded-full">
+                    <div
+                      className={`flex items-center text-blue-400 border px-3 py-1 rounded-full
+                      ${
+                        isDark
+                          ? "bg-[#232323] border-amber-700"
+                          : "bg-white border-amber-500"
+                      }`}
+                    >
                       <FaWifi className="mr-1" />
-                      <span className="text-sm font-medium">
+                      <span
+                        className={`text-sm font-medium ${
+                          isDark ? "text-gray-200" : ""
+                        }`}
+                      >
                         Kostenloses WLAN
                       </span>
                     </div>
                   )}
                   {selectedHotel.parking && (
-                    <div className="flex items-center text-blue-400 border bg-white border-amber-500 px-3 py-1 rounded-full">
+                    <div
+                      className={`flex items-center text-blue-400 border px-3 py-1 rounded-full
+                      ${
+                        isDark
+                          ? "bg-[#232323] border-amber-700"
+                          : "bg-white border-amber-500"
+                      }`}
+                    >
                       <FaCar className="mr-1" />
-                      <span className="text-sm font-medium">Parkplätze</span>
+                      <span
+                        className={`text-sm font-medium ${
+                          isDark ? "text-gray-200" : ""
+                        }`}
+                      >
+                        Parkplätze
+                      </span>
                     </div>
                   )}
-                  {selectedHotel.amenities.includes("Restaurant") && (
-                    <div className="flex items-center text-blue-400 border bg-white border-amber-500 px-3 py-1 rounded-full">
-                      <FaUtensils className="mr-1" />
-                      <span className="text-sm font-medium">Restaurant</span>
-                    </div>
-                  )}
+                  {selectedHotel.amenities &&
+                    selectedHotel.amenities.includes("Restaurant") && (
+                      <div
+                        className={`flex items-center text-blue-400 border px-3 py-1 rounded-full
+                      ${
+                        isDark
+                          ? "bg-[#232323] border-amber-700"
+                          : "bg-white border-amber-500"
+                      }`}
+                      >
+                        <FaUtensils className="mr-1" />
+                        <span
+                          className={`text-sm font-medium ${
+                            isDark ? "text-gray-200" : ""
+                          }`}
+                        >
+                          Restaurant
+                        </span>
+                      </div>
+                    )}
                   {selectedHotel.pool && (
-                    <div className="flex items-center text-blue-400 border bg-white border-amber-500 px-3 py-1 rounded-full">
+                    <div
+                      className={`flex items-center text-blue-400 border px-3 py-1 rounded-full
+                      ${
+                        isDark
+                          ? "bg-[#232323] border-amber-700"
+                          : "bg-white border-amber-500"
+                      }`}
+                    >
                       <FaSwimmingPool className="mr-1" />
-                      <span className="text-sm font-medium">Pool</span>
+                      <span
+                        className={`text-sm font-medium ${
+                          isDark ? "text-gray-200" : ""
+                        }`}
+                      >
+                        Pool
+                      </span>
                     </div>
                   )}
                   {selectedHotel.spa && (
-                    <div className="flex items-center text-blue-400 border bg-white border-amber-500 px-3 py-1 rounded-full">
+                    <div
+                      className={`flex items-center text-blue-400 border px-3 py-1 rounded-full
+                      ${
+                        isDark
+                          ? "bg-[#232323] border-amber-700"
+                          : "bg-white border-amber-500"
+                      }`}
+                    >
                       <FaSpa className="mr-1" />
-                      <span className="text-sm font-medium">Spa</span>
+                      <span
+                        className={`text-sm font-medium ${
+                          isDark ? "text-gray-200" : ""
+                        }`}
+                      >
+                        Spa
+                      </span>
                     </div>
                   )}
                 </div>
               </div>
 
-              <hr className="my-6 border-gray-200" />
+              <hr
+                className={`my-6 ${
+                  isDark ? "border-gray-700" : "border-gray-200"
+                }`}
+              />
 
               <div className="text-sm space-y-3">
-                <h3 className="font-semibold text-gray-800 text-lg">
+                <h3
+                  className={`font-semibold text-lg ${
+                    isDark ? "text-gray-200" : "text-gray-800"
+                  }`}
+                >
                   Ihre Buchungsdetails
                 </h3>
-                <div className="bg-gray-50 p-4 rounded-lg">
+                <div
+                  className={`${
+                    isDark ? "bg-[#232323] text-gray-200" : "bg-gray-50"
+                  } p-4 rounded-lg`}
+                >
                   <p className="mb-2">
                     <strong>Check-in:</strong>{" "}
                     {startDate ? formatDate(startDate) : selectedHotel.checkIn}{" "}
                     <br />
-                    <span className="text-gray-600">
+                    <span
+                      className={isDark ? "text-gray-400" : "text-gray-600"}
+                    >
                       Ab {selectedHotel.checkIn}
                     </span>
                   </p>
@@ -214,7 +327,9 @@ const BookingFormPage = () => {
                     <strong>Check-out:</strong>{" "}
                     {endDate ? formatDate(endDate) : selectedHotel.checkOut}{" "}
                     <br />
-                    <span className="text-gray-600">
+                    <span
+                      className={isDark ? "text-gray-400" : "text-gray-600"}
+                    >
                       Bis {selectedHotel.checkOut}
                     </span>
                   </p>
@@ -236,18 +351,33 @@ const BookingFormPage = () => {
                 </button>
               </div>
 
-              <hr className="my-6 border-gray-200" />
+              <hr
+                className={`my-6 ${
+                  isDark ? "border-gray-700" : "border-gray-200"
+                }`}
+              />
 
               <div className="text-sm space-y-3">
-                <h3 className="font-semibold text-gray-800 text-lg">
+                <h3
+                  className={`font-semibold text-lg ${
+                    isDark ? "text-gray-200" : "text-gray-800"
+                  }`}
+                >
                   Ihre Preisübersicht
                 </h3>
-                <div className="bg-gray-50 p-4 rounded-lg">
+                <div
+                  className={`${
+                    isDark ? "bg-[#232323] text-gray-200" : "bg-gray-50"
+                  } p-4 rounded-lg`}
+                >
                   <div className="pt-1 mt-1">
                     <p className="text-2xl font-bold text-blue-500 pb-1">
                       {totalPrice}€
                     </p>
-                    <p className="text-gray-600 text-xs">
+                    <p
+                      className={isDark ? "text-gray-400" : "text-gray-600"}
+                      style={{ fontSize: "0.75rem" }}
+                    >
                       Zusätzliche Gebühren können anfallen
                     </p>
                   </div>
@@ -256,15 +386,27 @@ const BookingFormPage = () => {
             </div>
 
             {/* Rechte Spalte */}
-            <div className="w-full lg:w-2/3 bg-white shadow-lg rounded-xl p-6 md:p-8">
-              <h2 className="text-2xl font-bold mb-6 text-gray-700">
+            <div
+              className={`w-full lg:w-2/3 shadow-lg rounded-xl p-6 md:p-8 ${
+                isDark ? "bg-[#232323] text-white" : "bg-white"
+              }`}
+            >
+              <h2
+                className={`text-2xl font-bold mb-6 ${
+                  isDark ? "text-gray-200" : "text-gray-700"
+                }`}
+              >
                 Geben Sie Ihre Daten ein
               </h2>
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="flex flex-col md:flex-row gap-4">
                   <div className="flex-1">
-                    <label className="block font-semibold text-gray-700 mb-2">
+                    <label
+                      className={`block font-semibold mb-2 ${
+                        isDark ? "text-gray-200" : "text-gray-700"
+                      }`}
+                    >
                       Vorname *
                     </label>
                     <input
@@ -272,7 +414,11 @@ const BookingFormPage = () => {
                       value={form.firstName}
                       onChange={handleChange}
                       className={`w-full border ${
-                        errors.firstName ? "border-red-500" : "border-gray-300"
+                        isDark
+                          ? "bg-[#232323] text-white border-gray-700"
+                          : "border-gray-300"
+                      } ${
+                        errors.firstName ? "border-red-500" : ""
                       } p-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors`}
                       placeholder="Geben Sie Ihren Vornamen ein"
                     />
@@ -281,35 +427,55 @@ const BookingFormPage = () => {
                     )}
                   </div>
                   <div className="flex-1">
-                    <label className="block font-semibold text-gray-700 mb-2">
+                    <label
+                      className={`block font-semibold mb-2 ${
+                        isDark ? "text-gray-200" : "text-gray-700"
+                      }`}
+                    >
                       Nachname
                     </label>
                     <input
                       name="lastName"
                       value={form.lastName}
                       onChange={handleChange}
-                      className="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                      className={`w-full border ${
+                        isDark
+                          ? "bg-[#232323] text-white border-gray-700"
+                          : "border-gray-300"
+                      } p-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors`}
                       placeholder="Geben Sie Ihren Nachnamen ein"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block font-semibold  text-gray-700 mb-2">
+                  <label
+                    className={`block font-semibold mb-2 ${
+                      isDark ? "text-gray-200" : "text-gray-700"
+                    }`}
+                  >
                     E-Mail-Adresse
                   </label>
                   <input
                     name="email"
                     value={form.email}
                     onChange={handleChange}
-                    className="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                    className={`w-full border ${
+                      isDark
+                        ? "bg-[#232323] text-white border-gray-700"
+                        : "border-gray-300"
+                    } p-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors`}
                     type="email"
                     placeholder="Geben Sie Ihre E-Mail-Adresse ein"
                   />
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-gray-600 mb-2">
+                  <label
+                    className={`block font-semibold mb-2 ${
+                      isDark ? "text-gray-200" : "text-gray-600"
+                    }`}
+                  >
                     Adresse *
                   </label>
                   <input
@@ -317,7 +483,11 @@ const BookingFormPage = () => {
                     value={form.address}
                     onChange={handleChange}
                     className={`w-full border ${
-                      errors.address ? "border-red-500" : "border-gray-300"
+                      isDark
+                        ? "bg-[#232323] text-white border-gray-700"
+                        : "border-gray-300"
+                    } ${
+                      errors.address ? "border-red-500" : ""
                     } p-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors`}
                     placeholder="Geben Sie Ihre Adresse ein"
                   />
@@ -328,33 +498,53 @@ const BookingFormPage = () => {
 
                 <div className="flex flex-col md:flex-row gap-4">
                   <div className="flex-1">
-                    <label className="block font-semibold text-gray-700 mb-2">
+                    <label
+                      className={`block font-semibold mb-2 ${
+                        isDark ? "text-gray-200" : "text-gray-700"
+                      }`}
+                    >
                       Stadt
                     </label>
                     <input
                       name="city"
                       value={form.city}
                       onChange={handleChange}
-                      className="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                      className={`w-full border ${
+                        isDark
+                          ? "bg-[#232323] text-white border-gray-700"
+                          : "border-gray-300"
+                      } p-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors`}
                       placeholder="Geben Sie Ihre Stadt ein"
                     />
                   </div>
                   <div className="flex-1">
-                    <label className="block font-semibold text-gray-700 mb-2">
+                    <label
+                      className={`block font-semibold mb-2 ${
+                        isDark ? "text-gray-200" : "text-gray-700"
+                      }`}
+                    >
                       Postleitzahl
                     </label>
                     <input
                       name="zip"
                       value={form.zip}
                       onChange={handleChange}
-                      className="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                      className={`w-full border ${
+                        isDark
+                          ? "bg-[#232323] text-white border-gray-700"
+                          : "border-gray-300"
+                      } p-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors`}
                       placeholder="Geben Sie Ihre Postleitzahl ein"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-gray-700 mb-2">
+                  <label
+                    className={`block font-semibold mb-2 ${
+                      isDark ? "text-gray-200" : "text-gray-700"
+                    }`}
+                  >
                     Telefonnummer *
                   </label>
                   <input
@@ -362,7 +552,11 @@ const BookingFormPage = () => {
                     value={form.phone}
                     onChange={handleChange}
                     className={`w-full border ${
-                      errors.phone ? "border-red-500" : "border-gray-300"
+                      isDark
+                        ? "bg-[#232323] text-white border-gray-700"
+                        : "border-gray-300"
+                    } ${
+                      errors.phone ? "border-red-500" : ""
                     } p-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors`}
                     placeholder="Geben Sie Ihre Telefonnummer ein"
                   />
