@@ -2,7 +2,7 @@
 @import "leaflet/dist/leaflet.css"; /* europe maps*/
 
 html {
-  overflow-x: hidden; /*scroll */
+  overflow-x: hidden; /* scroll */
 }
 
 :root {
@@ -56,7 +56,7 @@ body {
   min-height: 100vh;
   background-color: var(--bg-secondary); /* Теперь будет меняться с темой! */
   color: var(--text-color);
-  overflow-x: hidden; /*scroll */
+  overflow-x: hidden; /* scroll */
 }
 
 a {
