@@ -64,8 +64,9 @@ const cityNameToCode = {
 // Generierung einer eindeutigen UUID und Rückgabe ins Frontend
 // speichern von abgerufenen Amadeus-API-Daten unter dieser UUID in der Mongo-Datenbank
 router.get("/generate", async (req, res) => {
+  return res.json({ uuid: "5bb14dd1-6516-4c3a-a5e4-8c9eea70af58" });
   const uniqueId = uuidv4();
-
+  // /*
   try {
     const newUuid = new UuidModel({ uuid: uniqueId, flag: false });
     // const newUuid = new UuidModel({ uuid: uniqueId, flag: false, hotels: [] });
@@ -245,10 +246,24 @@ router.get("/status/:uuid", async (req, res) => {
   const { uuid } = req.params;
   console.log("uuid-backend-ep-zwei:", uuid);
 
+  let responded = false;
+
+  //Timeout 40sek
+  const timeout = setTimeout(() => {
+    if (!responded) {
+      responded = true;
+      return res
+        .status(404)
+        .json({ message: "Run Time Error - Keine Eintraege gefunden!" });
+    }
+  }, 40000);
+
   try {
     const eintrag = await UuidModel.findOne({ uuid: uuid }).exec();
 
     if (!eintrag || !Array.isArray(eintrag.hotels)) {
+      responded = true;
+      clearTimeout(timeout);
       return res.json({
         count: 0,
         flag: false,
@@ -256,8 +271,16 @@ router.get("/status/:uuid", async (req, res) => {
       });
     }
     console.log("mongo-db-eintrag-length", eintrag.hotels.length); // gibt Int/Number zurück
-    res.json({ count: eintrag.hotels.length, flag: eintrag.flag }); // Rückgabe an Frontend
+
+    clearTimeout(timeout);
+    responded = true;
+    return res.json({ count: eintrag.hotels.length, flag: eintrag.flag }); // Rückgabe an Frontend
+    // if (eintrag.hotels.length === 0) {
+    //   return;
+    // }
   } catch (err) {
+    responded = true;
+    clearTimeout(timeout);
     res.status(500).json({ message: err.message });
   }
 });

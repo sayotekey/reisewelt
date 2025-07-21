@@ -45,16 +45,16 @@ export default function SearchForm() {
   const [loading, setLoading] = useState(false);
   // const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [showErrorInfo, setShowErrorInfo] = useState(false);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const dropdownRef = useRef();
 
   // Daten aus localStorage holen
-  useEffect(() => {
-    const lastHotels = JSON.parse(localStorage.getItem("lastHotels")) || [];
-    if (lastHotels.length > 0) {
-      setHotels(lastHotels);
-    }
-  }, []);
+  // useEffect(() => {
+  //   const lastHotels = JSON.parse(localStorage.getItem("lastHotels")) || [];
+  //   if (lastHotels.length > 0) {
+  //     setHotels(lastHotels);
+  //   }
+  // }, []);
 
   //dropdown functionality
   useEffect(() => {
@@ -63,22 +63,13 @@ export default function SearchForm() {
         setShowDropdown(false);
       }
     };
-
     if (showDropdown) {
       document.addEventListener("mousedown", handleClickOutside);
     }
-
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [showDropdown]);
-
-  // localStorage last-search-Hotellist
-  useEffect(() => {
-    if (hotels.length > 0) {
-      localStorage.setItem("lastHotels", JSON.stringify(hotels));
-    }
-  }, [hotels]);
 
   // Filtere Vorschläge nach Eingabe (case-insensitive, enthält den Text)
   const suggestions = myCity
@@ -128,6 +119,8 @@ export default function SearchForm() {
       setCityError("Bitte einen Städtenamen eingeben.");
     } else if (!validCities.includes(myCity)) {
       setCityError("Ungültiger Städtename, bitte Eingabe überprüfen.");
+    } else if (!startDate || !endDate) {
+      setError("Bitte ein Reisedatum angeben!");
     } else {
       setCityError("");
       setShowSuggestions(false);
@@ -137,7 +130,7 @@ export default function SearchForm() {
   // 1.Endpunkt für UUID
   // onclick button anfrage an backend senden, um UUID zu generieren
   // und die UUID in der MongoDB zu speichern
-  const getCombinedData = async (myCity) => {
+  const getCombinedData = async () => {
     try {
       setError(""); // optional: reset error before fetch
       setHotels([]); // optional: clear previous hotels
@@ -221,7 +214,7 @@ export default function SearchForm() {
         setError("Es wurden keine Hotels gefunden.");
         setLoading(false);
       } else {
-        // setHotels([...allHotels]);
+        setHotels([...allHotels]);
         setLoading(false);
       }
       console.log("allHotels", allHotels);
@@ -501,60 +494,93 @@ export default function SearchForm() {
       <div className="mt-6 flex w-full sm:w-full sm:justify-center md:justify-end xl:justify-end">
         <button
           onClick={async () => {
+            // validierung
             handleSearch();
-            // Only fetch hotels if there is no error, myCity is valid, and both dates are selected
-            if (
-              myCity &&
-              validCities.includes(myCity) &&
-              startDate &&
-              endDate
-            ) {
-              ///
-              if (myCity.toLowerCase() === "hamburg") {
-                // Hamburg Suche in localStorage speichern
-                const previousSearches =
-                  JSON.parse(localStorage.getItem("lastSearches")) || [];
-                const newSearch = {
-                  to: "Hamburg",
-                  startDate: startDate ? startDate.toISOString() : null,
-                  endDate: endDate ? endDate.toISOString() : null,
-                  adults,
-                  children,
-                };
-                const updatedSearches = [newSearch, ...previousSearches].slice(
-                  0,
-                  3
-                );
-                localStorage.setItem(
-                  "lastSearches",
-                  JSON.stringify(updatedSearches)
-                );
-                // Weiterleitung zur Hamburg Seite
-                const params = new URLSearchParams();
-                if (startDate)
-                  params.append("startDate", startDate.toISOString());
-                if (endDate) params.append("endDate", endDate.toISOString());
-                params.append("adults", adults);
-                params.append("children", children);
 
-                window.location.href = `/hamburg-hotels?${params.toString()}`;
-              } else {
-                // hier KEIN await!
-                getCombinedData(myCity);
-                navigate(
-                  `/hotel-results?city=${encodeURIComponent(
-                    myCity
-                  )}&start=${startDate.toISOString()}&end=${endDate.toISOString()}&adults=${adults}&children=${children}`
-                );
-              }
-              ///
-            } else if (!startDate || !endDate) {
-              setError("Bitte ein Reisedatum angeben!");
-            } else if (!myCity) {
-              setError("Bitte einen Städtenamen eingeben.");
-            } else if (!validCities.includes(myCity)) {
-              setError("Ungültigen Städtename gefunden!");
+            // Neue Suchanfrage ggf. speichern
+            const newSearch = {
+              to: myCity,
+              startDate: startDate.toISOString(),
+              endDate: endDate.toISOString(),
+              adults,
+              children,
+            };
+            const previousSearches =
+              JSON.parse(localStorage.getItem("lastSearches")) || [];
+            const updatedSearches = [newSearch, ...previousSearches].slice(
+              0,
+              3
+            );
+            localStorage.setItem(
+              "lastSearches",
+              JSON.stringify(updatedSearches)
+            );
+            // URL-Parameter vorbereiten
+            const params = new URLSearchParams({
+              startDate: startDate.toISOString(),
+              endDate: endDate.toISOString(),
+              adults: adults.toString(),
+              children: children.toString(),
+            });
+            localStorage.setItem("SearchBarParams", params.toString());
+
+            console.log("startDate:", startDate.toISOString()); // startDate: 2025-07-28T22:00:00.000Z
+            console.log("endDate:", endDate.toISOString()); // endDate: 2025-07-29T22:00:00.000Z
+            console.log("adults:", adults);
+            console.log("children:", children);
+            // Sonderfall Hamburg
+            if (myCity.toLowerCase() === "hamburg") {
+              window.location.href = `/hamburg-hotels?${params.toString()}`;
+            } else {
+              params.append("city", myCity);
+
+              window.location.href = `/hotel-results?${params.toString()}`;
             }
+          }}
+          className="text-gray-800 w-full sm:w-full xl:w-1/7 px-6 py-2 mt-3 rounded transition font-semibold"
+          style={{ backgroundColor: "#a8d5e2" }}
+          onMouseEnter={(e) => (e.target.style.backgroundColor = "#a2ceda")}
+          onMouseLeave={(e) => (e.target.style.backgroundColor = "#a8d5e2")}
+        >
+          {t("search.searchButton") || "Suchen"}
+
+          {/* if (myCity.toLowerCase() === "hamburg") { 
+           // Hamburg Suche in localStorage speichern
+              //   const previousSearches =
+              //     JSON.parse(localStorage.getItem("lastSearches")) || [];
+              //   const newSearch = {
+              //     to: "Hamburg",
+              //     startDate: startDate ? startDate.toISOString() : null,
+              //     endDate: endDate ? endDate.toISOString() : null,
+              //     adults,
+              //     children,
+              //   };
+              //   const updatedSearches = [newSearch, ...previousSearches].slice(
+              //     0,
+              //     3
+              //   );
+              //   localStorage.setItem(
+              //     "lastSearches",
+              //     JSON.stringify(updatedSearches)
+              //   );
+              //   // Weiterleitung zur Hamburg Seite
+              //   const params = new URLSearchParams();
+              //   if (startDate)
+              //     params.append("startDate", startDate.toISOString());
+              //   if (endDate) params.append("endDate", endDate.toISOString());
+              //   params.append("adults", adults);
+              //   params.append("children", children);
+
+              //   window.location.href = `/hamburg-hotels?${params.toString()}`;
+              // } else {
+              //   // // hier KEIN await!
+              //   // getCombinedData();
+              //   window.location.href = `/hotel-results?city=${encodeURIComponent(
+              //     myCity
+              //   )}&startDate=${startDate}&endDate=${endDate}&adults=${adults}&children=${children}`;
+              // }
+              ///
+         
           }}
           className="text-gray-800 w-full sm:w-full xl:w-1/7 px-6 py-2 mt-3 rounded transition font-semibold"
           style={{
@@ -567,7 +593,7 @@ export default function SearchForm() {
             e.target.style.backgroundColor = "#a8d5e2";
           }}
         >
-          {t("search.searchButton") || "Suchen"}
+          {t("search.searchButton") || "Suchen"}*/}
         </button>
       </div>
       {/*hier ist Grid zu Ende! */}
