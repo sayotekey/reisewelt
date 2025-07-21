@@ -154,7 +154,7 @@ export default function SearchForm() {
         adults,
         children,
       };
-      const updatedSearches = [newSearch, ...previousSearches].slice(0, 3); // Limit to 3 searches
+      const updatedSearches = [newSearch, ...previousSearches].slice(0, 4); // Limit to 4 searches
       localStorage.setItem("lastSearches", JSON.stringify(updatedSearches));
       ///
       const response = await axios.get(
@@ -523,7 +523,7 @@ export default function SearchForm() {
                 };
                 const updatedSearches = [newSearch, ...previousSearches].slice(
                   0,
-                  3
+                  4
                 );
                 localStorage.setItem(
                   "lastSearches",
