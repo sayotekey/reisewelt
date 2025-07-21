@@ -318,6 +318,8 @@ const HotelResultsPage = () => {
       localStorage.setItem("lastSearches", JSON.stringify(updatedSearches));
     } catch (error) {
       console.error("Error fetching hotels:", error.message);
+      setError(error?.message || "Fehler beim Laden der Hotels."); // Nachricht im Frontend anzeigen
+      setLoading(false);
       return [];
     }
   };
