@@ -29,7 +29,7 @@ const SingleNews = () => {
 
   if (!news) {
     return (
-      <div className="text-center text-red-400 mt-10">
+      <div className="text-center text-red-400 mt-20">
         Nachricht nicht gefunden.
       </div>
     );
@@ -38,12 +38,12 @@ const SingleNews = () => {
   //Die Anzeige der Nachricht selbst:
   return (
     <motion.div
-      className="max-w-4xl mx-auto p-4 text-gray-200"
+      className="max-w-4xl mx-auto p-4 text-gray-200 mt-18"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <Link to="/" className="text-blue-200 hover:underline mb-4 inline-block">
+      <Link to="/news" className="text-blue-200 hover:underline mb-4 inline-block">
         ← Zurück zu den Nachrichten
       </Link>
 
