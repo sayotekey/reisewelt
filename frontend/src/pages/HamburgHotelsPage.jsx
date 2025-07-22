@@ -560,7 +560,7 @@ const HamburgHotelsPage = () => {
                     }`}
                 >
                   <Link
-                    to={`/hotel/${hotel.id}${
+                    to={`/hotels/${hotel._id}${
                       startDateParam && endDateParam
                         ? `?startDate=${startDateParam}&endDate=${endDateParam}${
                             adultsParam ? `&adults=${adultsParam}` : ""

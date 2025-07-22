@@ -51,7 +51,7 @@ function App() {
               element={<FivehundredEuroDeals />}
             />
             <Route path="/hotel-results" element={<HotelResultsPage />} />
-            <Route path="/hotel/:id" element={<HotelDetailPage />} />
+            <Route path="/hotels/:id" element={<HotelDetailPage />} />
             {/* Legal pages */}
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/imprint" element={<Imprint />} />

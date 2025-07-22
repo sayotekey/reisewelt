@@ -1,6 +1,7 @@
+import axios from "axios";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
-import { useState } from "react";
-import hotels from "../data/hotels";
+import { useState, useEffect } from "react";
+// import hotels from "../data/hotels";
 import ReviewHotel from "../components/ReviewHotel";
 import {
   FaMapMarkerAlt,
@@ -25,12 +26,37 @@ import { useTheme } from "../context/ThemeContext";
 
 const HotelDetailPage = () => {
   const { id } = useParams();
-  const hotelData = hotels.find((h) => h.id === parseInt(id));
+  // const hotelData = hotels.find((h) => h.id === parseInt(id));
+  const [hotelData, setHotelData] = useState(null);
   const [mainImage, setMainImage] = useState(hotelData?.image || "");
   const location = useLocation();
   const navigate = useNavigate();
   const [isFavorite, setIsFavorite] = useState(false);
+
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const { isDark } = useTheme();
+
+  // Laden der Hoteldaten
+  useEffect(() => {
+    console.log("Hoteldaten:", hotelData);
+    const fetchHotel = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/api/hotels/hotel/${id}`
+        );
+        setHotelData(response.data);
+        setMainImage(response.data.image);
+      } catch (error) {
+        console.error("Fehler beim Abrufen des Hotels:", error);
+        setError("Fehler beim Laden des Hotels");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchHotel();
+  }, [id]);
 
   const searchParams = new URLSearchParams(location.search);
   const startDateParam = searchParams.get("startDate");
