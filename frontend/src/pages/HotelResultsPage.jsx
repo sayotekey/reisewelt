@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import DatePicker from "react-datepicker";
 import { AnimatePresence, motion } from "framer-motion";
-
+import SkeletonHotelCard from "../components/SkeletonHotelCard.jsx";
 import xButtonDelete from "../icons/x-solid-black.svg";
 import persons from "../icons/people-group-solid-black.svg";
 import plane from "../icons/plane-solid-black.svg";
@@ -53,6 +53,8 @@ const HotelResultsPage = () => {
   const [searchAdults, setSearchAdults] = useState(2);
   const [searchChildren, setSearchChildren] = useState(0);
 
+  const [activeSearch, setActiveSearch] = useState(null);
+
   const [cityError, setCityError] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
@@ -69,41 +71,42 @@ const HotelResultsPage = () => {
   const { t } = useTranslate();
   const location = useLocation();
 
+  // Suchparameter aus der URL automatisch in die React-States übernommen
+  //sobald sich location.search ändert
   useEffect(() => {
+    // const myCity = query.get("city");
+    // const startDate = query.get("start");
+    // const endDate = query.get("end");
+    // const adults = query.get("adults");
+    // const children = query.get("children");
+
     const query = new URLSearchParams(location.search);
-    setAdults(Number(query.get("adults")) || 2);
     setMyCity(query.get("city") || "");
     setDateRange([query.get("startDate"), query.get("endDate")]);
+    setAdults(Number(query.get("adults")) || 2);
     setChildren(Number(query.get("children")) || 0);
   }, [location.search]);
 
-  console.log("startDate:", startDate); // startDate:
-  console.log("endDate:", endDate); // endDate:
+  console.log("startDate:", startDate); // startDate:2025-08-18
+  console.log("endDate:", endDate); // endDate: bla
   console.log("adults:", adults);
   console.log("children:", children);
 
+  // Wert aus localStorage übernehmen
   const togglePopup = () => {
     if (!showPopup && lastSearches[0]?.to) {
-      setMyCity(lastSearches[0].to); // Wert aus localStorage übernehmen
+      setMyCity(lastSearches[0].to);
     }
     setShowPopup(!showPopup);
   };
 
-  const handleSearchSubmit = () => {
-    setSearchCity(myCity);
-    setSearchDateRange(dateRange);
-    setSearchAdults(adults);
-    setSearchChildren(children);
-    setShowPopup(false); // Schließt das Popup nach Klick
-  };
-
   // Daten aus localStorage holen
-  // useEffect(() => {
-  //   setLoading(true);
-  //   const lastHotels = JSON.parse(localStorage.getItem("lastHotels")) || [];
-  //   setHotels(lastHotels);
-  //   setLoading(false);
-  // }, []);
+  useEffect(() => {
+    setLoading(true);
+    const lastHotels = JSON.parse(localStorage.getItem("lastHotels")) || [];
+    setHotels(lastHotels);
+    setLoading(false);
+  }, []);
 
   //dropdown functionality
   useEffect(() => {
@@ -144,44 +147,122 @@ const HotelResultsPage = () => {
       setErrorInfo("");
     }
   };
+
+  ///
+  useEffect(() => {
+    // Nur ausführen, wenn alle Parameter vorhanden sind (children kann auch 0 sein)
+    if (
+      myCity &&
+      startDate &&
+      endDate &&
+      typeof adults === "number" &&
+      typeof children === "number"
+    ) {
+      setLoading(true);
+      setError("");
+      setHotels([]);
+      axios
+        .get("http://localhost:3000/api/uuid/generate", {
+          params: {
+            cityName: myCity,
+            startDate,
+            endDate,
+            adults,
+            children,
+          },
+        })
+        .then((response) => {
+          setHotels(response.data.hotels || []);
+          setLoading(false);
+        })
+        .catch(() => {
+          setError("Fehler beim Laden der Hotels.");
+          setLoading(false);
+        });
+    }
+  }, [myCity, startDate, endDate, adults, children]);
+  ///
+  /*const handleSearchSubmit = () => {
+    // Felder prüfen
+    if (
+      myCity &&
+      dateRange[0] &&
+      dateRange[1] &&
+      typeof adults === "number" &&
+      typeof children === "number"
+    ) {
+      setSearchCity(myCity);
+      setSearchDateRange(dateRange);
+      setSearchAdults(adults);
+      setSearchChildren(children);
+      // Aktive Suche setzen → löst den API-Call via useEffect aus
+      setActiveSearch({
+        city: myCity,
+        dateRange: dateRange,
+        adults: adults,
+        children: children,
+      });
+      setShowPopup(false); // Popup schließen
+      setError(""); // Vorherige Fehlermeldung zurücksetzen (optional)
+    }
+  };
+
   // get combined data aufrufen, sobald seite neu geladen wird
   // flag auf true bei neuer datenlage
   // get coomb. ändert/prüft das flag
   ///
-  useEffect(() => {
-    // Nur starten, wenn alle Parameter vorhanden sind
-    if (
-      !searchCity ||
-      !searchDateRange[0] ||
-      !searchDateRange[1] ||
-      typeof searchAdults !== "number" ||
-      typeof searchChildren !== "number"
-    ) {
+  const handleSearchClick = () => {
+    if (!myCity) {
+      setCityError("Bitte einen Städtenamen eingeben.");
+      return;
+    } else if (!validCities.includes(myCity)) {
+      setCityError("Ungültiger Städtename, bitte Eingabe überprüfen.");
+      return;
+    } else {
+      setCityError("");
+    }
+
+    if (!dateRange[0] || !dateRange[1]) {
+      setError("Bitte wähle ein gültiges Datum aus.");
       return;
     }
 
+    setActiveSearch({
+      city: myCity,
+      dateRange,
+      adults,
+      children,
+    });
+  };*/
+
+  // Backend-Abfrage nach activeSearch-Änderung
+  useEffect(() => {
+    // Nur starten, wenn alle Parameter vorhanden sind
+    // if (!activeSearch) return;
+
     const getCombinedData = async () => {
       try {
-        setError(""); // optional: reset error before fetch
-        setHotels([]); // optional: clear previous hotels
-        setLoading(true); // <-- Spinner sichtbar machen
+        setError("");
+        setHotels([]);
+        setLoading(true);
         ///
-        const timeoutMs = 40000; // 40 Sekunden Timeout
+        // const { city, dateRange, adults, children } = activeSearch;
+        const timeoutMs = 20000;
         const startTime = Date.now();
         ///
         const response = await axios.get(
           "http://localhost:3000/api/uuid/generate",
           {
-            //zum backend schicken
             params: {
-              cityName: searchCity,
-              startDate: searchDateRange[0],
-              endDate: searchDateRange[1],
-              adults: searchAdults,
-              children: searchChildren,
+              cityName: myCity,
+              startDate: dateRange[0],
+              endDate: dateRange[1],
+              adults: adults,
+              children: children,
             },
           }
         );
+
         const myUuid = response.data.uuid;
 
         console.log("UUID:", myUuid); // Gibt die generierte UUID aus
@@ -199,8 +280,10 @@ const HotelResultsPage = () => {
 
         let allHotels = []; // Array für alle Hotels
         let newCount = 0; // Variable für neuen Count
+        //  let newCount = countRaw;
+        console.log("hier beginnt while-loop");
 
-        while (flag === false) {
+        while (!flag || newCount !== allHotels.length) {
           ///
           // TIMEOUT-CHECK
           if (Date.now() - startTime > timeoutMs) {
@@ -229,9 +312,9 @@ const HotelResultsPage = () => {
             console.log(hotelResponse.data.hotels);
             console.log(Array.isArray(hotelResponse.data.hotels));
             ///
+
             const fetchedHotels = hotelResponse.data.hotels.map((h) => h[0]);
             allHotels = [...allHotels, ...fetchedHotels];
-
             setHotels((prev) => [...prev, ...fetchedHotels]);
             hotelLength = newCount;
 
@@ -242,7 +325,6 @@ const HotelResultsPage = () => {
             //       setHotels((prevHotels) => [...prevHotels, hotel[0]]); //neu
             // allHotels.push(hotel[0]);
           }
-
           // setHotels([...allHotels]);
         }
         if (allHotels.length === 0) {
@@ -252,20 +334,28 @@ const HotelResultsPage = () => {
           setHotels([...allHotels]);
         }
         setLoading(false);
+
         localStorage.setItem("lastHotels", JSON.stringify(allHotels));
-        // console.log("allHotels", allHotels);
-        console.log("allHotels", allHotels);
+        console.log("Alle Hotels geladen:", allHotels);
 
         // Lesen die zuletzt gespeicherten Suchen aus localStorage
         const previousSearches =
           JSON.parse(localStorage.getItem("lastSearches")) || [];
-        // Create a new search object
+
+        // // Create a new search object
+        // const newSearch = {
+        //   to: searchCity,
+        //   startDate: searchDateRange[0],
+        //   endDate: searchDateRange[1],
+        //   adults: searchAdults,
+        //   children: searchChildren,
+        // };
         const newSearch = {
-          to: searchCity,
-          startDate: searchDateRange[0],
-          endDate: searchDateRange[1],
-          adults: searchAdults,
-          children: searchChildren,
+          to: myCity,
+          startDate: dateRange[0],
+          endDate: dateRange[1],
+          adults,
+          children,
         };
         //
         const updatedSearches = [newSearch, ...previousSearches].slice(0, 3); // Limit to 3 searches
@@ -273,13 +363,26 @@ const HotelResultsPage = () => {
       } catch (error) {
         console.error("Fehler beim Laden der Hotels:", error.message);
         setError(error?.message || "Fehler beim Laden der Hotels."); // Nachricht im Frontend anzeigen
-        return [];
+        // return [];
       } finally {
         setLoading(false);
       }
     };
-    getCombinedData();
-  }, [searchCity, searchDateRange, searchAdults, searchChildren]);
+
+    // Nur starten, wenn alle Parameter vorhanden sind
+    if (
+      myCity &&
+      dateRange[0] &&
+      dateRange[1] &&
+      typeof adults === "number" &&
+      typeof children === "number"
+    ) {
+      getCombinedData();
+    }
+  }, [myCity, dateRange, adults, children]);
+  //   getCombinedData();
+  // }, [searchAdults, searchChildren, searchCity, searchDateRange, activeSearch]);
+  // }, [activeSearch]);
   ///
   const handleKeyDown = (e) => {
     if (!showSuggestions || suggestions.length === 0) return;
@@ -334,6 +437,10 @@ const HotelResultsPage = () => {
     return null; // nicht gefunden
   };
 
+  // 1.Endpunkt für UUID
+  // onclick button anfrage an backend senden, um UUID zu generieren
+  // und die UUID in der MongoDB zu speichern
+
   const handleSearch = () => {
     if (!myCity) {
       setCityError("Bitte einen Städtenamen eingeben.");
@@ -344,10 +451,6 @@ const HotelResultsPage = () => {
       setShowSuggestions(false);
     }
   };
-
-  // 1.Endpunkt für UUID
-  // onclick button anfrage an backend senden, um UUID zu generieren
-  // und die UUID in der MongoDB zu speichern
 
   const lastSearches = JSON.parse(localStorage.getItem("lastSearches") || "[]");
 
@@ -693,6 +796,7 @@ const HotelResultsPage = () => {
                     className="bg-indigo-900 text-black px-6 py-2 rounded hover:bg-indigo-800 w-full"
                     onClick={async () => {
                       handleSearch();
+                      // handleSearchClick(); // ?? name?
 
                       // Only fetch hotels if there is no error, myCity is valid, and both dates are selected
                       if (
@@ -984,13 +1088,20 @@ const HotelResultsPage = () => {
             )}{" "}
           </div>
           {error && <div className="text-red-600 mb-4">{error}</div>}
-
+          {/* SKELETONS BEI LADEN */}
+          {loading && hotels.length === 0 && (
+            <>
+              <SkeletonHotelCard />
+              <SkeletonHotelCard />
+              <SkeletonHotelCard />
+            </>
+          )}
           <section className="grid gap-6">
             {hotels.length === 0 ? (
               <p>Keine Hotels gefunden.</p>
             ) : (
-              hotels.map((hotel) => {
-                // check if wishlist entry
+              hotels.map((hotel, index) => {
+                // Wishlist-Check
                 const wishlist = JSON.parse(
                   localStorage.getItem("wishlist") || "[]"
                 );
@@ -998,9 +1109,13 @@ const HotelResultsPage = () => {
                 const isWishlisted = wishlist.some(
                   (item) => item.offers?.[0]?.id === offerId
                 );
+
                 return (
-                  <div
-                    key={hotel.hotel.dupeId}
+                  <motion.div
+                    key={hotel.hotel.dupeId || index}
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: index * 0.05 }}
                     className="flex bg-white shadow-lg rounded-xl overflow-hidden hover:shadow-2xl transition-all duration-300 border border-gray-100"
                   >
                     <div className="w-full relative md:w-[320px] h-[250px] md:h-[220px] overflow-hidden rounded-lg ml-4 mt-4">
@@ -1175,7 +1290,7 @@ const HotelResultsPage = () => {
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </motion.div>
                 );
               })
             )}
@@ -1185,5 +1300,4 @@ const HotelResultsPage = () => {
     </div>
   );
 };
-
 export default HotelResultsPage;

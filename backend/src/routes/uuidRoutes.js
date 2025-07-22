@@ -64,7 +64,24 @@ const cityNameToCode = {
 // Generierung einer eindeutigen UUID und Rückgabe ins Frontend
 // speichern von abgerufenen Amadeus-API-Daten unter dieser UUID in der Mongo-Datenbank
 router.get("/generate", async (req, res) => {
-  return res.json({ uuid: "5bb14dd1-6516-4c3a-a5e4-8c9eea70af58" });
+  // return res.json({ uuid: "5bb14dd1-6516-4c3a-a5e4-8c9eea70af58" });
+
+  const mockParam = req.query.mock?.toLowerCase(); // z. B. "mock"
+
+  // Feste UUIDs für Mocking (müssen in MongoDB vorhanden sein)
+  const mockUuidsByCity = {
+    test: "5bb14dd1-6516-4c3a-a5e4-8c9eea70af58",
+    genf: "4b310ba6-e3d2-4726-83f1-ac2631954b02",
+    kopenhagen: "deadbeef-dead-beef-dead-beefdeadbeef", // oder "münchen" ohne Umlaute, je nach Bedarf
+  };
+
+  // Wenn ein Mock-Parameter gesetzt ist, gib passende UUID zurück
+  if (mockParam && mockUuidsByCity[mockParam]) {
+    const mockUuid = mockUuidsByCity[mockParam];
+    console.log(`Mock-UUID-Modus aktiv (${mockParam}) – sende:`, mockUuid);
+    return res.status(200).json({ uuid: mockUuid });
+  }
+
   const uniqueId = uuidv4();
   // /*
   try {
@@ -193,52 +210,12 @@ router.get("/generate", async (req, res) => {
       }
     }
     ///
-    /*
-    let countList = 0;
-    for (let i = 0; i < hotelIdList.length; i++) {
-      console.log("Frage Hotel-ID an:", hotelIdList[i]); // Ausgabe im Terminal zur Kontrolle
-      console.log("i=", i);
-
-      const result = await fetchFromAmadeus(
-        `/v3/shopping/hotel-offers?hotelIds=${hotelIdList[i].hotelIds}`,
-        token
-      ); // alle Hotelangebote für die jeweilige Hotel-ID
-
-      if (
-        // Pruefen, ob es Angebote mit available: true gibt
-        result &&
-        result.data &&
-        Array.isArray(result.data) &&
-        result.data.length > 0
-      ) {
-        // Füge die gefundenen Hotels zur bestehenden Liste hinzu (statt zu überschreiben)
-        await UuidModel.findOneAndUpdate(
-          { uuid: uniqueId },
-          { $addToSet: { hotels: { $each: result.data } } }
-        );
-        countList++;
-        console.log("Angebote gefunden für Hotel-ID:", hotelIdList[i].hotelIds);
-        console.log(`${result.data} wurde in Mongo DB gespeichert`);
-        if (countList === 5) {
-          await UuidModel.findOneAndUpdate({ uuid: uniqueId }, { flag: true });
-          console.log("5 Angebote gefunden");
-          break;
-        }
-      }
-      if (i == hotelIdList.length - 1) {
-        // else if (countList < 5 && countList === hotelIdList.length) {
-
-        await UuidModel.findOneAndUpdate({ uuid: uniqueId }, { flag: true });
-        console.log("Liste fertig, keine weiteren Angebote verfügbar");
-        break;
-      }
-    }*/
   } catch (error) {
     console.error("Error fetching hotel data:", error);
   }
 });
 
-// zweiter Endpunkt:
+// 2. Endpunkt:
 // Abfrage der Anzahl der Hotels, die unter dieser UUID gespeichert sind
 // und Rückgabe der Anzahl ins Frontend
 // URL: http://localhost:3000/api/uuid/status/:uuid
@@ -286,7 +263,7 @@ router.get("/status/:uuid", async (req, res) => {
 });
 export default router;
 
-// dritter Ednpunkt:
+// 3. Ednpunkt:
 // Abfrage der Hotels, die unter dieser UUID gespeichert sind
 // und Rückgabe der Hotels ins Frontend
 

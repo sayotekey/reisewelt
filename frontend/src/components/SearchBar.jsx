@@ -531,10 +531,20 @@ export default function SearchForm() {
             // Sonderfall Hamburg
             if (myCity.toLowerCase() === "hamburg") {
               window.location.href = `/hamburg-hotels?${params.toString()}`;
+            } else if (
+              myCity.toLowerCase() === "berlin" ||
+              myCity.toLowerCase() === "genf" ||
+              myCity.toLowerCase() === "kopenhagen"
+            ) {
+              console.log("mockdata-abfrage", myCity);
+              params.append("city", myCity);
+              window.location.href = `/hotel-results?${params.toString()}&mock=${encodeURIComponent(
+                myCity
+              )}`;
             } else {
               params.append("city", myCity);
 
-              window.location.href = `/hotel-results?${params.toString()}`;
+              // window.location.href = `/hotel-results?${params.toString()}`;
             }
           }}
           className="text-gray-800 w-full sm:w-full xl:w-1/7 px-6 py-2 mt-3 rounded transition font-semibold"
