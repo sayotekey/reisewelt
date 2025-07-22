@@ -1,9 +1,8 @@
 import { useState } from "react";
 import validateRegisterPassword from "../utils/validateRegisterPassword";
 import axios from "axios";
-// import { toast, ToastContainer } from "react-toastify"; // Bibliothek für Benachrichtigungen
-// import "react-toastify/dist/ReactToastify.css"; // Bibliothek für Benachrichtigungen
 import { useNavigate } from "react-router-dom";
+import { useTheme } from "../context/ThemeContext"; // Добавить импорт
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({
@@ -20,6 +19,7 @@ const RegisterPage = () => {
   const [errorMessage, setErrorMessage] = useState("");
 
   const navigate = useNavigate();
+  const { isDark } = useTheme(); // Получить значение темы
 
   // Handler für Formularänderungen
   const handleChange = (e) => {
@@ -92,24 +92,32 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="h-screen flex">
+    <div
+      className="h-screen flex"
+      style={{
+        backgroundColor: isDark ? "var(--bg-secondary)" : "white",
+        color: isDark ? "var(--text-color)" : "black",
+      }}
+    >
       {/* die linke Hälfte mit der Begrüßung */}
       <div
-        className="hidden lg:flex w-full lg:w-1/2 login_img_section
-          justify-around items-center"
+        className={`hidden lg:flex w-full lg:w-1/2 login_img_section justify-around items-center relative`}
+        style={{
+          background: isDark
+            ? "linear-gradient(135deg, #232326 60%, #18181b 100%)"
+            : undefined,
+          position: "relative",
+        }}
       >
-        <div
-          className=" 
-                  bg-black 
-                  opacity-20 
-                  inset-0 
-                  z-0"
-        ></div>
         <div className="w-full mx-auto px-20 flex-col items-center space-y-6">
-          <h1 className="text-gray-700 font-bold text-2xl font-sans">
+          <h1
+            className={`font-bold text-2xl font-sans ${
+              isDark ? "text-white drop-shadow-lg" : "text-gray-700"
+            }`}
+          >
             Herzlich willkommen bei ReiseWelt
           </h1>
-          <p className="text-gray-700 mt-1">
+          <p className={`${isDark ? "text-gray-200" : "text-gray-700"} mt-1`}>
             Hier finden Sie Ihr persönliches Kundenkonto. Einfach registrieren
             oder einloggen - und los gehts! Verwalten Sie Ihre Buchungen,
             persönliche Daten und mehr - alles übersichtlich an einem Ort.
@@ -121,13 +129,23 @@ const RegisterPage = () => {
       </div>
 
       {/* die rechte Hälfte mit dem Kundenkonto-Anmeldeformular*/}
-      <div className="flex w-full lg:w-1/2 justify-center items-center bg-white space-y-8">
+      <div
+        className={`flex w-full lg:w-1/2 justify-center items-center space-y-8 ${
+          isDark ? "bg-[#18181b]" : "bg-white"
+        }`}
+      >
         <div className="w-full px-8 md:px-32 lg:px-24">
           <form
-            className="bg-white rounded-md shadow-2xl p-5 text-left"
+            className={`rounded-md shadow-2xl p-5 text-left ${
+              isDark ? "bg-[#232326]" : "bg-white"
+            }`}
             onSubmit={handleSubmit}
           >
-            <h2 className="text-2xl font-bold text-center text-gray-700 mb-8">
+            <h2
+              className={`text-2xl font-bold text-center mb-8 ${
+                isDark ? "text-white" : "text-gray-700"
+              }`}
+            >
               Kundenkonto anlegen
             </h2>
 
@@ -356,33 +374,48 @@ const RegisterPage = () => {
 
             <button
               type="submit"
-              className="block w-full  rounded-lg font-bold py-2 mt-10"
+              className={`block w-full rounded-lg font-bold py-2 mt-10 ${
+                isDark ? "bg-indigo-700 hover:bg-indigo-800" : ""
+              }`}
               style={{
-                backgroundColor: "var(--accent-color)",
-                color: "white",
+                backgroundColor: isDark ? undefined : "var(--accent-color)",
+                color: isDark ? "white" : "white",
               }}
               onMouseEnter={(e) => {
-                e.target.style.backgroundColor = "var(--accent-hover)";
+                if (!isDark)
+                  e.target.style.backgroundColor = "var(--accent-hover)";
               }}
               onMouseLeave={(e) => {
-                e.target.style.backgroundColor = "var(--accent-color)";
+                if (!isDark)
+                  e.target.style.backgroundColor = "var(--accent-color)";
               }}
             >
               Konto erstellen
             </button>
 
             {successMessage && (
-              <p className="mt-3 mb-3 p-2 rounded text-s bg-green-100 text-green-700 border border-green-300">
+              <p
+                className={`mt-3 mb-3 p-2 rounded text-s border ${
+                  isDark
+                    ? "bg-green-900 text-green-200 border-green-700"
+                    : "bg-green-100 text-green-700 border-green-300"
+                }`}
+              >
                 {successMessage}
               </p>
             )}
             {errorMessage && (
-              <p className="mt-3 mb-3 p-2 rounded text-s bg-red-100 text-red-700 border border-red-300">
+              <p
+                className={`mt-3 mb-3 p-2 rounded text-s border ${
+                  isDark
+                    ? "bg-red-900 text-red-200 border-red-700"
+                    : "bg-red-100 text-red-700 border-red-300"
+                }`}
+              >
                 {errorMessage}
               </p>
             )}
           </form>
-          {/* <ToastContainer /> */}
         </div>
       </div>
     </div>
