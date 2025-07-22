@@ -23,6 +23,7 @@ import {
   FaKey,
 } from "react-icons/fa";
 import { useTheme } from "../context/ThemeContext";
+import { useFavorites } from "../context/FavoritesContext";
 
 const HotelDetailPage = () => {
   const { id } = useParams();
@@ -31,7 +32,7 @@ const HotelDetailPage = () => {
   const [mainImage, setMainImage] = useState(hotelData?.image || "");
   const location = useLocation();
   const navigate = useNavigate();
-  const [isFavorite, setIsFavorite] = useState(false);
+  const { toggleFavorite, isFavorite } = useFavorites();
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -39,7 +40,6 @@ const HotelDetailPage = () => {
 
   // Laden der Hoteldaten
   useEffect(() => {
-    console.log("Hoteldaten:", hotelData);
     const fetchHotel = async () => {
       try {
         const response = await axios.get(
@@ -383,13 +383,18 @@ const HotelDetailPage = () => {
           </div>
 
           <div className="flex gap-4 items-center">
+            {/* Merkzettel Button */}
             <button
               className={`bg-white border cursor-pointer text-4xl transition-transform duration-200 hover:scale-110 p-3 rounded-lg shadow-lg
                 ${
-                  isDark
-                    ? "border-gray-700 text-gray-200 bg-[#232323]"
+                  isFavorite(hotelData._id)
+                    ? "border-gray-300 text-red-500"
                     : "border-gray-300 text-gray-700"
-                }`}
+                } ${
+                isDark
+                  ? "border-gray-700 text-gray-200 bg-[#232323]"
+                  : "border-gray-300 text-gray-700"
+              }`}
               style={{
                 transition: "border-color 0.3s ease",
               }}
@@ -399,15 +404,19 @@ const HotelDetailPage = () => {
               onMouseLeave={(e) => {
                 e.target.style.borderColor = isDark ? "#374151" : "#d1d5db";
               }}
-              title="Favoriten hinzufügen"
-              onClick={() => setIsFavorite(!isFavorite)} // ← Toggle
+              title={
+                isFavorite(hotelData._id)
+                  ? "Aus Favoriten entfernen"
+                  : "Zu Favoriten hinzufügen"
+              }
+              onClick={() => toggleFavorite(hotelData)}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                fill={isFavorite ? "#ef4444" : "none"}
+                fill={isFavorite(hotelData._id) ? "#ef4444" : "none"}
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
-                stroke={isFavorite ? "#ef4444" : "currentColor"}
+                stroke="currentColor"
                 className="size-6"
               >
                 <path
@@ -417,6 +426,8 @@ const HotelDetailPage = () => {
                 />
               </svg>
             </button>
+
+            {/* Buchungsbutton */}
             <button
               className="flex-1 border-none font-bold cursor-pointer px-4 py-3 rounded-md text-base"
               style={{
