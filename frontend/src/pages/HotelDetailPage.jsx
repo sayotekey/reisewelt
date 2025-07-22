@@ -29,6 +29,7 @@ const HotelDetailPage = () => {
   const [mainImage, setMainImage] = useState(hotelData?.image || "");
   const location = useLocation();
   const navigate = useNavigate();
+  const [isFavorite, setIsFavorite] = useState(false);
   const { isDark } = useTheme();
 
   const searchParams = new URLSearchParams(location.search);
@@ -373,13 +374,14 @@ const HotelDetailPage = () => {
                 e.target.style.borderColor = isDark ? "#374151" : "#d1d5db";
               }}
               title="Favoriten hinzufügen"
+              onClick={() => setIsFavorite(!isFavorite)} // ← Toggle
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                fill="none"
+                fill={isFavorite ? "#ef4444" : "none"}
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
-                stroke="currentColor"
+                stroke={isFavorite ? "#ef4444" : "currentColor"}
                 className="size-6"
               >
                 <path

@@ -1,31 +1,39 @@
 import axios from "axios";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useFavorites } from "../../context/FavoritesContext.jsx";
+
 
 const FavoriteHotels = ({ user, onUpdate }) => {
   const [loading, setLoading] = useState(false);
+  const { favorites, fetchFavorites } = useFavorites();
+
+  useEffect(() => {
+  fetchFavorites();
+}, []);
 
   // Eine Reise aus den Merkzettel entfernen
-  const removeFavorite = async (hotelId) => {
-    try {
-      await axios.delete(`/api/user/favoriteHotels/${hotelId}`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
-      onUpdate(); // Callback zum Aktualisieren der Favoritenliste
-    } catch (error) {
-      console.error("Error removing favorite hotel:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+ const removeFavorite = async (hotelId) => {
+  setLoading(true);
+  try {
+    await axios.delete(`/api/user/favoriteHotels/${hotelId}`, {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+    });
+    fetchFavorites(); // Aktualisiere die Favoritenliste
+  } catch (error) {
+    console.error("Error removing favorite hotel:", error);
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <section className="space-y-4">
       <h2 className="text-xl font-semibold">Merkzettel</h2>
-      {!user?.favoriteHotels ? (
+      {!favorites ? (
         <div className="text-center py-8">
           <p className="text-gray-500">Loading...</p>
         </div>
-      ) : user.favoriteHotels.length === 0 ? (
+      ) : favorites.length === 0 ? (
         <div className="text-center py-12">
           <div className="max-w-sm mx-auto">
             <svg className="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -39,13 +47,13 @@ const FavoriteHotels = ({ user, onUpdate }) => {
         </div>
       ) : (
         <ul className="space-y-2">
-          {user.favoriteHotels.map((hotel) => (
-            <li key={hotel._id} className="flex justify-between items-center">
+          {favorites.map((hotel) => (
+            <li key={hotel.id || hotel._id} className="flex justify-between items-center">
               <span>
-                {hotel.title} - {hotel.location}
+                {hotel.name || hotel.title} - {hotel.location}
               </span>
               <button
-                onClick={() => removeFavorite(hotel._id)}
+                onClick={() => removeFavorite(hotel.id || hotel._id)}
                 className="text-red-500 hover:text-red-700"
                 disabled={loading}
               >
