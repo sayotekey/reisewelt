@@ -28,6 +28,7 @@ const HotelDetailPage = () => {
   const [mainImage, setMainImage] = useState(hotelData?.image || "");
   const location = useLocation(); // Zugriff auf die aktuelle URL, um Parameter zu extrahieren
   const navigate = useNavigate();
+  const [isFavorite, setIsFavorite] = useState(false);
 
   // URL-Parameter für Datumsberechnung
   const searchParams = new URLSearchParams(location.search);
@@ -351,9 +352,7 @@ const HotelDetailPage = () => {
             {/* Merkzettel */}
             <button
               className="bg-white border border-gray-300 cursor-pointer text-4xl text-gray-700 transition-transform duration-200 hover:scale-110 p-3 rounded-lg shadow-lg"
-              style={{
-                transition: "border-color 0.3s ease",
-              }}
+              style={{ transition: "border-color 0.3s ease" }}
               onMouseEnter={(e) => {
                 e.target.style.borderColor = "#ea580c";
               }}
@@ -361,13 +360,14 @@ const HotelDetailPage = () => {
                 e.target.style.borderColor = "#d1d5db";
               }}
               title="Favoriten hinzufügen"
+              onClick={() => setIsFavorite(!isFavorite)} // ← Toggle
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                fill="none"
+                fill={isFavorite ? "#ef4444" : "none"}
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
-                stroke="currentColor"
+                stroke={isFavorite ? "#ef4444" : "currentColor"}
                 className="size-6"
               >
                 <path

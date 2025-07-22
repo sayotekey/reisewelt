@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   FaMapMarkerAlt,
@@ -15,7 +15,8 @@ import {
   FaUtensils,
   FaBed,
 } from "react-icons/fa";
-import hotels from "../data/hotels";
+// import hotels from "../data/hotels";
+import { useFavorites } from "../context/FavoritesContext";
 
 const HamburgHotelsPage = () => {
   const location = useLocation();
@@ -25,6 +26,44 @@ const HamburgHotelsPage = () => {
   const endDateParam = searchParams.get("endDate");
   const adultsParam = searchParams.get("adults");
   const childrenParam = searchParams.get("children");
+  const { toggleFavorite, isFavorite } = useFavorites();
+  const [loadingId, setLoadingId] = useState(null);
+  const [hotels, setHotels] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    // Funktion zum Laden der Hotels
+    const fetchHotels = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch("http://localhost:3000/api/hotels");
+        if (!response.ok) {
+          throw new Error("Fehler beim Laden der Hotels");
+        }
+        const data = await response.json();
+        console.log("Hotels from API:", data); 
+        setHotels(data);
+        setError(null);
+      } catch (err) {
+        console.error("Error loading hotels:", err);
+        setError(err.message);
+        // Fallback на локальные данные при ошибке
+        try {
+          const { default: localHotels } = await import("../data/hotels");
+          setHotels(localHotels);
+          setError(null);
+        } catch (localErr) {
+          console.error("Error loading local hotels:", localErr);
+          setError("Fehler beim Laden der Hotels");
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchHotels();
+  }, []);
 
   const [filters, setFilters] = useState({
     priceRange: "all",
@@ -140,6 +179,22 @@ const HamburgHotelsPage = () => {
       sortBy: "rating",
     });
   };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="text-xl text-gray-600">Lädt Hotels...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="text-xl text-red-600">Fehler: {error}</div>
+      </div>
+    );
+  }
 
   return (
     <div className="pt-15">
@@ -401,6 +456,22 @@ const HamburgHotelsPage = () => {
                 from
               )} bis ${formatDate(to)}`;
 
+              // Hinzufügen/Entfernen von Favoriten hinzu
+              const hotelId = hotel.id || hotel._id;
+
+              const handleToggleFavorite = async (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setLoadingId(hotelId);
+                try {
+                  await toggleFavorite(hotel);
+                } catch (error) {
+                  console.error("Fehler beim Umschalten der Favoriten:", error);
+                } finally {
+                  setLoadingId(null);
+                }
+              };
+
               // Preis
               const calculatePrice = () => {
                 if (startDate && endDate && hotel.priceValue) {
@@ -412,7 +483,7 @@ const HamburgHotelsPage = () => {
 
               return (
                 <div
-                  key={hotel.id}
+                  key={hotelId}
                   className="flex flex-col md:flex-row bg-white shadow-lg rounded-xl overflow-hidden hover:shadow-2xl transition-all duration-300 border border-gray-100"
                 >
                   <Link
@@ -433,18 +504,25 @@ const HamburgHotelsPage = () => {
                       />
                       {/* Merkzettel Button */}
                       <button
-                        className="absolute top-2 right-2 bg-white border border-gray-300 cursor-pointer text-gray-700 transition-all duration-200 hover:scale-110 p-2 rounded-lg shadow-lg hover:border-orange-600"
-                        title="Favoriten hinzufügen"
+                        className={`absolute top-2 right-2 bg-white border ${
+                          isFavorite(hotelId)
+                            ? "border-gray-300 text-red-500"
+                            : "border-gray-300 text-gray-700"
+                        } cursor-pointer transition-all duration-200 hover:scale-110 p-2 rounded-lg shadow-lg`}
+                        title={
+                          isFavorite(hotelId)
+                            ? "Aus Favoriten entfernen"
+                            : "Zu Favoriten hinzufügen"
+                        }
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
-                          // Add favorite logic here
-                          console.log("Added to favorites:", hotel.id);
+                          toggleFavorite(hotel);
                         }}
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
+                          fill={isFavorite(hotelId) ? "#ef4444" : "none"}
                           viewBox="0 0 24 24"
                           strokeWidth={1.5}
                           stroke="currentColor"
@@ -542,10 +620,14 @@ const HamburgHotelsPage = () => {
                               e.stopPropagation();
                               const params = new URLSearchParams();
                               params.append("hotelId", hotel.id);
-                              if (startDateParam) params.append("startDate", startDateParam);
-                              if (endDateParam) params.append("endDate", endDateParam);
-                              if (adultsParam) params.append("adults", adultsParam);
-                              if (childrenParam) params.append("children", childrenParam);
+                              if (startDateParam)
+                                params.append("startDate", startDateParam);
+                              if (endDateParam)
+                                params.append("endDate", endDateParam);
+                              if (adultsParam)
+                                params.append("adults", adultsParam);
+                              if (childrenParam)
+                                params.append("children", childrenParam);
                               navigate(`/booking?${params.toString()}`);
                             }}
                             className="mt-2 px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-400 transition-colors font-medium shadow-md hover:shadow-lg"

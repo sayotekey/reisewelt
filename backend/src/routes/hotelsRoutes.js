@@ -1,4 +1,5 @@
 import express from 'express';
+import Hotel from '../models/hotelModels.js';
 
 // import Hotel from "../models/hotelModels.js"
 // import amadeusService from "../api/amadeusService.js"
