@@ -59,7 +59,7 @@ const ReviewHotel = ({ reviews }) => {
           >
             {reviews.map((review) => (
               <div
-                key={review.id}
+                key={review._id}
                 className="w-[calc(25%-18px)] flex-shrink-0 border border-gray-200 rounded-lg p-4 shadow-sm bg-white flex flex-col justify-between h-48"
               >
                 <div>
