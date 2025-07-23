@@ -1,4 +1,5 @@
-import express from 'express';
+import express from "express";
+import Hotel from "../models/hotelModels.js";
 
 // import Hotel from "../models/hotelModels.js"
 // import amadeusService from "../api/amadeusService.js"
@@ -19,11 +20,11 @@ const router = express.Router();
 //   }
 // });
 
-router.get('/', async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const filter = {};
     if (req.query.city) {
-      filter.city = { $regex: req.query.city, $options: 'i' };//egal welche erste buchstabe groß oder klein geschrieben ist
+      filter.city = { $regex: req.query.city, $options: "i" }; //egal welche erste buchstabe groß oder klein geschrieben ist
     }
     const hotels = await Hotel.find(filter);
     res.json(hotels);
@@ -32,9 +33,22 @@ router.get('/', async (req, res) => {
   }
 });
 
+// Route zum Abrufen eines einzelnen Hotels
+router.get("/hotel/:id", async (req, res) => {
+  try {
+    const hotel = await Hotel.findById(req.params.id);
+    if (!hotel) {
+      return res.status(404).json({ message: "Hotel nicht gefunden" });
+    }
+    res.json(hotel);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
 //neue route für hotels von Amadeus API via POSTMAN-ANFRAGE
 // route lautet: http://localhost:3000/api/hotels/amadeus/hotelIds
-router.get('/amadeus/hotelIds', async (req, res) => {
+router.get("/amadeus/hotelIds", async (req, res) => {
   try {
     const hotelIds = req.query.hotelIds;
 
@@ -47,9 +61,9 @@ router.get('/amadeus/hotelIds', async (req, res) => {
 
 //neue route für hotels von MongoDB
 // router.get('/fetch/:cityCode', async (req, res) => {
-// /fetch ist nicht notwendig, aber erlaubt. Für eine klassische REST-API 
+// /fetch ist nicht notwendig, aber erlaubt. Für eine klassische REST-API
 // ist /hotels/:cityCode (ohne /fetch) üblicher und klarer.
-router.get('/:cityCode', async (req, res) => {
+router.get("/:cityCode", async (req, res) => {
   try {
     const cityCode = req.params.cityCode;
     const hotelList = await Hotel.find({ cityCode: cityCode });
@@ -57,7 +71,8 @@ router.get('/:cityCode', async (req, res) => {
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
-})
+});
 
 export default router;
+
 

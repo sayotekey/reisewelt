@@ -1,12 +1,13 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
 @import "tailwindcss";
 @import "leaflet/dist/leaflet.css"; /* europe maps*/
 
 html {
-  overflow-x: hidden; /*scroll */
+  overflow-x: hidden; /* scroll */
 }
 
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: "Roboto", system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -56,7 +57,7 @@ body {
   min-height: 100vh;
   background-color: var(--bg-secondary); /* Теперь будет меняться с темой! */
   color: var(--text-color);
-  overflow-x: hidden; /*scroll */
+  overflow-x: hidden; /* scroll */
 }
 
 a {
@@ -608,7 +609,6 @@ html {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-
 .circle-btn {
   border-radius: 9999px;
   border: 1px solid white;
@@ -752,7 +752,3 @@ button.faq-category-active,
   padding: 100px 20px 20px 20px;
   gap: 20px;
 }
-
-
-
- 

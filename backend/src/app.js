@@ -3,6 +3,7 @@ import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import reviewsRoutes from "./routes/reviewsRoutes.js";
+import favoriteRoutes from "./routes/favoriteRoutes.js";
 import newsRoutes from "./routes/newsRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import hotelsRoutes from "./routes/hotelsRoutes.js";
@@ -22,6 +23,7 @@ app.use(express.json());
 app.use("/api/users", userRoutes);
 app.use("/api/news", newsRoutes);
 app.use("/api/reviews", reviewsRoutes);
+app.use("/api/favorites", favoriteRoutes);
 app.use("/api/uuid", uuidRoutes); // UUID Route, http://localhost:3000/api/uuid/generate
 // UUID Status Route, http://localhost:3000/api/uuid/status/:uuid
 // UUID Hotels Anfrage Route, http://localhost:3000/api/uuid/hotels/:uuid?count=5
@@ -34,9 +36,14 @@ app.use("/api/amadeus/test", (req, res) => {
   res.json({ message: "Amadeus API is working!" });
 });
 
+
+app.use((req, res) => {
+  res.status(404).json({ message: "Route nicht gefunden" });
+});
+
 // DB connection
 mongoose
-  .connect(process.env.MONGODB_URL)
+  .connect(process.env.MONGODB_URI)
   .then(async () => {
     console.log("MongoDB connected");
 

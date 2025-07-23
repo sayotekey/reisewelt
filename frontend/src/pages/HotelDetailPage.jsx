@@ -1,6 +1,7 @@
+import axios from "axios";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
-import { useState, useRef } from "react";
-import hotels from "../data/hotels";
+import { useState, useEffect } from "react";
+// import hotels from "../data/hotels";
 import ReviewHotel from "../components/ReviewHotel";
 import {
   FaMapMarkerAlt,
@@ -21,22 +22,48 @@ import {
   FaHome,
   FaKey,
 } from "react-icons/fa";
+import { useTheme } from "../context/ThemeContext";
+import { useFavorites } from "../context/FavoritesContext";
 
 const HotelDetailPage = () => {
-  const { id } = useParams(); // Erhalte die Hotel-ID aus der URL
-  const hotelData = hotels.find((h) => h.id === parseInt(id)); // Finde das Hotel anhand der ID
+  const { id } = useParams();
+  // const hotelData = hotels.find((h) => h.id === parseInt(id));
+  const [hotelData, setHotelData] = useState(null);
   const [mainImage, setMainImage] = useState(hotelData?.image || "");
-  const location = useLocation(); // Zugriff auf die aktuelle URL, um Parameter zu extrahieren
+  const location = useLocation();
   const navigate = useNavigate();
+  const { toggleFavorite, isFavorite } = useFavorites();
 
-  // URL-Parameter für Datumsberechnung
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const { isDark } = useTheme();
+
+  // Laden der Hoteldaten
+  useEffect(() => {
+    const fetchHotel = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/api/hotels/hotel/${id}`
+        );
+        setHotelData(response.data);
+        setMainImage(response.data.image);
+      } catch (error) {
+        console.error("Fehler beim Abrufen des Hotels:", error);
+        setError("Fehler beim Laden des Hotels");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchHotel();
+  }, [id]);
+
   const searchParams = new URLSearchParams(location.search);
   const startDateParam = searchParams.get("startDate");
   const endDateParam = searchParams.get("endDate");
   const adultsParam = searchParams.get("adults");
   const childrenParam = searchParams.get("children");
 
-  // Anzahl der Nächte berechnen
   const nights =
     startDateParam && endDateParam
       ? Math.round(
@@ -45,7 +72,6 @@ const HotelDetailPage = () => {
         )
       : 0;
 
-  // Datumsbestimmung, Fallback falls nicht übergeben
   const from = startDateParam ? new Date(startDateParam) : null;
   const to = endDateParam ? new Date(endDateParam) : null;
 
@@ -56,13 +82,11 @@ const HotelDetailPage = () => {
         ).padStart(2, "0")}`
       : "";
 
-  // String erstellen
   const dateRange =
     from && to
       ? `${nights} Nächte vom ${formatDate(from)} bis ${formatDate(to)}`
       : "";
 
-  // Personen-Informationen
   const peopleInfo = () => {
     if (adultsParam || childrenParam) {
       const adults = parseInt(adultsParam) || 0;
@@ -79,7 +103,6 @@ const HotelDetailPage = () => {
     return "";
   };
 
-  // Preis-Berechnung - Gesamt
   const calculatePrice = () => {
     if (nights > 0 && hotelData.priceValue) {
       const totalPrice = hotelData.priceValue * nights;
@@ -88,7 +111,6 @@ const HotelDetailPage = () => {
     return hotelData.price;
   };
 
-  // Label für die Bewertung basierend auf der Punktzahl
   const getRatingLabel = (score) => {
     if (score >= 9) return "Hervorragend";
     if (score >= 8) return "Sehr gut";
@@ -97,14 +119,12 @@ const HotelDetailPage = () => {
     return "Ausreichend";
   };
 
-  // Sterne
   const stars = (stars) => {
     const totalStars = 5;
     return (
       <div className="flex gap-1">
         {[...Array(totalStars)].map((_, index) =>
           index < stars ? (
-            // Gefüllte Stern
             <svg
               key={index}
               xmlns="http://www.w3.org/2000/svg"
@@ -119,7 +139,6 @@ const HotelDetailPage = () => {
               />
             </svg>
           ) : (
-            // Leerer Stern
             <svg
               key={index}
               xmlns="http://www.w3.org/2000/svg"
@@ -127,7 +146,9 @@ const HotelDetailPage = () => {
               viewBox="0 0 24 24"
               strokeWidth={1.5}
               stroke="currentColor"
-              className="w-5 h-5 text-gray-700"
+              className={
+                isDark ? "w-5 h-5 text-gray-500" : "w-5 h-5 text-gray-700"
+              }
             >
               <path
                 strokeLinecap="round"
@@ -141,10 +162,13 @@ const HotelDetailPage = () => {
     );
   };
 
-  // Fehlerbehandlung, falls das Hotel nicht gefunden wird
   if (!hotelData) {
     return (
-      <div className="text-center p-12 pt-36">
+      <div
+        className={`text-center p-12 pt-36 ${
+          isDark ? "bg-[#232323] text-gray-200" : ""
+        }`}
+      >
         <h2 className="text-2xl font-bold mb-4">Hotel nicht gefunden</h2>
         <p className="text-base">
           Das angeforderte Hotel konnte nicht gefunden werden.
@@ -154,35 +178,29 @@ const HotelDetailPage = () => {
   }
 
   return (
-    <div className="pt-20 px-4 max-w-7xl mx-auto mt-8">
+    <div
+      className={`pt-20 px-4 max-w-7xl mx-auto mt-8 ${
+        isDark ? "bg-[#242424] text-white" : ""
+      }`}
+    >
       <div className="flex gap-8 flex-wrap lg:flex-nowrap items-start">
         {/* Linke Seite */}
         <div className="flex-2 min-w-[400px]">
           {/* Hotelsname */}
           <div className="mb-6">
-            <h2 className="text-3xl text-gray-700 font-bold mb-2">
+            <h2
+              className={`text-3xl font-bold mb-2 ${
+                isDark ? "text-gray-200" : "text-gray-700"
+              }`}
+            >
               {hotelData.name}
             </h2>
-            <p className="text-base mb-2 flex items-center gap-2">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="w-5 h-5 text-red-500"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-                />
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"
-                />
-              </svg>
+            <p
+              className={`text-base mb-2 flex items-center gap-2 ${
+                isDark ? "text-gray-400" : "text-gray-700"
+              }`}
+            >
+              <FaMapMarkerAlt className="w-5 h-5 text-red-500" />
               {hotelData.location}
             </p>
             <div className="text-yellow-500 text-base">
@@ -192,7 +210,6 @@ const HotelDetailPage = () => {
 
           {/* Bildergalerie */}
           <div className="grid grid-cols-4 gap-x-4 gap-y-2 pt-5 max-h-[550px] overflow-hidden">
-            {/* Hauptbild */}
             <div className="col-span-2 row-span-2 overflow-hidden rounded-lg shadow-lg h-full max-h-[550px] ">
               <img
                 src={mainImage}
@@ -200,8 +217,6 @@ const HotelDetailPage = () => {
                 className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
               />
             </div>
-
-            {/* Erste 4 Bilder rechts vom Hauptbild */}
             {hotelData.gallery?.slice(0, 4).map((img, index) => (
               <div
                 key={index}
@@ -217,8 +232,6 @@ const HotelDetailPage = () => {
                 />
               </div>
             ))}
-
-            {/* Zweite 4 Bilder unter dem Hauptbild */}
             {hotelData.gallery?.slice(4, 8).map((img, index) => (
               <div
                 key={index + 4}
@@ -238,7 +251,6 @@ const HotelDetailPage = () => {
 
           {/* Ausstattung und Beschreibung */}
           <div className="mt-8">
-            {/* Ausstattung Grid */}
             <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
               {[
                 {
@@ -294,18 +306,25 @@ const HotelDetailPage = () => {
                 .map((filter) => (
                   <div
                     key={filter.key}
-                    className="flex items-center space-x-3 p-2 rounded-md border-1 border-orange-400 transition-colors"
+                    className={`flex items-center space-x-3 p-2 rounded-md border-1 border-orange-400 transition-colors
+                      ${
+                        isDark
+                          ? "bg-[#232323] text-gray-200"
+                          : "bg-white text-gray-700"
+                      }`}
                   >
                     {filter.icon}
-                    <span className="text-gray-700 font-medium text-base">
+                    <span className="font-medium text-base">
                       {filter.label}
                     </span>
                   </div>
                 ))}
             </div>
-
-            {/* Hotelsbeschreibung */}
-            <p className="mt-6 leading-relaxed text-gray-700 text-justify text-base">
+            <p
+              className={`mt-6 leading-relaxed text-justify text-base ${
+                isDark ? "text-gray-200" : "text-gray-700"
+              }`}
+            >
               {hotelData.fullDescription}
             </p>
           </div>
@@ -313,29 +332,45 @@ const HotelDetailPage = () => {
 
         {/* Rechte Seite */}
         <div className="flex-1 min-w-[300px] space-y-5 mt-32 pt-3">
-          {/* Rating */}
           <a href="#bewertungen" className="block">
-            <div className="flex items-center justify-between bg-white p-4 rounded-lg shadow-lg border border-gray-300 cursor-pointer hover:bg-gray-50 transition-colors">
+            <div
+              className={`flex items-center justify-between p-4 rounded-lg shadow-lg border cursor-pointer transition-colors
+              ${
+                isDark
+                  ? "bg-[#232323] border-gray-700 hover:bg-[#232323]/80"
+                  : "bg-white border-gray-300 hover:bg-gray-50"
+              }`}
+            >
               <div className="flex flex-col">
-                <span className="text-base font-semibold text-gray-700">
+                <span
+                  className={`text-base font-semibold ${
+                    isDark ? "text-gray-200" : "text-gray-700"
+                  }`}
+                >
                   {getRatingLabel(hotelData.ratingScore)}
                 </span>
-                <span className="text-base text-gray-700">
+                <span
+                  className={`text-base ${
+                    isDark ? "text-gray-300" : "text-gray-700"
+                  }`}
+                >
                   {hotelData.reviewsCount} Bewertungen
                 </span>
               </div>
-
-              <div
-                className="text-white px-4 py-3 rounded-lg font-bold text-base shadow-lg bg-blue-400"
-                // style={{ backgroundColor: "var(--blue-light)" }}
-              >
+              <div className="text-white px-4 py-3 rounded-lg font-bold text-base shadow-lg bg-blue-400">
                 {hotelData.ratingScore}
               </div>
             </div>
           </a>
 
-          {/* Karte */}
-          <div className="h-64 bg-gray-300 rounded-lg flex items-center justify-center shadow-lg border border-gray-300">
+          <div
+            className={`h-64 rounded-lg flex items-center justify-center shadow-lg border
+            ${
+              isDark
+                ? "bg-gray-800 border-gray-700"
+                : "bg-gray-300 border-gray-300"
+            }`}
+          >
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d151676.79043810876!2d9.763016637588567!3d53.55866268463536!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47b161837e1813b9%3A0x4263df27bd63aa0!2sHamburg!5e0!3m2!1sen!2sde!4v1752608765193!5m2!1sen!2sde"
               width="100%"
@@ -348,9 +383,18 @@ const HotelDetailPage = () => {
           </div>
 
           <div className="flex gap-4 items-center">
-            {/* Merkzettel */}
+            {/* Merkzettel Button */}
             <button
-              className="bg-white border border-gray-300 cursor-pointer text-4xl text-gray-700 transition-transform duration-200 hover:scale-110 p-3 rounded-lg shadow-lg"
+              className={`bg-white border cursor-pointer text-4xl transition-transform duration-200 hover:scale-110 p-3 rounded-lg shadow-lg
+                ${
+                  isFavorite(hotelData._id)
+                    ? "border-gray-300 text-red-500"
+                    : "border-gray-300 text-gray-700"
+                } ${
+                isDark
+                  ? "border-gray-700 text-gray-200 bg-[#232323]"
+                  : "border-gray-300 text-gray-700"
+              }`}
               style={{
                 transition: "border-color 0.3s ease",
               }}
@@ -358,13 +402,18 @@ const HotelDetailPage = () => {
                 e.target.style.borderColor = "#ea580c";
               }}
               onMouseLeave={(e) => {
-                e.target.style.borderColor = "#d1d5db";
+                e.target.style.borderColor = isDark ? "#374151" : "#d1d5db";
               }}
-              title="Favoriten hinzufügen"
+              title={
+                isFavorite(hotelData._id)
+                  ? "Aus Favoriten entfernen"
+                  : "Zu Favoriten hinzufügen"
+              }
+              onClick={() => toggleFavorite(hotelData)}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                fill="none"
+                fill={isFavorite(hotelData._id) ? "#ef4444" : "none"}
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
                 stroke="currentColor"
@@ -378,7 +427,7 @@ const HotelDetailPage = () => {
               </svg>
             </button>
 
-            {/* Reservierung Button */}
+            {/* Buchungsbutton */}
             <button
               className="flex-1 border-none font-bold cursor-pointer px-4 py-3 rounded-md text-base"
               style={{
@@ -405,21 +454,39 @@ const HotelDetailPage = () => {
             </button>
           </div>
 
-          {/* Preis, Personen und Zeitraum */}
-          <div className="bg-white p-4 rounded-lg shadow-lg border border-gray-300 mt-7">
+          <div
+            className={`p-4 rounded-lg shadow-lg border mt-7
+            ${
+              isDark
+                ? "bg-[#232323] border-gray-700"
+                : "bg-white border-gray-300"
+            }`}
+          >
             <div className="text-center">
               {peopleInfo() && (
-                <p className="text-base font-medium text-gray-700 mb-2">
+                <p
+                  className={`text-base font-medium mb-2 ${
+                    isDark ? "text-gray-200" : "text-gray-700"
+                  }`}
+                >
                   {peopleInfo()}
                 </p>
               )}
               {dateRange && (
-                <p className="text-base font-medium text-gray-700 mb-2">
+                <p
+                  className={`text-base font-medium mb-2 ${
+                    isDark ? "text-gray-200" : "text-gray-700"
+                  }`}
+                >
                   {dateRange}
                 </p>
               )}
               {!dateRange && !peopleInfo() && (
-                <p className="text-base text-gray-600 mb-1">
+                <p
+                  className={`text-base mb-1 ${
+                    isDark ? "text-gray-400" : "text-gray-600"
+                  }`}
+                >
                   {hotelData.nights}
                 </p>
               )}
@@ -429,8 +496,14 @@ const HotelDetailPage = () => {
             </div>
           </div>
 
-          {/* Zusätzliche Informationen */}
-          <div className="mt-5 bg-white p-4 rounded-lg shadow-lg border border-gray-300 space-y-3">
+          <div
+            className={`mt-5 p-4 rounded-lg shadow-lg border space-y-3
+            ${
+              isDark
+                ? "bg-[#232323] border-gray-700"
+                : "bg-white border-gray-300"
+            }`}
+          >
             {[
               {
                 label: `Check-in: ${hotelData.checkIn}`,
@@ -449,19 +522,19 @@ const HotelDetailPage = () => {
                 icon: <FaUtensils className="text-blue-400 " />,
               },
             ].map((item, index) => (
-              <div key={index} className="flex items-center gap-3">
+              <div
+                key={index}
+                className={`flex items-center gap-3 ${
+                  isDark ? "text-gray-200" : "text-gray-700"
+                }`}
+              >
                 {item.icon}
-                <span className="text-base font-medium text-gray-700">
-                  {item.label}
-                </span>
+                <span className="text-base font-medium">{item.label}</span>
               </div>
             ))}
           </div>
         </div>
       </div>
-
-      {/* Bewertungen Sektion */}
-
       <ReviewHotel reviews={hotelData.reviews} />
     </div>
   );
