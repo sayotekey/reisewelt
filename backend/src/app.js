@@ -36,7 +36,6 @@ app.use("/api/amadeus/test", (req, res) => {
   res.json({ message: "Amadeus API is working!" });
 });
 
-
 app.use((req, res) => {
   res.status(404).json({ message: "Route nicht gefunden" });
 });
