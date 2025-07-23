@@ -1,4 +1,4 @@
-// src/pages/AllNews.jsx
+
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import NewsCard from "../components/NewsCard";
@@ -25,8 +25,7 @@ const AllNews = () => {
     };
 
     fetchNews();
-  }, [currentLanguage]); // Перезагружаем при смене языка
-
+  }, [currentLanguage]); 
   return (
     <div className="max-w-6xl mx-auto px-2 sm:px-4 py-6 sm:py-8 text-white">
       <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-3 sm:mb-4 md:mb-6">

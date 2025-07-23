@@ -25,7 +25,7 @@ const PaymentPage = () => {
   const [selectedBank, setSelectedBank] = useState("TBK Bank");
   const [paymentMethod, setPaymentMethod] = useState("paypal");
 
-  // Функция для выделения выбранного способа оплаты с учетом темной темы
+ 
   const getPaymentLabelClass = (method) => {
     if (paymentMethod === method) {
       return isDark
