@@ -130,119 +130,119 @@ export default function SearchForm() {
   // 1.Endpunkt für UUID
   // onclick button anfrage an backend senden, um UUID zu generieren
   // und die UUID in der MongoDB zu speichern
-  const getCombinedData = async () => {
-    try {
-      setError(""); // optional: reset error before fetch
-      setHotels([]); // optional: clear previous hotels
-      setLoading(true); // <-- Spinner sichtbar machen
+  // const getCombinedData = async () => {
+  //   try {
+  //     setError(""); // optional: reset error before fetch
+  //     setHotels([]); // optional: clear previous hotels
+  //     setLoading(true); // <-- Spinner sichtbar machen
 
-      ///
-      // Speichern der letzten Suchanfrage im Local Storage
-      const previousSearches =
-        JSON.parse(localStorage.getItem("lastSearches")) || [];
-      const newSearch = {
-        to: myCity,
-        startDate: startDate ? startDate.toISOString() : null,
-        endDate: endDate ? endDate.toISOString() : null,
-        adults,
-        children,
-      };
-      const updatedSearches = [newSearch, ...previousSearches].slice(0, 4); // Limit to 4 searches
-      localStorage.setItem("lastSearches", JSON.stringify(updatedSearches));
-      ///
-      const response = await axios.get(
-        "http://localhost:3000/api/uuid/generate",
-        {
-          params: {
-            //zum backend schicken
-            cityName: myCity,
-            startDate: startDate,
-            endDate: endDate,
-            adults: adults,
-            children: children,
-          },
-        }
-      );
-      const myUuid = response.data.uuid;
+  //     ///
+  //     // Speichern der letzten Suchanfrage im Local Storage
+  //     const previousSearches =
+  //       JSON.parse(localStorage.getItem("lastSearches")) || [];
+  //     const newSearch = {
+  //       to: myCity,
+  //       startDate: startDate ? startDate.toISOString() : null,
+  //       endDate: endDate ? endDate.toISOString() : null,
+  //       adults,
+  //       children,
+  //     };
+  //     const updatedSearches = [newSearch, ...previousSearches].slice(0, 4); // Limit to 4 searches
+  //     localStorage.setItem("lastSearches", JSON.stringify(updatedSearches));
+  //     ///
+  //     const response = await axios.get(
+  //       "http://localhost:3000/api/uuid/generate",
+  //       {
+  //         params: {
+  //           //zum backend schicken
+  //           cityName: myCity,
+  //           startDate: startDate,
+  //           endDate: endDate,
+  //           adults: adults,
+  //           children: children,
+  //         },
+  //       }
+  //     );
+  //     const myUuid = response.data.uuid;
 
-      console.log("UUID:", myUuid); // Gibt die generierte UUID aus
+  //     console.log("UUID:", myUuid); // Gibt die generierte UUID aus
 
-      // 2. Endpunkt: Abfrage der Anzahl der Hotels, die unter dieser UUID gespeichert sind
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+  //     // 2. Endpunkt: Abfrage der Anzahl der Hotels, die unter dieser UUID gespeichert sind
+  //     await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      const url = `http://localhost:3000/api/uuid/status/${myUuid}`;
-      const hotelCountResponse = await axios.get(url);
-      const countRaw = hotelCountResponse.data.count; // {"count":3 }
-      let flag = hotelCountResponse.data.flag; // false?
+  //     const url = `http://localhost:3000/api/uuid/status/${myUuid}`;
+  //     const hotelCountResponse = await axios.get(url);
+  //     const countRaw = hotelCountResponse.data.count; // {"count":3 }
+  //     let flag = hotelCountResponse.data.flag; // false?
 
-      console.log("2.Endpunkt: aktueller Count", countRaw);
-      console.log("2.Endpunkt: aktuelle flag", flag);
+  //     console.log("2.Endpunkt: aktueller Count", countRaw);
+  //     console.log("2.Endpunkt: aktuelle flag", flag);
 
-      let allHotels = []; // Array für alle Hotels
-      let newCount = 0; // Variable für neuen Count
+  //     let allHotels = []; // Array für alle Hotels
+  //     let newCount = 0; // Variable für neuen Count
 
-      while (flag === false) {
-        await new Promise((resolve) => setTimeout(resolve, 3000));
-        const retryResponse = await axios.get(url); // erneute Abfrage der Anzahl der Hotels
-        newCount = retryResponse.data.count; // aktualisiere neuen Count
-        console.log("newCount aus while-loop:", newCount);
-        flag = retryResponse.data.flag;
+  //     while (flag === false) {
+  //       await new Promise((resolve) => setTimeout(resolve, 3000));
+  //       const retryResponse = await axios.get(url); // erneute Abfrage der Anzahl der Hotels
+  //       newCount = retryResponse.data.count; // aktualisiere neuen Count
+  //       console.log("newCount aus while-loop:", newCount);
+  //       flag = retryResponse.data.flag;
 
-        if (newCount > allHotels.length) {
-          //3. endpunkt
-          const hotelLength = allHotels.length;
-          const urlHotel = "http://localhost:3000/api/uuid/hotels";
-          const hotelResponse = await axios.get(urlHotel, {
-            params: {
-              uuid: myUuid,
-              count: hotelLength,
-              limit: newCount - hotelLength,
-            },
-          });
-          console.log(hotelResponse.data.hotels);
-          console.log(Array.isArray(hotelResponse.data.hotels));
+  //       if (newCount > allHotels.length) {
+  //         //3. endpunkt
+  //         const hotelLength = allHotels.length;
+  //         const urlHotel = "http://localhost:3000/api/uuid/hotels";
+  //         const hotelResponse = await axios.get(urlHotel, {
+  //           params: {
+  //             uuid: myUuid,
+  //             count: hotelLength,
+  //             limit: newCount - hotelLength,
+  //           },
+  //         });
+  //         console.log(hotelResponse.data.hotels);
+  //         console.log(Array.isArray(hotelResponse.data.hotels));
 
-          hotelResponse.data.hotels.forEach((hotel) => {
-            console.log(hotel);
-            allHotels.push(hotel[0]);
-          });
+  //         hotelResponse.data.hotels.forEach((hotel) => {
+  //           console.log(hotel);
+  //           allHotels.push(hotel[0]);
+  //         });
 
-          setHotels([...allHotels]);
-        }
-      }
-      if (allHotels.length === 0) {
-        setError("Es wurden keine Hotels gefunden.");
-        setLoading(false);
-      } else {
-        setHotels([...allHotels]);
-        setLoading(false);
-      }
-      console.log("allHotels", allHotels);
+  //         setHotels([...allHotels]);
+  //       }
+  //     }
+  //     if (allHotels.length === 0) {
+  //       setError("Es wurden keine Hotels gefunden.");
+  //       setLoading(false);
+  //     } else {
+  //       setHotels([...allHotels]);
+  //       setLoading(false);
+  //     }
+  //     console.log("allHotels", allHotels);
 
-      localStorage.setItem("lastHotels", JSON.stringify(allHotels));
+  //     localStorage.setItem("lastHotels", JSON.stringify(allHotels));
 
-      // Lesen die zuletzt gespeicherten Suchen aus localStorage
-      //   const previousSearches =
-      //     JSON.parse(localStorage.getItem("lastSearches")) || [];
-      //   // Create a new search object
-      //   const newSearch = {
-      //     to: myCity,
-      //     startDate: startDate ? startDate.toISOString() : null,
-      //     endDate: endDate ? endDate.toISOString() : null,
-      //     adults,
-      //     children,
-      //   };
-      //   //
-      //   const updatedSearches = [newSearch, ...previousSearches].slice(0, 3); // Limit to 3 searches
-      //   localStorage.setItem("lastSearches", JSON.stringify(updatedSearches));
-      //
-    } catch (error) {
-      console.error("Error fetching hotels:", error.message);
-      setLoading(false); // <-- Spinner ausblenden bei Fehler
-      setError("Fehler beim Laden der Hotels. Bitte versuchen Sie es erneut.");
-      return [];
-    }
-  };
+  //     // Lesen die zuletzt gespeicherten Suchen aus localStorage
+  //     //   const previousSearches =
+  //     //     JSON.parse(localStorage.getItem("lastSearches")) || [];
+  //     //   // Create a new search object
+  //     //   const newSearch = {
+  //     //     to: myCity,
+  //     //     startDate: startDate ? startDate.toISOString() : null,
+  //     //     endDate: endDate ? endDate.toISOString() : null,
+  //     //     adults,
+  //     //     children,
+  //     //   };
+  //     //   //
+  //     //   const updatedSearches = [newSearch, ...previousSearches].slice(0, 3); // Limit to 3 searches
+  //     //   localStorage.setItem("lastSearches", JSON.stringify(updatedSearches));
+  //     //
+  //   } catch (error) {
+  //     console.error("Error fetching hotels:", error.message);
+  //     setLoading(false); // <-- Spinner ausblenden bei Fehler
+  //     setError("Fehler beim Laden der Hotels. Bitte versuchen Sie es erneut.");
+  //     return [];
+  //   }
+  // };
 
   return (
     <div

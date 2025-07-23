@@ -1279,7 +1279,9 @@ const HotelResultsPage = () => {
               {loading ? (
                 <div className="flex items-center gap-2 text-blue-600 text-lg mb-4">
                   <FaSpinner className="animate-spin" />
-                  Hotels werden geladen...
+                  {/* <p> Ihre Hotels werden geladen...</p> */}
+                  <p> Gleich werden Sie Ihr Traumhotel finden...</p>
+                  <br />
                 </div>
               ) : (
                 `${hotels.length} Angebote für Hotels in
