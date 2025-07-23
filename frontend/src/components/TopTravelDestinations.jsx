@@ -3,6 +3,8 @@ import axios from "axios";
 import MapComponent from "./MapComponent.jsx";
 import { useTheme } from "../context/ThemeContext";
 import { useTranslate } from "../locales/index.js";
+import { useNavigate } from "react-router-dom";
+
 
 
 // Animationsstile hinzufügen
@@ -92,6 +94,8 @@ const TopTravelDestinations = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const { t } = useTranslate();
+    const navigate = useNavigate();
+
 
   // Städte des ausgewählten Landes anzeigen
   const handleCountryClick = (country) => {
@@ -102,11 +106,16 @@ const TopTravelDestinations = () => {
   };
 
   // Hotels für die ausgewählte Stadt laden
-  const fetchHotelsByCity = async (city) => {
+/*   const fetchHotelsByCity = async (city) => {
     setLoading(true);
     setError(null);
-    setSelectedCity(city);
+    setSelectedCity(city); */
 
+      const fetchHotelsByCity = async (city) => {
+    if (city === "Hamburg") {
+      navigate("/hamburg-hotels");
+      return;
+    }
     try {
       console.log(`Lade Hotels für Stadt: ${city}`);
       const url = `http://localhost:3000/api/amadeus/combined?cityName=${city}`;
