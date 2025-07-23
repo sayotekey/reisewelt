@@ -528,26 +528,25 @@ export default function SearchForm() {
             console.log("endDate:", endDate.toISOString()); // endDate: 2025-07-29T22:00:00.000Z
             console.log("adults:", adults);
             console.log("children:", children);
-            // Sonderfall Hamburg
-            if (myCity.toLowerCase() === "hamburg") {
-              window.location.href = `/hamburg-hotels?${params.toString()}`;
-            } else if (
-              myCity.toLowerCase() === "berlin" ||
-              myCity.toLowerCase() === "genf" ||
-              myCity.toLowerCase() === "kopenhagen"
-            ) {
-              console.log("mockdata-abfrage", myCity);
-              params.append("city", myCity);
-              window.location.href = `/hotel-results?${params.toString()}&mock=${encodeURIComponent(
-                myCity
-              )}`;
-            } else {
-              params.append("city", myCity);
 
-              // window.location.href = `/hotel-results?${params.toString()}`;
+            const lowerCity = myCity.toLowerCase();
+            params.append("city", myCity);
+
+            // Sonderfall Hamburg
+            if (lowerCity === "hamburg") {
+              // Kein Mock-Parameter
+              window.location.href = `/hamburg-hotels?${params.toString()}`;
+            } else {
+              // mock immer setzen (leer oder mit Wert)
+              const validMocks = ["berlin", "genf", "kopenhagen"];
+              const mockValue = validMocks.includes(lowerCity) ? lowerCity : "";
+
+              params.append("mock", encodeURIComponent(mockValue));
+
+              window.location.href = `/hotel-results?${params.toString()}`;
             }
           }}
-          className="text-gray-800 w-full sm:w-full xl:w-1/7 px-6 py-2 mt-3 rounded transition font-semibold"
+          className="text-gray-800 w-full sm:w-full xl:w-1/7 px-6 py-2 mt-3 rounded transition font-semibold cursor-pointer"
           style={{ backgroundColor: "#a8d5e2" }}
           onMouseEnter={(e) => (e.target.style.backgroundColor = "#a2ceda")}
           onMouseLeave={(e) => (e.target.style.backgroundColor = "#a8d5e2")}

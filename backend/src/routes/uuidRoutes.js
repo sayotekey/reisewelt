@@ -64,15 +64,16 @@ const cityNameToCode = {
 // Generierung einer eindeutigen UUID und Rückgabe ins Frontend
 // speichern von abgerufenen Amadeus-API-Daten unter dieser UUID in der Mongo-Datenbank
 router.get("/generate", async (req, res) => {
-  // return res.json({ uuid: "5bb14dd1-6516-4c3a-a5e4-8c9eea70af58" });
+  console.log("mock:", req.query.mock);
 
-  const mockParam = req.query.mock?.toLowerCase(); // z. B. "mock"
+  // const mockParam = req.query.mock?.toLowerCase();
+  const mockParam = req.query.mock.toLowerCase();
 
-  // Feste UUIDs für Mocking (müssen in MongoDB vorhanden sein)
+  // Feste UUIDs für Mocking  in MongoDB
   const mockUuidsByCity = {
-    test: "5bb14dd1-6516-4c3a-a5e4-8c9eea70af58",
+    berlin: "5bb14dd1-6516-4c3a-a5e4-8c9eea70af58",
     genf: "4b310ba6-e3d2-4726-83f1-ac2631954b02",
-    kopenhagen: "deadbeef-dead-beef-dead-beefdeadbeef", // oder "münchen" ohne Umlaute, je nach Bedarf
+    kopenhagen: "9b9b3d97-76d0-43eb-a3d8-820942871cc3",
   };
 
   // Wenn ein Mock-Parameter gesetzt ist, gib passende UUID zurück
@@ -80,73 +81,73 @@ router.get("/generate", async (req, res) => {
     const mockUuid = mockUuidsByCity[mockParam];
     console.log(`Mock-UUID-Modus aktiv (${mockParam}) – sende:`, mockUuid);
     return res.status(200).json({ uuid: mockUuid });
-  }
-
-  const uniqueId = uuidv4();
-  // /*
-  try {
-    const newUuid = new UuidModel({ uuid: uniqueId, flag: false });
-    // const newUuid = new UuidModel({ uuid: uniqueId, flag: false, hotels: [] });
-    await newUuid.save();
-    console.log("UUID saved successfully:", uniqueId);
-  } catch (error) {
-    console.error("Error saving UUID:", error);
-    res.status(500).json({ error: "Error saving UUID" });
-  }
-  console.log("Generated UUID:", uniqueId);
-  res.status(200).json({ uuid: uniqueId }); // für das Frontend
-
-  try {
-    ///
-    const { cityName, startDate, endDate, adults, children } = req.query;
-    function formatDate(date) {
-      return (
-        date.getFullYear() +
-        "-" +
-        String(date.getMonth() + 1).padStart(2, "0") +
-        "-" +
-        String(date.getDate()).padStart(2, "0")
-      );
+  } else {
+    const uniqueId = uuidv4();
+    //
+    try {
+      // const newUuid = new UuidModel({ uuid: uniqueId, flag: false }); //amadeus
+      const newUuid = new UuidModel({ uuid: uniqueId }); //mock
+      // const newUuid = new UuidModel({ uuid: uniqueId, flag: false, hotels: [] });
+      await newUuid.save();
+      console.log("UUID saved successfully:", uniqueId);
+    } catch (error) {
+      console.error("Error saving UUID:", error);
+      res.status(500).json({ error: "Error saving UUID" });
     }
-    const startDateObj = new Date(startDate);
-    const endDateObj = new Date(endDate);
-    const startDateFormatted = formatDate(startDateObj); // "2025-07-19"
-    const endDateFormatted = formatDate(endDateObj);
+    console.log("Generated UUID:", uniqueId);
+    res.status(200).json({ uuid: uniqueId }); // für das Frontend
 
-    // Kinder sind API-Pay-Option
-    const combinedTravellers = Number(adults) + Number(children);
-    ///
-    console.log("Received cityName:", cityName);
-    console.log("startDate", startDate);
-    console.log("typeof startDate", typeof startDate); //string
-    console.log("endDate", endDate);
-    console.log("startDateFormatted", startDateFormatted);
-    console.log("endDateFormatted", endDateFormatted);
-    console.log("adults", adults);
-    console.log("travellers", combinedTravellers);
+    try {
+      ///
+      const { cityName, startDate, endDate, adults, children } = req.query;
+      function formatDate(date) {
+        return (
+          date.getFullYear() +
+          "-" +
+          String(date.getMonth() + 1).padStart(2, "0") +
+          "-" +
+          String(date.getDate()).padStart(2, "0")
+        );
+      }
+      const startDateObj = new Date(startDate);
+      const endDateObj = new Date(endDate);
+      const startDateFormatted = formatDate(startDateObj); // "2025-07-19"
+      const endDateFormatted = formatDate(endDateObj);
 
-    // CityCode suchen
-    const cityCode = cityNameToCode[cityName];
-    if (!cityCode) {
-      return res.status(400).json({ message: "Unbekannter Städtename" });
-    }
-    const token = await getAccessToken(); // access token holen
+      // Kinder sind API-Pay-Option
+      const combinedTravellers = Number(adults) + Number(children);
+      ///
+      console.log("Received cityName:", cityName);
+      console.log("startDate", startDate);
+      console.log("typeof startDate", typeof startDate); //string
+      console.log("endDate", endDate);
+      console.log("startDateFormatted", startDateFormatted);
+      console.log("endDateFormatted", endDateFormatted);
+      console.log("adults", adults);
+      console.log("travellers", combinedTravellers);
 
-    // Anfrage an verschiedene Amadeus-Endpunkte
-    // später=>  Promiss all einbauen für abfrage von rating und geocode!!
+      // CityCode suchen
+      const cityCode = cityNameToCode[cityName];
+      if (!cityCode) {
+        return res.status(400).json({ message: "Unbekannter Städtename" });
+      }
+      const token = await getAccessToken(); // access token holen
 
-    const hotelsbyCity = await fetchFromAmadeus(
-      `/v1/reference-data/locations/hotels/by-city?cityCode=${cityCode}`,
-      token
-    ); // alle Hotels by Citycode
+      // Anfrage an verschiedene Amadeus-Endpunkte
+      // später=>  Promiss all einbauen für abfrage von rating und geocode!!
 
-    const hotelIdList = hotelsbyCity.data.map((hotel) => ({
-      hotelIds: hotel.hotelId, // holt aus Amadeus-Anfrage Nr. 1 alle HotelIds fuer die spaetere Verwendung (=> 2.Anfrage fuer Offers)
-    }));
-    console.log("hotelIdList-Length", hotelIdList.length);
+      const hotelsbyCity = await fetchFromAmadeus(
+        `/v1/reference-data/locations/hotels/by-city?cityCode=${cityCode}`,
+        token
+      ); // alle Hotels by Citycode
 
-    ///neue logik für 10citycodes bei multioffers amadeus abfrage
-    /*
+      const hotelIdList = hotelsbyCity.data.map((hotel) => ({
+        hotelIds: hotel.hotelId, // holt aus Amadeus-Anfrage Nr. 1 alle HotelIds fuer die spaetere Verwendung (=> 2.Anfrage fuer Offers)
+      }));
+      console.log("hotelIdList-Length", hotelIdList.length);
+
+      ///neue logik für 10citycodes bei multioffers amadeus abfrage
+      /*
     eine flache kopie von hotelIDList machen
     for schleife mit hotelidList.length
     mit splice() immer 10 ausschneiden und an die amadeus url hängen
@@ -155,63 +156,63 @@ router.get("/generate", async (req, res) => {
     ergebnis => auf available true prüfen => falls true in mongo db speichern
     dann die nächsten 10 hotelids ausschneiden und prüfen
     */
-    let newCountList = 0;
-    const newHotelIdList = [...hotelIdList];
-    while (newHotelIdList.length > 0) {
-      // Schneide die nächsten 10 Hotel-IDs aus dem Array heraus
-      const batch = newHotelIdList
-        .splice(0, 50)
-        .map((h) => h.hotelIds)
-        .join(",");
-      console.log("Frage Hotel-IDs an:", batch);
+      let newCountList = 0;
+      const newHotelIdList = [...hotelIdList];
+      while (newHotelIdList.length > 0) {
+        // Schneide die nächsten 10 Hotel-IDs aus dem Array heraus
+        const batch = newHotelIdList
+          .splice(0, 50)
+          .map((h) => h.hotelIds)
+          .join(",");
+        console.log("Frage Hotel-IDs an:", batch);
 
-      const result = await fetchFromAmadeus(
-        `/v3/shopping/hotel-offers?hotelIds=${batch}&checkInDate=${startDateFormatted}&checkOutDate=${endDateFormatted}&adults=${combinedTravellers}`,
-        // `/v3/shopping/hotel-offers?hotelIds=${batch}`,
-        token
-      );
-
-      if (
-        result &&
-        result.data &&
-        Array.isArray(result.data) &&
-        result.data.length > 0
-      ) {
-        // Nur Hotels mit available: true speichern (optional, je nach API-Response)
-        const availableHotels = result.data.filter(
-          (hotel) => hotel.available === true
+        const result = await fetchFromAmadeus(
+          `/v3/shopping/hotel-offers?hotelIds=${batch}&checkInDate=${startDateFormatted}&checkOutDate=${endDateFormatted}&adults=${combinedTravellers}`,
+          // `/v3/shopping/hotel-offers?hotelIds=${batch}`,
+          token
         );
-        if (availableHotels.length > 0) {
-          await UuidModel.findOneAndUpdate(
-            { uuid: uniqueId },
-            { $addToSet: { hotels: { $each: availableHotels } } }
+
+        if (
+          result &&
+          result.data &&
+          Array.isArray(result.data) &&
+          result.data.length > 0
+        ) {
+          // Nur Hotels mit available: true speichern (optional, je nach API-Response)
+          const availableHotels = result.data.filter(
+            (hotel) => hotel.available === true
           );
-          newCountList += availableHotels.length;
-          console.log(
-            `${availableHotels.length} Angebote in Mongo DB gespeichert`
-          );
-          // Optional: Abbruch nach 5 gefundenen Hotels
-          if (newCountList >= 5) {
+          if (availableHotels.length > 0) {
             await UuidModel.findOneAndUpdate(
               { uuid: uniqueId },
-              { flag: true }
+              { $addToSet: { hotels: { $each: availableHotels } } }
             );
-            console.log("5 Angebote gefunden");
-            break;
+            newCountList += availableHotels.length;
+            console.log(
+              `${availableHotels.length} Angebote in Mongo DB gespeichert`
+            );
+            // Optional: Abbruch nach 5 gefundenen Hotels
+            if (newCountList >= 5) {
+              await UuidModel.findOneAndUpdate(
+                { uuid: uniqueId },
+                { flag: true }
+              );
+              console.log("5 Angebote gefunden");
+              break;
+            }
           }
         }
+        // Wenn keine weiteren Hotels mehr übrig sind, flag setzen
+        if (newHotelIdList.length === 0) {
+          await UuidModel.findOneAndUpdate({ uuid: uniqueId }, { flag: true });
+          console.log("Liste fertig, keine weiteren Angebote verfügbar");
+          break;
+        }
       }
-
-      // Wenn keine weiteren Hotels mehr übrig sind, flag setzen
-      if (newHotelIdList.length === 0) {
-        await UuidModel.findOneAndUpdate({ uuid: uniqueId }, { flag: true });
-        console.log("Liste fertig, keine weiteren Angebote verfügbar");
-        break;
-      }
+      ///
+    } catch (error) {
+      console.error("Error fetching hotel data:", error);
     }
-    ///
-  } catch (error) {
-    console.error("Error fetching hotel data:", error);
   }
 });
 
@@ -221,7 +222,7 @@ router.get("/generate", async (req, res) => {
 // URL: http://localhost:3000/api/uuid/status/:uuid
 router.get("/status/:uuid", async (req, res) => {
   const { uuid } = req.params;
-  console.log("uuid-backend-ep-zwei:", uuid);
+  console.log("uuid-backend-endpunkt-zwei:", uuid);
 
   let responded = false;
 
