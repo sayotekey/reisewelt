@@ -161,10 +161,14 @@ const HotelResultsPage = () => {
         setLoading(true);
         setError("");
         setHotels([]);
-        ///
+
         // const { city, dateRange, adults, children } = activeSearch;
         const timeoutMs = 20000;
         const startTime = Date.now();
+        ///
+        if (myCity.toLowerCase === "hamburg") {
+          window.location.href = `/hamburg-hotels?${params.toString()}`;
+        }
         ///
         if (
           myCity &&
@@ -210,109 +214,215 @@ const HotelResultsPage = () => {
           //  let newCount = countRaw;
           console.log("hier beginnt while-loop");
 
-          // while (!flag || newCount !== allHotels.length) { // amadeus
-          while (flag || newCount !== allHotels.length) {
-            // mock
-            ///
-            console.log("im while-loop");
+          if (!flag) {
+            // while (!flag || newCount !== allHotels.length) { // amadeus
+            while (!flag || newCount !== allHotels.length) {
+              // mock
+              ///
+              console.log("im while-loop");
 
-            // TIMEOUT-CHECK
-            if (Date.now() - startTime > timeoutMs) {
-              setError("Es wurden keine Hotels gefunden (Timeout).");
-              setLoading(false);
-              return;
+              // TIMEOUT-CHECK
+              if (Date.now() - startTime > timeoutMs) {
+                setError("Es wurden keine Hotels gefunden (Timeout).");
+                setLoading(false);
+                return;
+              }
+              ///
+              await new Promise((resolve) => setTimeout(resolve, 3000));
+              const retryResponse = await axios.get(url); // erneute Abfrage der Anzahl der Hotels
+              newCount = retryResponse.data.count; // aktualisiere neuen Count
+              console.log("newCount aus while-loop:", newCount);
+              flag = retryResponse.data.flag;
+              ///
+              if (newCount > allHotels.length) {
+                const urlHotel = "http://localhost:3000/api/uuid/hotels";
+                const hotelResponse = await axios.get(urlHotel, {
+                  params: {
+                    uuid: myUuid,
+                    count: allHotels.length,
+                    limit: newCount - allHotels.length,
+                  },
+                });
+
+                console.log(
+                  "hotelResponse.data.hotels",
+                  hotelResponse.data.hotels
+                );
+                console.log(
+                  "Array.isArray",
+                  Array.isArray(hotelResponse.data.hotels)
+                );
+
+                hotelResponse.data.hotels.forEach((hotelArray) => {
+                  allHotels.push(hotelArray[0]); // hole Hotelobjekt aus innerem Array raus
+                });
+
+                setHotels([...allHotels]);
+                // allHotels.push(...neueHotels);
+              } else if (flag) {
+                break; // alle Hotels geladen, Loop abbrechen
+              } else {
+                // Warten und nochmal prüfen (um API-Schleifen zu vermeiden)
+                await new Promise((resolve) => setTimeout(resolve, 1000));
+              }
+              ///
+              // if (newCount > allHotels.length) {
+              //   //3. endpunkt
+              //   let hotelLength = allHotels.length;
+              //   const urlHotel = "http://localhost:3000/api/uuid/hotels";
+              //   const hotelResponse = await axios.get(urlHotel, {
+              //     params: {
+              //       uuid: myUuid,
+              //       count: hotelLength,
+              //       limit: newCount - hotelLength,
+              //     },
+              //   });
+              //   console.log(
+              //     "hotelResponse.data.hotels",
+              //     hotelResponse.data.hotels
+              //   );
+
+              //   ///
+
+              //   // const fetchedHotels = hotelResponse.data.hotels; // [[hotel1], [hotel2], ...]
+              //   //  const fetchedHotels = hotelResponse.data.hotels.map((h) => h[0]);
+              //   //  console.log("fetchedHotels:");
+              //   // allHotels = [...allHotels, ...fetchedHotels];
+              //   // setHotels((prev) => [...prev, ...fetchedHotels]);
+
+              //   hotelLength = newCount;
+              //   console.log(hotelResponse.data.hotels);
+              //   console.log(
+              //     "Array.isArray",
+              //     Array.isArray(hotelResponse.data.hotels)
+              //   );
+              //   console.log(hotelResponse.data.hotels[0]); // sollte ein Array sein, z.B. [hotelObjekt]
+              //   console.log(hotelResponse.data.hotels[0][0]); // sollte das Hotelobjekt sein
+              //   console.log("Vorher allHotels.length:", allHotels.length);
+              //   hotelResponse.data.hotels.forEach((hotelArray, index) => {
+              //     console.log(`hotelArray[${index}]`, hotelArray);
+              //     console.log(`hotelArray[${index}][0]`, hotelArray[0]);
+              //     allHotels.push(hotelArray[0]);
+              //   });
+              //   console.log("Nachher allHotels.length:", allHotels.length);
+              //   // hotelResponse.data.hotels.forEach((hotel, index) => {
+              //   //   console.log(`Hotel ${index}:`, hotel);
+              //   // });
+              //   ///
+              //   //// => ältere Umwandlung:
+              //   hotelResponse.data.hotels.forEach((hotel) => {
+              //     console.log(hotel);
+              //     allHotels.push(hotel[0]);
+              //     // setHotels((prevHotels) => [...prevHotels, hotel[0]]); //neu
+              //   });
+              //   setHotels([...allHotels]);
+              // }
             }
-            ///
-            await new Promise((resolve) => setTimeout(resolve, 3000));
-            const retryResponse = await axios.get(url); // erneute Abfrage der Anzahl der Hotels
-            newCount = retryResponse.data.count; // aktualisiere neuen Count
-            console.log("newCount aus while-loop:", newCount);
-            flag = retryResponse.data.flag;
-            ///
-            if (newCount > allHotels.length) {
-              const urlHotel = "http://localhost:3000/api/uuid/hotels";
-              const hotelResponse = await axios.get(urlHotel, {
-                params: {
-                  uuid: myUuid,
-                  count: allHotels.length,
-                  limit: newCount - allHotels.length,
-                },
-              });
+          } else {
+            // flag= true // mock
+            while (flag || newCount !== allHotels.length) {
+              ///
+              console.log("im while-loop");
 
-              console.log(
-                "hotelResponse.data.hotels",
-                hotelResponse.data.hotels
-              );
-              console.log(
-                "Array.isArray",
-                Array.isArray(hotelResponse.data.hotels)
-              );
+              // TIMEOUT-CHECK
+              if (Date.now() - startTime > timeoutMs) {
+                setError("Es wurden keine Hotels gefunden (Timeout).");
+                setLoading(false);
+                return;
+              }
+              ///
+              await new Promise((resolve) => setTimeout(resolve, 2000));
+              const retryResponse = await axios.get(url); // erneute Abfrage der Anzahl der Hotels
+              newCount = retryResponse.data.count; // aktualisiere neuen Count
+              console.log("newCount aus while-loop:", newCount);
+              flag = retryResponse.data.flag;
+              ///
+              if (newCount > allHotels.length) {
+                const urlHotel = "http://localhost:3000/api/uuid/hotels";
+                const hotelResponse = await axios.get(urlHotel, {
+                  params: {
+                    uuid: myUuid,
+                    count: allHotels.length,
+                    limit: newCount - allHotels.length,
+                  },
+                });
 
-              hotelResponse.data.hotels.forEach((hotelArray) => {
-                allHotels.push(hotelArray[0]); // hole Hotelobjekt aus innerem Array raus
-              });
+                console.log(
+                  "hotelResponse.data.hotels",
+                  hotelResponse.data.hotels
+                );
+                console.log(
+                  "Array.isArray",
+                  Array.isArray(hotelResponse.data.hotels)
+                );
 
-              setHotels([...allHotels]);
-              // allHotels.push(...neueHotels);
-            } else if (flag) {
-              break; // alle Hotels geladen, Loop abbrechen
-            } else {
-              // Warten und nochmal prüfen (um API-Schleifen zu vermeiden)
-              await new Promise((resolve) => setTimeout(resolve, 1000));
+                hotelResponse.data.hotels.forEach((hotelArray) => {
+                  allHotels.push(hotelArray[0]); // hole Hotelobjekt aus innerem Array raus
+                });
+
+                setHotels([...allHotels]);
+                // allHotels.push(...neueHotels);
+              } else if (flag) {
+                break; // alle Hotels geladen, Loop abbrechen
+              } else {
+                // Warten und nochmal prüfen (um API-Schleifen zu vermeiden)
+                await new Promise((resolve) => setTimeout(resolve, 1000));
+              }
+              ///
+              // if (newCount > allHotels.length) {
+              //   //3. endpunkt
+              //   let hotelLength = allHotels.length;
+              //   const urlHotel = "http://localhost:3000/api/uuid/hotels";
+              //   const hotelResponse = await axios.get(urlHotel, {
+              //     params: {
+              //       uuid: myUuid,
+              //       count: hotelLength,
+              //       limit: newCount - hotelLength,
+              //     },
+              //   });
+              //   console.log(
+              //     "hotelResponse.data.hotels",
+              //     hotelResponse.data.hotels
+              //   );
+
+              //   ///
+
+              //   // const fetchedHotels = hotelResponse.data.hotels; // [[hotel1], [hotel2], ...]
+              //   //  const fetchedHotels = hotelResponse.data.hotels.map((h) => h[0]);
+              //   //  console.log("fetchedHotels:");
+              //   // allHotels = [...allHotels, ...fetchedHotels];
+              //   // setHotels((prev) => [...prev, ...fetchedHotels]);
+
+              //   hotelLength = newCount;
+              //   console.log(hotelResponse.data.hotels);
+              //   console.log(
+              //     "Array.isArray",
+              //     Array.isArray(hotelResponse.data.hotels)
+              //   );
+              //   console.log(hotelResponse.data.hotels[0]); // sollte ein Array sein, z.B. [hotelObjekt]
+              //   console.log(hotelResponse.data.hotels[0][0]); // sollte das Hotelobjekt sein
+              //   console.log("Vorher allHotels.length:", allHotels.length);
+              //   hotelResponse.data.hotels.forEach((hotelArray, index) => {
+              //     console.log(`hotelArray[${index}]`, hotelArray);
+              //     console.log(`hotelArray[${index}][0]`, hotelArray[0]);
+              //     allHotels.push(hotelArray[0]);
+              //   });
+              //   console.log("Nachher allHotels.length:", allHotels.length);
+              //   // hotelResponse.data.hotels.forEach((hotel, index) => {
+              //   //   console.log(`Hotel ${index}:`, hotel);
+              //   // });
+              //   ///
+              //   //// => ältere Umwandlung:
+              //   hotelResponse.data.hotels.forEach((hotel) => {
+              //     console.log(hotel);
+              //     allHotels.push(hotel[0]);
+              //     // setHotels((prevHotels) => [...prevHotels, hotel[0]]); //neu
+              //   });
+              //   setHotels([...allHotels]);
+              // }
             }
-            ///
-            // if (newCount > allHotels.length) {
-            //   //3. endpunkt
-            //   let hotelLength = allHotels.length;
-            //   const urlHotel = "http://localhost:3000/api/uuid/hotels";
-            //   const hotelResponse = await axios.get(urlHotel, {
-            //     params: {
-            //       uuid: myUuid,
-            //       count: hotelLength,
-            //       limit: newCount - hotelLength,
-            //     },
-            //   });
-            //   console.log(
-            //     "hotelResponse.data.hotels",
-            //     hotelResponse.data.hotels
-            //   );
-
-            //   ///
-
-            //   // const fetchedHotels = hotelResponse.data.hotels; // [[hotel1], [hotel2], ...]
-            //   //  const fetchedHotels = hotelResponse.data.hotels.map((h) => h[0]);
-            //   //  console.log("fetchedHotels:");
-            //   // allHotels = [...allHotels, ...fetchedHotels];
-            //   // setHotels((prev) => [...prev, ...fetchedHotels]);
-
-            //   hotelLength = newCount;
-            //   console.log(hotelResponse.data.hotels);
-            //   console.log(
-            //     "Array.isArray",
-            //     Array.isArray(hotelResponse.data.hotels)
-            //   );
-            //   console.log(hotelResponse.data.hotels[0]); // sollte ein Array sein, z.B. [hotelObjekt]
-            //   console.log(hotelResponse.data.hotels[0][0]); // sollte das Hotelobjekt sein
-            //   console.log("Vorher allHotels.length:", allHotels.length);
-            //   hotelResponse.data.hotels.forEach((hotelArray, index) => {
-            //     console.log(`hotelArray[${index}]`, hotelArray);
-            //     console.log(`hotelArray[${index}][0]`, hotelArray[0]);
-            //     allHotels.push(hotelArray[0]);
-            //   });
-            //   console.log("Nachher allHotels.length:", allHotels.length);
-            //   // hotelResponse.data.hotels.forEach((hotel, index) => {
-            //   //   console.log(`Hotel ${index}:`, hotel);
-            //   // });
-            //   ///
-            //   //// => ältere Umwandlung:
-            //   hotelResponse.data.hotels.forEach((hotel) => {
-            //     console.log(hotel);
-            //     allHotels.push(hotel[0]);
-            //     // setHotels((prevHotels) => [...prevHotels, hotel[0]]); //neu
-            //   });
-            //   setHotels([...allHotels]);
-            // }
           }
+
           if (allHotels.length === 0) {
             setError("Es wurden keine Hotels gefunden.");
           } else {

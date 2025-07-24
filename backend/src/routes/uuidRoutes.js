@@ -85,8 +85,8 @@ router.get("/generate", async (req, res) => {
     const uniqueId = uuidv4();
     //
     try {
-      // const newUuid = new UuidModel({ uuid: uniqueId, flag: false }); //amadeus
-      const newUuid = new UuidModel({ uuid: uniqueId }); //mock
+      const newUuid = new UuidModel({ uuid: uniqueId, flag: false }); //amadeus
+      // const newUuid = new UuidModel({ uuid: uniqueId }); //mock
       // const newUuid = new UuidModel({ uuid: uniqueId, flag: false, hotels: [] });
       await newUuid.save();
       console.log("UUID saved successfully:", uniqueId);
