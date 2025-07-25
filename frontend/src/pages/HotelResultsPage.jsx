@@ -38,25 +38,13 @@ import { useTranslate } from "../locales/index.js"; // Import the translation co
 
 import gptExample from "../images/chat-gpt-example.png";
 
-// handleEdit
-
 const HotelResultsPage = () => {
-  // const [myUuid, setMyUuid] = useState(null);
   const [adults, setAdults] = useState(2);
   const [children, setChildren] = useState(0);
   const [childrenAges, setChildrenAges] = useState([]);
   const [hotels, setHotels] = useState([]);
   const [myCity, setMyCity] = useState(""); // State for my city (von wo ?)
   const [mock, setMock] = useState("");
-
-  // aktive Suchparameter
-  // const [searchCity, setSearchCity] = useState("");
-  // const [searchDateRange, setSearchDateRange] = useState([null, null]);
-  // const [searchAdults, setSearchAdults] = useState(2);
-  // const [searchChildren, setSearchChildren] = useState(0);
-
-  // const [activeSearch, setActiveSearch] = useState(null);
-
   const [cityError, setCityError] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
@@ -76,12 +64,6 @@ const HotelResultsPage = () => {
   // Suchparameter aus der URL automatisch in die React-States übernommen
   //sobald sich location.search ändert
   useEffect(() => {
-    // const myCity = query.get("city");
-    // const startDate = query.get("start");
-    // const endDate = query.get("end");
-    // const adults = query.get("adults");
-    // const children = query.get("children");
-
     const query = new URLSearchParams(location.search);
     setMyCity(query.get("city") || "");
     setDateRange([query.get("startDate"), query.get("endDate")]);
@@ -166,7 +148,15 @@ const HotelResultsPage = () => {
         const timeoutMs = 20000;
         const startTime = Date.now();
         ///
-        if (myCity.toLowerCase === "hamburg") {
+        if (myCity.toLowerCase() === "hamburg") {
+          const params = new URLSearchParams({
+            startDate: startDate,
+            endDate: endDate,
+            adults: adults,
+            children: children,
+          });
+
+          params.append("city", myCity);
           window.location.href = `/hamburg-hotels?${params.toString()}`;
         }
         ///
@@ -265,58 +255,6 @@ const HotelResultsPage = () => {
                 // Warten und nochmal prüfen (um API-Schleifen zu vermeiden)
                 await new Promise((resolve) => setTimeout(resolve, 1000));
               }
-              ///
-              // if (newCount > allHotels.length) {
-              //   //3. endpunkt
-              //   let hotelLength = allHotels.length;
-              //   const urlHotel = "http://localhost:3000/api/uuid/hotels";
-              //   const hotelResponse = await axios.get(urlHotel, {
-              //     params: {
-              //       uuid: myUuid,
-              //       count: hotelLength,
-              //       limit: newCount - hotelLength,
-              //     },
-              //   });
-              //   console.log(
-              //     "hotelResponse.data.hotels",
-              //     hotelResponse.data.hotels
-              //   );
-
-              //   ///
-
-              //   // const fetchedHotels = hotelResponse.data.hotels; // [[hotel1], [hotel2], ...]
-              //   //  const fetchedHotels = hotelResponse.data.hotels.map((h) => h[0]);
-              //   //  console.log("fetchedHotels:");
-              //   // allHotels = [...allHotels, ...fetchedHotels];
-              //   // setHotels((prev) => [...prev, ...fetchedHotels]);
-
-              //   hotelLength = newCount;
-              //   console.log(hotelResponse.data.hotels);
-              //   console.log(
-              //     "Array.isArray",
-              //     Array.isArray(hotelResponse.data.hotels)
-              //   );
-              //   console.log(hotelResponse.data.hotels[0]); // sollte ein Array sein, z.B. [hotelObjekt]
-              //   console.log(hotelResponse.data.hotels[0][0]); // sollte das Hotelobjekt sein
-              //   console.log("Vorher allHotels.length:", allHotels.length);
-              //   hotelResponse.data.hotels.forEach((hotelArray, index) => {
-              //     console.log(`hotelArray[${index}]`, hotelArray);
-              //     console.log(`hotelArray[${index}][0]`, hotelArray[0]);
-              //     allHotels.push(hotelArray[0]);
-              //   });
-              //   console.log("Nachher allHotels.length:", allHotels.length);
-              //   // hotelResponse.data.hotels.forEach((hotel, index) => {
-              //   //   console.log(`Hotel ${index}:`, hotel);
-              //   // });
-              //   ///
-              //   //// => ältere Umwandlung:
-              //   hotelResponse.data.hotels.forEach((hotel) => {
-              //     console.log(hotel);
-              //     allHotels.push(hotel[0]);
-              //     // setHotels((prevHotels) => [...prevHotels, hotel[0]]); //neu
-              //   });
-              //   setHotels([...allHotels]);
-              // }
             }
           } else {
             // flag= true // mock
@@ -430,24 +368,14 @@ const HotelResultsPage = () => {
           }
 
           localStorage.setItem("lastHotels", JSON.stringify(allHotels));
-          console.log("Alle Hotels geladen:");
+          console.log("Alle Hotels geladen:", allHotels);
 
           // Lesen die zuletzt gespeicherten Suchen aus localStorage
           const previousSearches =
             JSON.parse(localStorage.getItem("lastSearches")) || [];
 
-          // // Create a new search object
-          // const newSearch = {
-          //   to: searchCity,
-          //   startDate: searchDateRange[0],
-          //   endDate: searchDateRange[1],
-          //   adults: searchAdults,
-          //   children: searchChildren,
-          // };
           const newSearch = {
             to: myCity,
-            // startDate: dateRange[0],
-            // endDate: dateRange[1],
             startDate: startDate,
             endDate: endDate,
             adults,
@@ -493,181 +421,13 @@ const HotelResultsPage = () => {
       const mockValue = validMocks.includes(lowerCity) ? lowerCity : "";
 
       params.append("mock", encodeURIComponent(mockValue));
-      // setSearchCity(myCity);
-      // setSearchDateRange(dateRange);
-      // setSearchAdults(adults);
-      // setSearchChildren(children);
-      // Aktive Suche setzen → löst den API-Call via useEffect aus
-      // setActiveSearch({
-      // city: myCity,
-      // // dateRange: dateRange,
-      // adults: adults,
-      // children: children,
-      // });
+
       setShowPopup(false); // Popup schließen
       setError(""); // Vorherige Fehlermeldung zurücksetzen (optional)
       window.location.href = `/hotel-results?${params.toString()}`;
     }
   };
 
-  // get combined data aufrufen, sobald seite neu geladen wird
-  // flag auf true bei neuer datenlage
-  // get comb. ändert/prüft das flag
-  ///
-
-  // Backend-Abfrage nach activeSearch-Änderung
-  useEffect(
-    () => {
-      /*// Nur starten, wenn alle Parameter vorhanden sind
-    // if (!activeSearch) return;
-
-    const getCombinedData = async () => {
-      try {
-        setLoading(true);
-        setError("");
-        setHotels([]);
-        ///
-        // const { city, dateRange, adults, children } = activeSearch;
-        const timeoutMs = 20000;
-        const startTime = Date.now();
-        ///
-        const response = await axios.get(
-          "http://localhost:3000/api/uuid/generate",
-          {
-            params: {
-              cityName: myCity,
-              startDate: dateRange[0],
-              endDate: dateRange[1],
-              adults: adults,
-              children: children,
-            },
-          }
-        );
-
-        const myUuid = response.data.uuid;
-
-        console.log("UUID:", myUuid); // Gibt die generierte UUID aus
-
-        // 2. Endpunkt: Abfrage der Anzahl der Hotels, die unter dieser UUID gespeichert sind
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-
-        const url = `http://localhost:3000/api/uuid/status/${myUuid}`;
-        const hotelCountResponse = await axios.get(url);
-        const countRaw = hotelCountResponse.data.count; // {"count":3 }
-        let flag = hotelCountResponse.data.flag; // false
-
-        console.log("2.Endpunkt: aktueller Count", countRaw);
-        console.log("2.Endpunkt: aktuelle flag", flag);
-
-        let allHotels = []; // Array für alle Hotels
-        let newCount = 0; // Variable für neuen Count
-        //  let newCount = countRaw;
-        console.log("hier beginnt while-loop");
-
-        while (!flag || newCount !== allHotels.length) {
-          ///
-          // TIMEOUT-CHECK
-          if (Date.now() - startTime > timeoutMs) {
-            setError("Es wurden keine Hotels gefunden (Timeout).");
-            setLoading(false);
-            return;
-          }
-          ///
-          await new Promise((resolve) => setTimeout(resolve, 3000));
-          const retryResponse = await axios.get(url); // erneute Abfrage der Anzahl der Hotels
-          newCount = retryResponse.data.count; // aktualisiere neuen Count
-          console.log("newCount aus while-loop:", newCount);
-          flag = retryResponse.data.flag;
-
-          if (newCount > allHotels.length) {
-            //3. endpunkt
-            let hotelLength = allHotels.length;
-            const urlHotel = "http://localhost:3000/api/uuid/hotels";
-            const hotelResponse = await axios.get(urlHotel, {
-              params: {
-                uuid: myUuid,
-                count: hotelLength,
-                limit: newCount - hotelLength,
-              },
-            });
-            console.log(hotelResponse.data.hotels);
-            console.log(Array.isArray(hotelResponse.data.hotels));
-            ///
-
-            const fetchedHotels = hotelResponse.data.hotels.map((h) => h[0]);
-            allHotels = [...allHotels, ...fetchedHotels];
-            setHotels((prev) => [...prev, ...fetchedHotels]);
-            hotelLength = newCount;
-
-            ///
-            //// => ältere Umwandlung:
-            //  hotelResponse.data.hotels.forEach((hotel) => {
-            //       console.log(hotel);
-            //       setHotels((prevHotels) => [...prevHotels, hotel[0]]); //neu
-            // allHotels.push(hotel[0]);
-          }
-          // setHotels([...allHotels]);
-        }
-        if (allHotels.length === 0) {
-          setError("Es wurden keine Hotels gefunden.");
-          setLoading(false);
-        } else {
-          setHotels([...allHotels]);
-        }
-        setLoading(false);
-
-        localStorage.setItem("lastHotels", JSON.stringify(allHotels));
-        console.log("Alle Hotels geladen:", allHotels);
-
-        // Lesen die zuletzt gespeicherten Suchen aus localStorage
-        const previousSearches =
-          JSON.parse(localStorage.getItem("lastSearches")) || [];
-
-        // // Create a new search object
-        // const newSearch = {
-        //   to: searchCity,
-        //   startDate: searchDateRange[0],
-        //   endDate: searchDateRange[1],
-        //   adults: searchAdults,
-        //   children: searchChildren,
-        // };
-        const newSearch = {
-          to: myCity,
-          startDate: dateRange[0],
-          endDate: dateRange[1],
-          adults,
-          children,
-        };
-        //
-        const updatedSearches = [newSearch, ...previousSearches].slice(0, 3); // Limit to 3 searches
-        localStorage.setItem("lastSearches", JSON.stringify(updatedSearches));
-      } catch (error) {
-        console.error("Fehler beim Laden der Hotels:", error.message);
-        setError(error?.message || "Fehler beim Laden der Hotels."); // Nachricht im Frontend anzeigen
-        // return [];
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    // Nur starten, wenn alle Parameter vorhanden sind
-    if (
-      myCity &&
-      dateRange[0] &&
-      dateRange[1] &&
-      typeof adults === "number" &&
-      typeof children === "number"
-    ) {
-      getCombinedData();
-    }*/
-    }
-    // ,
-    // [myCity, dateRange, adults, children]
-  );
-  //   getCombinedData();
-  // }, [searchAdults, searchChildren, searchCity, searchDateRange, activeSearch]);
-  // }, [activeSearch]);
-  ///
   const handleKeyDown = (e) => {
     if (!showSuggestions || suggestions.length === 0) return;
 
@@ -721,22 +481,6 @@ const HotelResultsPage = () => {
     return null; // nicht gefunden
   };
 
-  // 1.Endpunkt für UUID
-  // onclick button anfrage an backend senden, um UUID zu generieren
-  // und die UUID in der MongoDB zu speichern
-
-  // Erroranzeige in Minisearchbar
-  //alte Verison:
-  /*const handleSearch = () => {
-    if (!myCity) {
-      setCityError("Bitte einen Städtenamen eingeben.");
-    } else if (!validCities.includes(myCity)) {
-      setCityError("Ungültiger Städtename, bitte Eingabe überprüfen.");
-    } else {
-      setCityError("");
-      setShowSuggestions(false);
-    }
-  };*/
   const handleSearchClick = () => {
     if (!myCity) {
       setCityError("Bitte einen Städtenamen eingeben.");
@@ -752,13 +496,6 @@ const HotelResultsPage = () => {
       setError("Bitte wähle ein gültiges Datum aus.");
       return;
     }
-
-    // setActiveSearch({
-    //   city: myCity,
-    //   dateRange,
-    //   adults,
-    //   children,
-    // });
   };
 
   const lastSearches = JSON.parse(localStorage.getItem("lastSearches") || "[]");
@@ -1527,7 +1264,16 @@ const HotelResultsPage = () => {
                                 month: "2-digit",
                                 year: "numeric",
                               })
-                            : ""}
+                            : ""}{" "}
+                          <span>
+                            ({" "}
+                            {hotel.offers?.[0]?.checkOutDate.slice(8, 10) -
+                              hotel.offers?.[0]?.checkInDate.slice(8, 10) >
+                            1
+                              ? "Tage"
+                              : "Tag"}{" "}
+                            Tage )
+                          </span>
                         </p>
 
                         {/* Anzahl + Erwachsene(r) */}
@@ -1599,6 +1345,12 @@ const HotelResultsPage = () => {
                 </motion.div>
               );
             })}
+            {/* Skeletons anzeigen, wenn noch nachgeladen wird */}
+            {loading &&
+              Array.from({ length: 3 }).map((_, idx) => (
+                // <HotelCardSkeleton key={`skeleton-${idx}`} />
+                <SkeletonHotelCard key={`skeleton-${idx}`} />
+              ))}
           </section>
         </section>
       </main>

@@ -25,7 +25,7 @@ const LastMinuteComponent = () => {
             alt="Reisekoffer mit Aufklebern"
             className="w-full h-72 object-cover group-hover:scale-105 transition-transform duration-300"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent"></div>
+          {/* <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent"></div> */}
           <div className="absolute left-8 top-8">
             <h3 className="text-white text-2xl font-semibold drop-shadow-lg text-shadow-lg/30">
               {t("lastMinute.superLastMinute") || "Super Last Minute"}
@@ -46,9 +46,9 @@ const LastMinuteComponent = () => {
           <img
             src={beachFivehundredDeals}
             alt="Strand und Meer mit Badeschuhen und Hut"
-            className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+            className="w-full h-72 object-cover group-hover:scale-105 transition-transform duration-300"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent"></div>
+          {/* <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent"></div> */}
           <div className="absolute left-8 top-8">
             <h3 className="text-white text-2xl font-semibold drop-shadow-lg text-shadow-lg/30">
               {t("lastMinute.vacationUnder500") || "Urlaub unter 500€"}
