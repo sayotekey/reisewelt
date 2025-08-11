@@ -36,7 +36,7 @@ export default function SearchForm() {
   const [hotels, setHotels] = useState([]);
   const [myCity, setMyCity] = useState(""); // State for my city (von wo ?)
   const [error, setError] = useState("");
-  const [cityError, setCityError] = useState("");
+  // const [cityError, setCityError] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
@@ -82,7 +82,7 @@ export default function SearchForm() {
     setMyCity(e.target.value);
     setShowSuggestions(true);
     setSelectedIndex(-1);
-    // setError("");
+    setError("");
   };
 
   const handleKeyDown = (e) => {
@@ -111,20 +111,28 @@ export default function SearchForm() {
     setMyCity(city);
     setShowSuggestions(false);
     setSelectedIndex(-1);
-    // setError("");
+    setError("");
   };
 
   const handleSearch = () => {
-    if (!myCity) {
-      setCityError("Bitte einen Städtenamen eingeben.");
+    console.log("kontrolle myCity bei Validierung", myCity);
+
+    if (!myCity || myCity === "") {
+      setError("Bitte einen Städtenamen eingeben.");
+      return false;
     } else if (!validCities.includes(myCity)) {
-      setCityError("Ungültiger Städtename, bitte Eingabe überprüfen.");
+      setError("Ungültiger Städtename, bitte Eingabe überprüfen.");
+      return false;
     } else if (!startDate || !endDate) {
       setError("Bitte ein Reisedatum angeben!");
-    } else {
-      setCityError("");
-      setShowSuggestions(false);
+      return false;
     }
+    return true;
+    // else {
+    //   // setCityError("");
+    //   setError("");
+    //   setShowSuggestions(false);
+    // }
   };
 
   // 1.Endpunkt für UUID
@@ -495,7 +503,10 @@ export default function SearchForm() {
         <button
           onClick={async () => {
             // validierung
-            handleSearch();
+            console.log("Starte Validierung");
+
+            if (!handleSearch()) return;
+            console.log("Beende Validierung");
 
             // Neue Suchanfrage ggf. speichern
             const newSearch = {
@@ -552,57 +563,6 @@ export default function SearchForm() {
           onMouseLeave={(e) => (e.target.style.backgroundColor = "#a8d5e2")}
         >
           {t("search.searchButton") || "Suchen"}
-
-          {/* if (myCity.toLowerCase() === "hamburg") { 
-           // Hamburg Suche in localStorage speichern
-              //   const previousSearches =
-              //     JSON.parse(localStorage.getItem("lastSearches")) || [];
-              //   const newSearch = {
-              //     to: "Hamburg",
-              //     startDate: startDate ? startDate.toISOString() : null,
-              //     endDate: endDate ? endDate.toISOString() : null,
-              //     adults,
-              //     children,
-              //   };
-              //   const updatedSearches = [newSearch, ...previousSearches].slice(
-              //     0,
-              //     3
-              //   );
-              //   localStorage.setItem(
-              //     "lastSearches",
-              //     JSON.stringify(updatedSearches)
-              //   );
-              //   // Weiterleitung zur Hamburg Seite
-              //   const params = new URLSearchParams();
-              //   if (startDate)
-              //     params.append("startDate", startDate.toISOString());
-              //   if (endDate) params.append("endDate", endDate.toISOString());
-              //   params.append("adults", adults);
-              //   params.append("children", children);
-
-              //   window.location.href = `/hamburg-hotels?${params.toString()}`;
-              // } else {
-              //   // // hier KEIN await!
-              //   // getCombinedData();
-              //   window.location.href = `/hotel-results?city=${encodeURIComponent(
-              //     myCity
-              //   )}&startDate=${startDate}&endDate=${endDate}&adults=${adults}&children=${children}`;
-              // }
-              ///
-         
-          }}
-          className="text-gray-800 w-full sm:w-full xl:w-1/7 px-6 py-2 mt-3 rounded transition font-semibold"
-          style={{
-            backgroundColor: "#a8d5e2",
-          }}
-          onMouseEnter={(e) => {
-            e.target.style.backgroundColor = "#a2ceda";
-          }}
-          onMouseLeave={(e) => {
-            e.target.style.backgroundColor = "#a8d5e2";
-          }}
-        >
-          {t("search.searchButton") || "Suchen"}*/}
         </button>
       </div>
       {/*hier ist Grid zu Ende! */}

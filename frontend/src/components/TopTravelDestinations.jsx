@@ -4,8 +4,7 @@ import MapComponent from "./MapComponent.jsx";
 import { useTheme } from "../context/ThemeContext";
 import { useTranslate } from "../locales/index.js";
 import { useNavigate } from "react-router-dom";
-
-
+import validCityNames from "../utils/validCityNames.js";
 
 // Animationsstile hinzufügen
 const fadeInStyle = `
@@ -61,29 +60,39 @@ if (typeof document !== "undefined") {
 
 // Struktur: Land → Städte (aktualisiert entsprechend der Amadeus API)
 const countriesCities = {
+  Belgien: ["Antwerpen", "Brüssel"],
+  Dänemark: ["Kopenhagen"],
   Deutschland: [
     "Berlin",
-    "Hamburg",
-    "München",
-    "Köln",
-    "Frankfurt",
     "Düsseldorf",
+    "Frankfurt",
+    "Hamburg",
+    "Köln",
     "Leipzig",
+    "München",
     "Stuttgart",
   ],
-  Österreich: ["Wien", "Salzburg", "Graz", "Innsbruck"],
-  Schweiz: ["Zürich", "Genf"],
-  Frankreich: ["Paris", "Lyon", "Marseille", "Nizza", "Toulouse"],
-  Italien: ["Rom", "Bologna"],
-  Spanien: ["Madrid", "Barcelona", "Sevilla", "Valencia", "Palma"],
-  Portugal: ["Lissabon", "Porto"],
-  Niederlande: ["Amsterdam"],
-  Belgien: ["Brüssel", "Antwerpen"],
+  Frankreich: ["Lyon", "Marseille", "Nizza", "Paris", "Toulouse"],
+  Italien: ["Bologna", "Mailand_Malpensa", "Mailand_Linate", "Pisa", "Rom"],
   Irland: ["Dublin"],
-  Schottland: ["Edinburgh"],
-  Dänemark: ["Kopenhagen"],
+  Niederlande: ["Amsterdam"],
   Norwegen: ["Oslo"],
+  Österreich: ["Graz", "Innsbruck", "Klagenfurt", "Linz", "Salzburg", "Wien"],
+  Portugal: ["Lissabon", "Porto"],
+  Schottland: [" Aberdeen", "Dundee", "Edinburgh", "Glasgow", "Inverness"],
   Schweden: ["Stockholm"],
+  Schweiz: ["Genf", "Zürich"],
+  Spanien: [
+    "Algeciras",
+    "Barcelona",
+    "Coruna",
+    "Granada",
+    "Madrid",
+    " Malaga_Costa_del_Sol",
+    "Palma",
+    "Sevilla",
+    "Valencia",
+  ],
 };
 
 const TopTravelDestinations = () => {
@@ -94,8 +103,7 @@ const TopTravelDestinations = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const { t } = useTranslate();
-    const navigate = useNavigate();
-
+  const navigate = useNavigate();
 
   // Städte des ausgewählten Landes anzeigen
   const handleCountryClick = (country) => {
@@ -106,16 +114,54 @@ const TopTravelDestinations = () => {
   };
 
   // Hotels für die ausgewählte Stadt laden
-/*   const fetchHotelsByCity = async (city) => {
+  /*   const fetchHotelsByCity = async (city) => {
     setLoading(true);
     setError(null);
     setSelectedCity(city); */
 
-      const fetchHotelsByCity = async (city) => {
+  const fetchHotelsByCity = async (city) => {
+    // Sonderfall Hamburg
     if (city === "Hamburg") {
       navigate("/hamburg-hotels");
       return;
+      // } else if(){
+      //   popupHotelName()
     }
+
+    if (!amadeusToken) {
+      setError("Kein API-Token verfügbar");
+      return;
+    }
+
+    const cityCode = validCityNames[activeCountry]?.[city];
+    if (!cityCode) {
+      setError(`Kein IATA-Code für ${city} gefunden`);
+      return;
+    }
+
+    setSelectedCity(city);
+    setHotels([]);
+    setLoading(true);
+    setError(null);
+
+    try {
+      const res = await axios.get(`${AMADEUS_HOTEL_URL}?cityCode=${cityCode}`, {
+        headers: { Authorization: `Bearer ${amadeusToken}` },
+      });
+
+      if (res.data?.data?.length) {
+        setHotels(res.data.data);
+      } else {
+        setError("Keine Hotels gefunden");
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Fehler beim Laden der Hotels");
+    } finally {
+      setLoading(false);
+    }
+
+    /*
     try {
       console.log(`Lade Hotels für Stadt: ${city}`);
       const url = `http://localhost:3000/api/amadeus/combined?cityName=${city}`;
@@ -149,7 +195,7 @@ const TopTravelDestinations = () => {
       setHotels([]);
     } finally {
       setLoading(false);
-    }
+    }*/
   };
 
   return (
@@ -166,7 +212,9 @@ const TopTravelDestinations = () => {
           style={{ color: "var(--text-color)" }}
         >
           {t("topTravel.title") || "Top Reiseziele"} –{" "}
-          <span style={{ color: "var(--accent-color)" }}>{t("topTravel.subtitle") || "Europa"}</span>{" "}
+          <span style={{ color: "var(--accent-color)" }}>
+            {t("topTravel.subtitle") || "Europa"}
+          </span>{" "}
           {t("topTravel.dreamVacation") || "Traumurlaub"}
         </h2>
 
@@ -200,13 +248,15 @@ const TopTravelDestinations = () => {
                 className="text-xl font-semibold mb-2 opacity-70 animate-custom-pulse"
                 style={{ color: "var(--text-color)" }}
               >
-                {t("topTravel.pleaseSelectCountry") || "Bitte wähle ein Land"}
+                {t("topTravel.pleaseSelectCountry") ||
+                  "Bitte wählen Sie ein Land"}
               </h4>
               <p
                 className="text-sm opacity-60"
                 style={{ color: "var(--text-light)" }}
               >
-                {t("topTravel.clickCountryToSee") || "Klicken Sie auf ein Land oben, um Städte zu sehen"}
+                {t("topTravel.clickCountryToSee") ||
+                  "Klicken Sie auf ein Land oben, um Städte zu sehen"}
               </p>
               <div className="mt-8 text-6xl opacity-30 animate-slow-bounce">
                 🌍
@@ -258,7 +308,8 @@ const TopTravelDestinations = () => {
                   e.target.style.color = "var(--text-light)";
                 }}
               >
-                  {t("topTravel.backToCities") || "← Zurück zu Städten in"} {activeCountry}
+                {t("topTravel.backToCities") || "← Zurück zu Städten in"}{" "}
+                {activeCountry}
               </button>
             </div>
           )}
@@ -288,7 +339,8 @@ const TopTravelDestinations = () => {
                     e.target.style.color = "var(--text-light)";
                   }}
                 >
-                  {t("topTravel.backToCities") || "← Zurück zu Städten in"} {activeCountry}
+                  {t("topTravel.backToCities") || "← Zurück zu Städten in"}{" "}
+                  {activeCountry}
                 </button>
               </div>
 
@@ -308,7 +360,8 @@ const TopTravelDestinations = () => {
                     className="text-sm mt-1"
                     style={{ color: "var(--text-light)" }}
                   >
-                    {t("topTravel.pleaseWait") || "Bitte warten Sie einen Moment"}
+                    {t("topTravel.pleaseWait") ||
+                      "Bitte warten Sie einen Moment"}
                   </p>
                 </div>
               )}
@@ -317,7 +370,8 @@ const TopTravelDestinations = () => {
 
               {!loading && !error && hotels.length === 0 && (
                 <p style={{ color: "var(--text-color)" }}>
-                  {t("topTravel.noHotelsFound") || "Keine Hotels in"} {selectedCity} gefunden.
+                  {t("topTravel.noHotelsFound") || "Keine Hotels in"}{" "}
+                  {selectedCity} gefunden.
                 </p>
               )}
 
@@ -357,7 +411,8 @@ const TopTravelDestinations = () => {
                         className="text-sm mt-1"
                         style={{ color: "var(--accent-color)" }}
                       >
-                        {t("topTravel.from") || "Ab"} {hotel.offers[0].price?.total}{" "}
+                        {t("topTravel.from") || "Ab"}{" "}
+                        {hotel.offers[0].price?.total}{" "}
                         {hotel.offers[0].price?.currency}
                       </div>
                     )}
