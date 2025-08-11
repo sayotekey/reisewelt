@@ -36,7 +36,47 @@ import hotelRooms from "../data/hotelRooms";
 
 import { useTranslate } from "../locales/index.js"; // Import the translation context
 
-import gptExample from "../images/chat-gpt-example.png";
+import gptExample from "../images/chat-gpt-example.png"; // fallbakc
+
+import set1_img1 from "../images/hotel-results/set1/pexels-leah-newhouse.jpg";
+import set1_img2 from "../images/hotel-results/set1/pexels-suhel-vba-17.jpg";
+import set1_img3 from "../images/hotel-results/set1/pexels-cottonbro.jpg";
+import set1_img4 from "../images/hotel-results/set1/pexels-pixabay-24.jpg";
+import set1_img5 from "../images/hotel-results/set1/pexels-szymon-shields-15.jpg";
+import set1_img6 from "../images/hotel-results/set1/pexels-vika-glitter-392079-3315291.jpg";
+
+import set2_img1 from "../images/hotel-results/set2/pexels-matthiasgroeneveld-2877267.jpg";
+import set2_img2 from "../images/hotel-results/set2/pexels-enginakyurt-2684260.jpg";
+import set2_img3 from "../images/hotel-results/set2/pexels-pixabay-460537.jpg";
+import set2_img4 from "../images/hotel-results/set2/pexels-helenalopes-3215519.jpg";
+import set2_img5 from "../images/hotel-results/set2/pexels-fidel-2814828.jpg";
+import set2_img6 from "../images/hotel-results/set2/pexels-vince-17568098.jpg";
+
+// import set3_img1 from "../images/hotel-results/set3/img1.jpg";
+// import set3_img2 from "../images/hotel-results/set3/img2.jpg";
+// import set3_img3 from "../images/hotel-results/set3/img3.jpg";
+// import set3_img4 from "../images/hotel-results/set3/img4.jpg";
+// import set3_img5 from "../images/hotel-results/set3/img5.jpg";
+// import set3_img6 from "../images/hotel-results/set3/img6.jpg";
+
+// import set4_img1 from "../images/hotel-results/set4/img1.jpg";
+// import set4_img2 from "../images/hotel-results/set4/img2.jpg";
+// import set4_img3 from "../images/hotel-results/set4/img3.jpg";
+// import set4_img4 from "../images/hotel-results/set4/img4.jpg";
+// import set4_img5 from "../images/hotel-results/set4/img5.jpg";
+// import set4_img6 from "../images/hotel-results/set4/img6.jpg";
+
+// import set5_img1 from "../images/hotel-results/set5/img1.jpg";
+// import set5_img2 from "../images/hotel-results/set5/img2.jpg";
+// import set5_img3 from "../images/hotel-results/set5/img3.jpg";
+// import set5_img4 from "../images/hotel-results/set5/img4.jpg";
+// import set5_img5 from "../images/hotel-results/set5/img5.jpg";
+// import set5_img6 from "../images/hotel-results/set5/img6.jpg";
+
+const hotelImageSets = [
+  [set1_img1, set1_img2, set1_img3, set1_img4, set1_img5, set1_img6], // Hotel 1
+  [set2_img1, set2_img2, set2_img3, set2_img4, set2_img5, set2_img6], // Hotel 2
+];
 
 const HotelResultsPage = () => {
   const [adults, setAdults] = useState(2);
@@ -150,14 +190,14 @@ const HotelResultsPage = () => {
       )
     : [];
 
-  const handleInputChange = (e) => {
-    setMyCity(e.target.value);
-    setShowSuggestions(true);
-    setSelectedIndex(-1);
-    if (e.target.value.trim() !== "") {
-      setErrorInfo("");
-    }
-  };
+  // const handleInputChange = (e) => {
+  //   setMyCity(e.target.value);
+  //   setShowSuggestions(true);
+  //   setSelectedIndex(-1);
+  //   if (e.target.value.trim() !== "") {
+  //     setErrorInfo("");
+  //   }
+  // };
 
   ///
   useEffect(() => {
@@ -1163,13 +1203,16 @@ const HotelResultsPage = () => {
           {/* SKELETONS BEI LADEN */}
           {loading && (
             <>
+              {/* <SkeletonHotelCard />
               <SkeletonHotelCard />
-              <SkeletonHotelCard />
-              <SkeletonHotelCard />
+              <SkeletonHotelCard /> */}
             </>
           )}{" "}
           <section className="grid gap-6">
             {hotels.map((hotel, index) => {
+              const imageSet = hotelImageSets[index % hotelImageSets.length];
+              const titleImage = imageSet[0];
+
               // Wishlist-Check
               const wishlist = JSON.parse(
                 localStorage.getItem("wishlist") || "[]"
@@ -1227,8 +1270,8 @@ const HotelResultsPage = () => {
                       </button>
                     </div>
                     <img
-                      src={gptExample}
-                      alt="gpt-example-picture"
+                      src={titleImage}
+                      alt={`Titelbild für ${hotel.hotel.name}`}
                       className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
                     />
                   </div>
@@ -1289,13 +1332,27 @@ const HotelResultsPage = () => {
                               })
                             : ""}{" "}
                           <span>
-                            ({" "}
-                            {hotel.offers?.[0]?.checkOutDate.slice(8, 10) -
-                              hotel.offers?.[0]?.checkInDate.slice(8, 10) >
-                            1
-                              ? "Tage"
-                              : "Tag"}{" "}
-                            Tage )
+                            (
+                            {(() => {
+                              const offer = hotel.offers && hotel.offers[0];
+                              const checkIn = offer?.checkInDate;
+                              const checkOut = offer?.checkOutDate;
+                              if (checkIn && checkOut) {
+                                const inDate = new Date(checkIn);
+                                const outDate = new Date(checkOut);
+                                const nights = Math.max(
+                                  1,
+                                  Math.round(
+                                    (outDate - inDate) / (1000 * 60 * 60 * 24)
+                                  )
+                                );
+                                return `${nights} ${
+                                  nights > 1 ? "Tage" : "Tag"
+                                }`;
+                              }
+                              return "";
+                            })()}
+                            )
                           </span>
                         </p>
 
@@ -1356,7 +1413,9 @@ const HotelResultsPage = () => {
                           <button
                             className="mt-2 px-6 py-2 ml-4 bg-orange-500 text-white rounded-lg hover:bg-orange-400 transition-colors font-medium shadow-md hover:shadow-lg"
                             onClick={() =>
-                              navigate(`/hotel-details/${hotel.hotel.dupeId}`)
+                              navigate(`/hotel-details/${hotel.hotel.dupeId}`, {
+                                state: { images: imageSet },
+                              })
                             }
                           >
                             Buchen

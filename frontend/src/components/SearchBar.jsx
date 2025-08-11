@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import DatePicker from "react-datepicker";
 import { AnimatePresence } from "framer-motion";
 import { motion } from "framer-motion";
@@ -15,7 +15,7 @@ import {
   FaWifi,
 } from "react-icons/fa";
 import "react-datepicker/dist/react-datepicker.css";
-import axios from "axios";
+// import axios from "axios";
 import { useTranslate } from "../locales/index.js"; // Import the translation context
 
 import validCities from "../utils/validCities.js";
@@ -27,13 +27,14 @@ import plane from "../icons/plane-solid-black.svg";
 // import plane2 from "../icons/plane2-solid-black.png";
 import persons from "../icons/people-group-solid-black.svg";
 import question from "../icons/question-solid-black.svg";
+import comingSoon from "../images/coming-soon.svg";
 
 export default function SearchForm() {
   const { t } = useTranslate();
   const [adults, setAdults] = useState(2);
   const [children, setChildren] = useState(0);
   const [childrenAges, setChildrenAges] = useState([]);
-  const [hotels, setHotels] = useState([]);
+  // const [hotels, setHotels] = useState([]);
   const [myCity, setMyCity] = useState(""); // State for my city (von wo ?)
   const [error, setError] = useState("");
   // const [cityError, setCityError] = useState("");
@@ -42,7 +43,7 @@ export default function SearchForm() {
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [dateRange, setDateRange] = useState([null, null]); // State for date range
   const [startDate, endDate] = dateRange;
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
   // const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [showErrorInfo, setShowErrorInfo] = useState(false);
   // const navigate = useNavigate();
@@ -302,7 +303,7 @@ export default function SearchForm() {
           {myCity && (
             <button
               type="button"
-              className="absolute -right-2 top-4 -translate-y-1/2 text-gray-300 cursor-pointer min-w-2"
+              className="absolute -right-2 top-4 -translate-y-1/2 text-gray-300  min-w-2"
               onClick={() => setMyCity("")}
               tabIndex={-1}
               aria-label="Eingabe löschen"
@@ -315,23 +316,32 @@ export default function SearchForm() {
         </div>
         {/* Flug hinzufügen */}
         <div>
-          <label className="font-semibold hover:cursor-pointer flex text-blue-100 gap-2"></label>
-          <div className="w-full">
+          <label className="font-semibold flex text-blue-100 gap-2"></label>
+          <div className="w-full relative">
             <div className="flex mb-1 items-center gap-2">
               <img
                 src={plane}
                 alt="icon: mountain and building"
                 className="h-4"
               />
-              <label className="font-semibold hover:cursor-pointer flex text-blue-800 gap-2">
+              <label className="font-semibold flex text-blue-800 gap-2">
                 Willst du fliegen?
               </label>
             </div>
             <input
               type="text"
               placeholder={t("search.addFlight") || "  +  Flug hinzufügen"}
-              className="w-full p-2 hover:cursor-pointer border rounded border-dashed border-gray-800 text-gray-600 placeholder-gray-600"
+              className="w-full p-2  border rounded border-dashed border-gray-800 text-gray-600 placeholder-gray-600"
+              disabled
             />
+            <div className="absolute -right-5 top-0">
+              <img
+                src={comingSoon}
+                alt="coming soon"
+                width={180}
+                style={{ transform: "rotate(35deg)" }}
+              />
+            </div>
           </div>
         </div>
         <div>
