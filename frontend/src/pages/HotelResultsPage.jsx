@@ -12,7 +12,7 @@ import travelGoal from "../icons/mountain-city-solid-black.svg";
 import calendar from "../icons/calendar-days-solid-black.svg";
 // import pencil from "../icons/pencil-solid-black.svg";
 import pencil2 from "../icons/pencil-solid-white.svg";
-import wishlistHeartFull from "../icons/heart-solid-black.svg";
+import wishlistHeartFull from "../icons/heart-solid-full.svg";
 import wishlistHeartEmpty from "../icons/heart-regular-black.svg";
 import { ChevronLeft, ChevronRight } from "lucide-react"; // Pfeil-Icons
 import {

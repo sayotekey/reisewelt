@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 
 const saveTopTravelSchema = new mongoose.Schema({
+  uuid: { type: String, required: true },
   city: {
     type: String,
     required: true,

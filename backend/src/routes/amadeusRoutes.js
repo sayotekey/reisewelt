@@ -2,6 +2,7 @@ import express from "express";
 import { getAccessToken, fetchFromAmadeus } from "../api/amadeusService.js";
 import UuidModel from "../models/uuidModel.js";
 import TopTravelModel from "../models/topTravelModel.js";
+import { v4 as uuidv4 } from "uuid";
 
 const router = express.Router();
 
@@ -59,51 +60,44 @@ const cityNameToCode = {
 
   // ...weitere Städte
 };
-
-router.get("/getHotelNamesbyCitycode", async (req, res) => {
+router.get("/getHotelCount", async (req, res) => {
   try {
-    const { cityName } = req.query; // Städtenamen auslesen
+    const { cityName } = req.query;
     console.log("Received cityName:", cityName);
+    const uniqueId = uuidv4();
+    // Neue Stadt in DB speichern (falls nicht schon vorhanden)
+    await TopTravelModel.create({
+      uuid: uniqueId,
+      city: cityName,
+      hotels: [],
+      flag: false,
+    });
 
-    const newCityForDatabase = new TopTravelModel({ city: cityName });
-    await newCityForDatabase.save();
-    console.log(`city ${cityName} erfolgreich in DB gespeichert`);
-
-    const startDateFormatted = new Date().toISOString().split("T")[0]; // aktuelles Datum im Format "YYYY-MM-DD"
+    const startDateFormatted = new Date().toISOString().split("T")[0];
     const endDateFormatted = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
       .toISOString()
       .split("T")[0];
     const adults = 2;
 
-    // CityCode suchen
     const cityCode = cityNameToCode[cityName];
     if (!cityCode) {
       return res.status(400).json({ message: "Unbekannter Städtename" });
     }
-    const token = await getAccessToken(); // access token holen
 
-    // Anfrage an verschiedene Amadeus-Endpunkte
-    // später=>  Promiss all einbauen für abfrage von rating und geocode!!
-
+    const token = await getAccessToken();
     const hotelsbyCity = await fetchFromAmadeus(
       `/v1/reference-data/locations/hotels/by-city?cityCode=${cityCode}`,
       token
-    ); // alle Hotels by Citycode
+    );
 
-    const hotelIdList = hotelsbyCity.data.map((hotel) => ({
-      hotelIds: hotel.hotelId, // holt aus Amadeus-Anfrage Nr. 1 alle HotelIds für die spätere Verwendung (=> 2.Anfrage fuer Offers)
-    }));
+    const hotelIdList = hotelsbyCity.data.map((hotel) => hotel.hotelId);
     console.log("hotelIdList-Length", hotelIdList.length);
 
-    ///
     let newCountList = 0;
     const newHotelIdList = [...hotelIdList];
+
     while (newHotelIdList.length > 0) {
-      // Schneide die nächsten 10 Hotel-IDs aus dem Array heraus
-      const batch = newHotelIdList
-        .splice(0, 50)
-        .map((h) => h.hotelIds)
-        .join(",");
+      const batch = newHotelIdList.splice(0, 50).join(",");
       console.log("Frage Hotel-IDs an:", batch);
 
       const result = await fetchFromAmadeus(
@@ -111,49 +105,33 @@ router.get("/getHotelNamesbyCitycode", async (req, res) => {
         token
       );
 
-      if (
-        result &&
-        result.data &&
-        Array.isArray(result.data) &&
-        result.data.length > 0
-      ) {
-        // Nur Hotels mit available: true speichern (optional, je nach API-Response)
-        const availableHotels = result.data.filter(
-          (hotel) => hotel.available === true
-        );
+      if (result?.data?.length > 0) {
+        const availableHotels = result.data.filter((h) => h.available === true);
+
         if (availableHotels.length > 0) {
           await TopTravelModel.findOneAndUpdate(
-            { city: cityName },
+            { uuid: uniqueId },
             { $addToSet: { hotels: { $each: availableHotels } } }
           );
+
           newCountList += availableHotels.length;
-          console.log(
-            `${availableHotels.length} Angebote in Mongo DB gespeichert`
-          );
-          /*
-          // Optional: Abbruch nach 4 gefundenen Hotels
+          console.log(`${availableHotels.length} Angebote gespeichert`);
+
           if (newCountList >= 4) {
-            await TopTravelModel.findOneAndUpdate({ flag: true });
-            console.log("4 Angebote gefunden");
+            console.log("4 Angebote gefunden → Abbruch");
             break;
           }
-          */
         }
       }
-      // Wenn keine weiteren Hotels mehr übrig sind, flag setzen
-      if (newHotelIdList.length === 0) {
-        await TopTravelModel.findOneAndUpdate(
-          { city: cityName },
-          { flag: true }
-        );
-        console.log("Liste fertig, keine weiteren Angebote verfügbar");
-        break;
-      }
     }
+
+    // Hier EINMAL zurückgeben
+    res.json({ uniqueId, hotelCount: newCountList });
+    console.log("newCountList (final):", newCountList);
   } catch (error) {
     console.error("Error fetching hotel data:", error);
+    res.status(500).json({ message: "Serverfehler" });
   }
-  console.log("Anfrage beendet");
 });
 
 // 2. Endpunkt:
@@ -204,29 +182,24 @@ router.get("/status/:cityName", async (req, res) => {
 // 3. Ednpunkt:
 // Anfrage an MongoDB und Rückgabe der Hotels ins Frontend
 
-router.get("/hotels", async (req, res) => {
-  // const { limit } = req.query;
-  // const { count } = req.query;
-  const { cityName } = req.query;
-
-  // console.log("limit:", limit);
-  // console.log("uuid:", uuid);
-  // console.log("Count:", count);
+router.get("/top-travel-hotels", async (req, res) => {
   try {
-    // const countNum = count ? parseInt(count, 10) : null;
-    // const limitNum = limit ? parseInt(limit, 10) : null;
+    const { uuid } = req.query;
 
-    // console.log("Parsed count:", countNum);
+    if (!uuid) {
+      return res.status(400).json({ message: "UUID ist erforderlich" });
+    }
 
-    const eintrag = await TopTravelModel.findOne({ city: cityName }).exec();
+    const eintrag = await TopTravelModel.findOne({ uuid }).exec();
+
     if (eintrag && Array.isArray(eintrag.hotels)) {
       res.json(eintrag.hotels);
     } else {
-      res.status(404).json({ message: "No hotels found for this city" });
+      res.status(404).json({ message: "Keine Hotels für diese UUID gefunden" });
     }
   } catch (error) {
-    res.status(500).json({ message: error.message });
-    return;
+    console.error("Fehler beim Abrufen der Hotels:", error);
+    res.status(500).json({ message: "Serverfehler" });
   }
 });
 ///

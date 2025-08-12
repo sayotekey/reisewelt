@@ -113,6 +113,7 @@ const TopTravelDestinations = () => {
   const [children, setChildren] = useState(0);
   const [dateRange, setDateRange] = useState([null, null]); // State for date range
   const [startDate, endDate] = dateRange;
+  const [uuid, setUuid] = useState(null);
 
   const toggleCard = (index) => {
     setActiveIndex((prev) => (prev === index ? null : index));
@@ -152,13 +153,24 @@ const TopTravelDestinations = () => {
     setError(null);
 
     try {
-      const urlForGetHotelNames = `http://localhost:3000/api/amadeus/getHotelNamesbyCitycode?cityName=${city}`;
+      const countUrl = `http://localhost:3000/api/amadeus/getHotelCount?cityName=${city}`;
       console.log("aktuelle City hotelName-Anfrage", city);
-      const response = await axios.get(urlForGetHotelNames);
-      console.log(`API Antwort für ${city}:`, response);
+      const countResponse = await axios.get(countUrl);
+      console.log(`API Antwort für ${city}:`, countResponse.data); // Number
 
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // künstliche Ladezeit
-      setHotels(response.data || []);
+      // await new Promise((resolve) => setTimeout(resolve, 1000));
+      const { uniqueId, hotelCount } = countResponse.data;
+      setUuid(uniqueId);
+
+      if (Number(hotelCount) > 0) {
+        const urlForGetHotelNames = `http://localhost:3000/api/amadeus/top-travel-hotels?uuid=${uniqueId}`;
+        const hotelResponse = await axios.get(urlForGetHotelNames);
+        console.log("Hotel-Daten:", hotelResponse.data);
+
+        setHotels(hotelResponse.data || []);
+      } else {
+        setHotels([]);
+      }
     } catch (err) {
       console.error(err);
       setError("Fehler beim Laden der Hotels");
@@ -381,81 +393,87 @@ const TopTravelDestinations = () => {
               )}
 
               <div className="space-y-4">
-                {hotels.map((hotel, index) => (
-                  <div
-                    key={hotel.id || index}
-                    className="pb-3 p-3 rounded cursor-pointer transition-colors relative"
-                    style={{
-                      borderBottom: "1px solid var(--border-color)",
-                      backgroundColor: "var(--bg-secondary)",
-                      border: "1px solid var(--border-color)",
-                    }}
-                    // onMouseEnter={(e) => {
-                    //   e.target.style.backgroundColor = "var(--accent-color)";
-                    //   e.target.style.color = "white";
-                    // }}
-                    // onMouseLeave={(e) => {
-                    //   e.target.style.backgroundColor = "var(--bg-secondary)";
-                    //   e.target.style.color = "var(--text-color)";
-                    // }}
-                    onClick={() => toggleCard(index)}
-                  >
-                    <h5
-                      className="font-semibold"
-                      style={{ color: "var(--text-color)" }}
-                    >
-                      {hotel.hotel?.name || "Hotelname nicht verfügbar"}
-                    </h5>
-                    <p
-                      className="text-sm"
-                      style={{ color: "var(--text-light)" }}
-                    >
-                      {hotel.cityName}
-                    </p>
-                    {hotel.offers && hotel.offers[0] && (
-                      <div
-                        className="text-sm mt-1"
-                        style={{ color: "var(--accent-color)" }}
-                      >
-                        {t("topTravel.from") || "Ab"}{" "}
-                        {hotel.offers[0].price?.total}{" "}
-                        {hotel.offers[0].price?.currency}
-                      </div>
-                    )}
-                    {hotel.hotel?.rating && (
-                      <div
-                        className="text-sm mt-1"
-                        style={{ color: "var(--accent-hover)" }}
-                      >
-                        {hotel.hotel.rating} {t("topTravel.stars") || "Sterne"}
-                      </div>
-                    )}
+                {hotels.flat().map((hotelWrapper, index) => {
+                  const hotel = hotelWrapper.hotel;
+                  if (!hotel) return null;
 
-                    {/* Dropdown-Bereich */}
+                  return (
                     <div
+                      key={hotel.id || index}
+                      className="pb-3 p-3 rounded cursor-pointer transition-colors relative"
                       style={{
-                        maxHeight: activeIndex === index ? "500px" : "0",
-                        overflow: "hidden",
-                        transition: "max-height 0.8s ease-in",
+                        borderBottom: "1px solid var(--border-color)",
+                        backgroundColor: "var(--bg-secondary)",
+                        border: "1px solid var(--border-color)",
                       }}
+                      // onMouseEnter={(e) => {
+                      //   e.target.style.backgroundColor = "var(--accent-color)";
+                      //   e.target.style.color = "white";
+                      // }}
+                      // onMouseLeave={(e) => {
+                      //   e.target.style.backgroundColor = "var(--bg-secondary)";
+                      //   e.target.style.color = "var(--text-color)";
+                      // }}
+                      onClick={() => toggleCard(index)}
                     >
-                      {activeIndex === index && (
-                        <div className="mt-3 p-2 border-t border-gray-300">
-                          <p style={{ color: "var(--text-color)" }}>
-                            {hotel.description ||
-                              "Keine Beschreibung verfügbar."}
-                          </p>
-                          <p style={{ color: "var(--text-light)" }}>
-                            Weitere Hotelinfos hier...
-                          </p>
-                          <button className="text-white rounded px-3 py-1 bg-orange-500 cursor-pointer mt-2 hover:bg-amber-400 hover:text-black absolute bottom-1 right-2">
-                            Angebote anzeigen
-                          </button>
+                      <h5
+                        className="font-semibold"
+                        style={{ color: "var(--text-color)" }}
+                      >
+                        {hotel.name || "Hotelname nicht verfügbar"}
+                      </h5>
+                      <p
+                        className="text-sm"
+                        style={{ color: "var(--text-light)" }}
+                      >
+                        {hotel.cityName}
+                      </p>
+                      {hotel.offers && hotel.offers[0] && (
+                        <div
+                          className="text-sm mt-1"
+                          style={{ color: "var(--accent-color)" }}
+                        >
+                          {t("topTravel.from") || "Ab"}{" "}
+                          {hotel.offers[0].price?.total}{" "}
+                          {hotel.offers[0].price?.currency}
                         </div>
                       )}
+                      {hotel.hotel?.rating && (
+                        <div
+                          className="text-sm mt-1"
+                          style={{ color: "var(--accent-hover)" }}
+                        >
+                          {hotel.hotel.rating}{" "}
+                          {t("topTravel.stars") || "Sterne"}
+                        </div>
+                      )}
+
+                      {/* Dropdown-Bereich */}
+                      <div
+                        style={{
+                          maxHeight: activeIndex === index ? "500px" : "0",
+                          overflow: "hidden",
+                          transition: "max-height 0.8s ease-in",
+                        }}
+                      >
+                        {activeIndex === index && (
+                          <div className="mt-3 p-2 border-t border-gray-300">
+                            <p style={{ color: "var(--text-color)" }}>
+                              {hotel.description ||
+                                "Keine Beschreibung verfügbar."}
+                            </p>
+                            <p style={{ color: "var(--text-light)" }}>
+                              Weitere Hotelinfos hier...
+                            </p>
+                            <button className="text-white rounded px-3 py-1 bg-orange-500 cursor-pointer mt-2 hover:bg-amber-400 hover:text-black absolute bottom-1 right-2">
+                              Angebote anzeigen
+                            </button>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
               <button
                 className="rounded bg-orange-500 mt-4 p-2 w-full cursor-pointer"
