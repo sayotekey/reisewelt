@@ -43,9 +43,12 @@ export async function fetchFromAmadeus(endpoint, accessToken) {
     });
     return response.data;
   } catch (error) {
-    console.log("Error fetching data from Amadeus", error.data.errors);
+    // console.log("Error fetching data from Amadeus", error.data.errors);
 
-    // console.error('Error fetching data from Amadeus:', error.response ? error.response.data : error.message);
+    console.log(
+      "Error fetching data from Amadeus:",
+      error.response?.data?.errors || error.response?.data || error.message
+    );
     return null; // fängt den Fehler ab und gibt null zurück, wenn ein Fehler auftritt, axios wirft einen Fehler, wenn die Anfrage fehlschlägt und bricht leider sonst ab
     // mit "null" wird nichts zurückgegeben, das kann später für die Offer-Validierung im Backend benutzt werden
   }

@@ -3,6 +3,7 @@ const validCityNames = {
     Berlin: "BER",
     Düsseldorf: "DUS",
     Frankfurt: "FRA",
+    Hamburg: "HAM",
     Köln: "CGN",
     Leipzig: "LEJ",
     München: "MUC",

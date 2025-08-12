@@ -110,17 +110,21 @@ const HeaderComponent = () => {
               className="flex items-center space-x-2 group transition-colors duration-200"
               style={{ textDecoration: "none" }}
               onMouseEnter={(e) => {
-                e.target.querySelector("h3").style.background =
-                  "linear-gradient(to right, #ea580c, #ef4444)";
-                e.target.querySelector("h3").style.webkitBackgroundClip =
-                  "text";
-                e.target.querySelector("h3").style.webkitTextFillColor =
-                  "transparent";
+                const h3 = e.currentTarget.querySelector("h3");
+                if (h3) {
+                  h3.style.background =
+                    "linear-gradient(to right, #ea580c, #ef4444)";
+                  h3.style.backgroundClip = "text";
+                  h3.style.webkitTextFillColor = "transparent";
+                }
               }}
               onMouseLeave={(e) => {
-                e.target.querySelector("h3").style.background = "";
-                e.target.querySelector("h3").style.webkitBackgroundClip = "";
-                e.target.querySelector("h3").style.webkitTextFillColor = "";
+                const h3 = e.currentTarget.querySelector("h3");
+                if (h3) {
+                  h3.style.background = "";
+                  h3.style.backgroundClip = "";
+                  h3.style.webkitTextFillColor = "";
+                }
               }}
             >
               <img

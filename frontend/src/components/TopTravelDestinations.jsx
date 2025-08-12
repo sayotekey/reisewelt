@@ -3,7 +3,8 @@ import axios from "axios";
 import MapComponent from "./MapComponent.jsx";
 import { useTheme } from "../context/ThemeContext";
 import { useTranslate } from "../locales/index.js";
-
+import { useNavigate } from "react-router-dom";
+import validCityNames from "../utils/validCityNames.js";
 
 // Animationsstile hinzufügen
 const fadeInStyle = `
@@ -58,31 +59,43 @@ if (typeof document !== "undefined") {
 }
 
 // Struktur: Land → Städte (aktualisiert entsprechend der Amadeus API)
+/*
 const countriesCities = {
+  Belgien: ["Antwerpen", "Brüssel"],
+  Dänemark: ["Kopenhagen"],
   Deutschland: [
     "Berlin",
-    "Hamburg",
-    "München",
-    "Köln",
-    "Frankfurt",
     "Düsseldorf",
+    "Frankfurt",
+    "Hamburg",
+    "Köln",
     "Leipzig",
+    "München",
     "Stuttgart",
   ],
-  Österreich: ["Wien", "Salzburg", "Graz", "Innsbruck"],
-  Schweiz: ["Zürich", "Genf"],
-  Frankreich: ["Paris", "Lyon", "Marseille", "Nizza", "Toulouse"],
-  Italien: ["Rom", "Bologna"],
-  Spanien: ["Madrid", "Barcelona", "Sevilla", "Valencia", "Palma"],
-  Portugal: ["Lissabon", "Porto"],
-  Niederlande: ["Amsterdam"],
-  Belgien: ["Brüssel", "Antwerpen"],
+  Frankreich: ["Lyon", "Marseille", "Nizza", "Paris", "Toulouse"],
+  Italien: ["Bologna", "Mailand_Malpensa", "Mailand_Linate", "Pisa", "Rom"],
   Irland: ["Dublin"],
-  Schottland: ["Edinburgh"],
-  Dänemark: ["Kopenhagen"],
+  Niederlande: ["Amsterdam"],
   Norwegen: ["Oslo"],
+  Österreich: ["Graz", "Innsbruck", "Klagenfurt", "Linz", "Salzburg", "Wien"],
+  Portugal: ["Lissabon", "Porto"],
+  Schottland: [" Aberdeen", "Dundee", "Edinburgh", "Glasgow", "Inverness"],
   Schweden: ["Stockholm"],
+  Schweiz: ["Genf", "Zürich"],
+  Spanien: [
+    "Algeciras",
+    "Barcelona",
+    "Coruna",
+    "Granada",
+    "Madrid",
+    " Malaga_Costa_del_Sol",
+    "Palma",
+    "Sevilla",
+    "Valencia",
+  ],
 };
+*/
 
 const TopTravelDestinations = () => {
   const { isDark } = useTheme();
@@ -92,21 +105,80 @@ const TopTravelDestinations = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const { t } = useTranslate();
+  const navigate = useNavigate();
+  // const [expanded, setExpanded] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(null);
+  const [myCity, setMyCity] = useState(""); // State for my city (von wo ?)
+  const [adults, setAdults] = useState(2);
+  const [children, setChildren] = useState(0);
+  const [dateRange, setDateRange] = useState([null, null]); // State for date range
+  const [startDate, endDate] = dateRange;
+  const [uuid, setUuid] = useState(null);
+
+  const toggleCard = (index) => {
+    setActiveIndex((prev) => (prev === index ? null : index));
+  };
 
   // Städte des ausgewählten Landes anzeigen
   const handleCountryClick = (country) => {
     setActiveCountry(country);
     setSelectedCity(null); // Ausgewählte Stadt zurücksetzen
     setHotels([]); // Hotels leeren
-    setError(null);
+    // setError(null);
   };
 
+  // Städte-Liste direkt aus validCityNames
+  const countriesCities = Object.fromEntries(
+    Object.entries(validCityNames).map(([country, cities]) => [
+      country,
+      Object.keys(cities),
+    ])
+  );
+
   // Hotels für die ausgewählte Stadt laden
-  const fetchHotelsByCity = async (city) => {
+  /*   const fetchHotelsByCity = async (city) => {
     setLoading(true);
     setError(null);
-    setSelectedCity(city);
+    setSelectedCity(city); 
+    */
 
+  const fetchHotelsByCity = async (city) => {
+    // Sonderfall Hamburg
+    if (city === "Hamburg") {
+      navigate("/hamburg-hotels");
+      return;
+    }
+    setSelectedCity(city);
+    setLoading(true);
+    setError(null);
+
+    try {
+      const countUrl = `http://localhost:3000/api/amadeus/getHotelCount?cityName=${city}`;
+      console.log("aktuelle City hotelName-Anfrage", city);
+      const countResponse = await axios.get(countUrl);
+      console.log(`API Antwort für ${city}:`, countResponse.data); // Number
+
+      // await new Promise((resolve) => setTimeout(resolve, 1000));
+      const { uniqueId, hotelCount } = countResponse.data;
+      setUuid(uniqueId);
+
+      if (Number(hotelCount) > 0) {
+        const urlForGetHotelNames = `http://localhost:3000/api/amadeus/top-travel-hotels?uuid=${uniqueId}`;
+        const hotelResponse = await axios.get(urlForGetHotelNames);
+        console.log("Hotel-Daten:", hotelResponse.data);
+
+        setHotels(hotelResponse.data || []);
+      } else {
+        setHotels([]);
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Fehler beim Laden der Hotels");
+    } finally {
+      setLoading(false);
+    }
+
+    /*
     try {
       console.log(`Lade Hotels für Stadt: ${city}`);
       const url = `http://localhost:3000/api/amadeus/combined?cityName=${city}`;
@@ -140,7 +212,7 @@ const TopTravelDestinations = () => {
       setHotels([]);
     } finally {
       setLoading(false);
-    }
+    }*/
   };
 
   return (
@@ -157,7 +229,9 @@ const TopTravelDestinations = () => {
           style={{ color: "var(--text-color)" }}
         >
           {t("topTravel.title") || "Top Reiseziele"} –{" "}
-          <span style={{ color: "var(--accent-color)" }}>{t("topTravel.subtitle") || "Europa"}</span>{" "}
+          <span style={{ color: "var(--accent-color)" }}>
+            {t("topTravel.subtitle") || "Europa"}
+          </span>{" "}
           {t("topTravel.dreamVacation") || "Traumurlaub"}
         </h2>
 
@@ -191,13 +265,15 @@ const TopTravelDestinations = () => {
                 className="text-xl font-semibold mb-2 opacity-70 animate-custom-pulse"
                 style={{ color: "var(--text-color)" }}
               >
-                {t("topTravel.pleaseSelectCountry") || "Bitte wähle ein Land"}
+                {t("topTravel.pleaseSelectCountry") ||
+                  "Bitte wählen Sie ein Land"}
               </h4>
               <p
                 className="text-sm opacity-60"
                 style={{ color: "var(--text-light)" }}
               >
-                {t("topTravel.clickCountryToSee") || "Klicken Sie auf ein Land oben, um Städte zu sehen"}
+                {t("topTravel.clickCountryToSee") ||
+                  "Klicken Sie oben auf ein Land, um Städte zu sehen"}
               </p>
               <div className="mt-8 text-6xl opacity-30 animate-slow-bounce">
                 🌍
@@ -249,7 +325,8 @@ const TopTravelDestinations = () => {
                   e.target.style.color = "var(--text-light)";
                 }}
               >
-                  {t("topTravel.backToCities") || "← Zurück zu Städten in"} {activeCountry}
+                {t("topTravel.backToCities") || "← Zurück zu Städten in"}{" "}
+                {activeCountry}
               </button>
             </div>
           )}
@@ -279,7 +356,8 @@ const TopTravelDestinations = () => {
                     e.target.style.color = "var(--text-light)";
                   }}
                 >
-                  {t("topTravel.backToCities") || "← Zurück zu Städten in"} {activeCountry}
+                  {t("topTravel.backToCities") || "← Zurück zu Städten in"}{" "}
+                  {activeCountry}
                 </button>
               </div>
 
@@ -299,7 +377,8 @@ const TopTravelDestinations = () => {
                     className="text-sm mt-1"
                     style={{ color: "var(--text-light)" }}
                   >
-                    {t("topTravel.pleaseWait") || "Bitte warten Sie einen Moment"}
+                    {t("topTravel.pleaseWait") ||
+                      "Bitte warten Sie einen Moment"}
                   </p>
                 </div>
               )}
@@ -308,61 +387,151 @@ const TopTravelDestinations = () => {
 
               {!loading && !error && hotels.length === 0 && (
                 <p style={{ color: "var(--text-color)" }}>
-                  {t("topTravel.noHotelsFound") || "Keine Hotels in"} {selectedCity} gefunden.
+                  {t("topTravel.noHotelsFound") || "Keine Hotels in"}{" "}
+                  {selectedCity} gefunden.
                 </p>
               )}
 
               <div className="space-y-4">
-                {hotels.map((hotel, index) => (
-                  <div
-                    key={index}
-                    className="pb-3 p-3 rounded cursor-pointer transition-colors"
-                    style={{
-                      borderBottom: "1px solid var(--border-color)",
-                      backgroundColor: "var(--bg-secondary)",
-                      border: "1px solid var(--border-color)",
-                    }}
-                    onMouseEnter={(e) => {
-                      e.target.style.backgroundColor = "var(--accent-color)";
-                      e.target.style.color = "white";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.target.style.backgroundColor = "var(--bg-secondary)";
-                      e.target.style.color = "var(--text-color)";
-                    }}
-                  >
-                    <h5
-                      className="font-semibold"
-                      style={{ color: "var(--text-color)" }}
+                {hotels.flat().map((hotelWrapper, index) => {
+                  const hotel = hotelWrapper.hotel;
+                  if (!hotel) return null;
+
+                  return (
+                    <div
+                      key={hotel.id || index}
+                      className="pb-3 p-3 rounded cursor-pointer transition-colors relative"
+                      style={{
+                        borderBottom: "1px solid var(--border-color)",
+                        backgroundColor: "var(--bg-secondary)",
+                        border: "1px solid var(--border-color)",
+                      }}
+                      // onMouseEnter={(e) => {
+                      //   e.target.style.backgroundColor = "var(--accent-color)";
+                      //   e.target.style.color = "white";
+                      // }}
+                      // onMouseLeave={(e) => {
+                      //   e.target.style.backgroundColor = "var(--bg-secondary)";
+                      //   e.target.style.color = "var(--text-color)";
+                      // }}
+                      onClick={() => toggleCard(index)}
                     >
-                      {hotel.hotel?.name || "Hotelname nicht verfügbar"}
-                    </h5>
-                    <p
-                      className="text-sm"
-                      style={{ color: "var(--text-light)" }}
-                    >
-                      {hotel.cityName}
-                    </p>
-                    {hotel.offers && hotel.offers[0] && (
-                      <div
-                        className="text-sm mt-1"
-                        style={{ color: "var(--accent-color)" }}
+                      <h5
+                        className="font-semibold"
+                        style={{ color: "var(--text-color)" }}
                       >
-                        {t("topTravel.from") || "Ab"} {hotel.offers[0].price?.total}{" "}
-                        {hotel.offers[0].price?.currency}
-                      </div>
-                    )}
-                    {hotel.hotel?.rating && (
-                      <div
-                        className="text-sm mt-1"
-                        style={{ color: "var(--accent-hover)" }}
+                        {hotel.name || "Hotelname nicht verfügbar"}
+                      </h5>
+                      <p
+                        className="text-sm"
+                        style={{ color: "var(--text-light)" }}
                       >
-                        {hotel.hotel.rating} {t("topTravel.stars") || "Sterne"}
+                        {hotel.cityName}
+                      </p>
+                      {hotel.offers && hotel.offers[0] && (
+                        <div
+                          className="text-sm mt-1"
+                          style={{ color: "var(--accent-color)" }}
+                        >
+                          {t("topTravel.from") || "Ab"}{" "}
+                          {hotel.offers[0].price?.total}{" "}
+                          {hotel.offers[0].price?.currency}
+                        </div>
+                      )}
+                      {hotel.hotel?.rating && (
+                        <div
+                          className="text-sm mt-1"
+                          style={{ color: "var(--accent-hover)" }}
+                        >
+                          {hotel.hotel.rating}{" "}
+                          {t("topTravel.stars") || "Sterne"}
+                        </div>
+                      )}
+
+                      {/* Dropdown-Bereich */}
+                      <div
+                        style={{
+                          maxHeight: activeIndex === index ? "500px" : "0",
+                          overflow: "hidden",
+                          transition: "max-height 0.8s ease-in",
+                        }}
+                      >
+                        {activeIndex === index && (
+                          <div className="mt-3 p-2 border-t border-gray-300">
+                            <p style={{ color: "var(--text-color)" }}>
+                              {hotel.description ||
+                                "Keine Beschreibung verfügbar."}
+                            </p>
+                            <p style={{ color: "var(--text-light)" }}>
+                              Weitere Hotelinfos hier...
+                            </p>
+                            <button className="text-white rounded px-3 py-1 bg-orange-500 cursor-pointer mt-2 hover:bg-amber-400 hover:text-black absolute bottom-1 right-2">
+                              Angebote anzeigen
+                            </button>
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
-                ))}
+                    </div>
+                  );
+                })}
               </div>
+              <button
+                className="rounded bg-orange-500 mt-4 p-2 w-full cursor-pointer"
+                onClick={async () => {
+                  // Neue Suchanfrage ggf. speichern
+                  const newSearch = {
+                    to: myCity,
+                    startDate: startDate.toISOString(),
+                    endDate: endDate.toISOString(),
+                    adults,
+                    children,
+                  };
+                  const previousSearches =
+                    JSON.parse(localStorage.getItem("lastSearches")) || [];
+                  const updatedSearches = [
+                    newSearch,
+                    ...previousSearches,
+                  ].slice(0, 4);
+                  localStorage.setItem(
+                    "lastSearches",
+                    JSON.stringify(updatedSearches)
+                  );
+                  // URL-Parameter vorbereiten
+                  const params = new URLSearchParams({
+                    startDate: startDate.toISOString(),
+                    endDate: endDate.toISOString(),
+                    adults: adults.toString(),
+                    children: children.toString(),
+                  });
+                  localStorage.setItem("SearchBarParams", params.toString());
+
+                  console.log("startDate:", startDate.toISOString()); // startDate: 2025-07-28T22:00:00.000Z
+                  console.log("endDate:", endDate.toISOString()); // endDate: 2025-07-29T22:00:00.000Z
+                  console.log("adults:", adults);
+                  console.log("children:", children);
+
+                  const lowerCity = myCity.toLowerCase();
+                  params.append("city", myCity);
+
+                  // Sonderfall Hamburg
+                  if (lowerCity === "hamburg") {
+                    // Kein Mock-Parameter
+                    window.location.href = `/hamburg-hotels?${params.toString()}`;
+                  } else {
+                    // mock immer setzen (leer oder mit Wert)
+                    const validMocks = ["berlin", "genf", "kopenhagen"];
+                    const mockValue = validMocks.includes(lowerCity)
+                      ? lowerCity
+                      : "";
+
+                    params.append("mock", encodeURIComponent(mockValue));
+
+                    window.location.href = `/hotel-results?${params.toString()}`;
+                  }
+                }}
+              >
+                alle Angebote für {selectedCity} anzeigen
+              </button>
             </div>
           )}
         </div>

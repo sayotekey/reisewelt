@@ -25,6 +25,7 @@ import HotelDetailPage from "./pages/HotelDetailPage.jsx";
 import { ThemeProvider } from "./context/ThemeContext.jsx"; // Theme context
 import { I18nProvider } from "./context/I18nContext.jsx"; //translation context
 import BookingFormPage from "./pages/BookingFormPage.jsx";
+import PaymentPage from "./pages/PaymentPage.jsx";
 
 function App() {
   return (
@@ -50,7 +51,7 @@ function App() {
               element={<FivehundredEuroDeals />}
             />
             <Route path="/hotel-results" element={<HotelResultsPage />} />
-            <Route path="/hotel/:id" element={<HotelDetailPage />} />
+            <Route path="/hotels/:id" element={<HotelDetailPage />} />
             {/* Legal pages */}
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/imprint" element={<Imprint />} />
@@ -58,6 +59,7 @@ function App() {
             <Route path="/cookies" element={<Cookies />} />
             <Route path="*" element={<ErrorPage />} />
             <Route path="/booking" element={<BookingFormPage />} /> 
+            <Route path="/payment" element={<PaymentPage />} />
           </Routes>
         </div>
         <FooterComponent />

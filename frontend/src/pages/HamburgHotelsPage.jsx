@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   FaMapMarkerAlt,
@@ -15,7 +15,9 @@ import {
   FaUtensils,
   FaBed,
 } from "react-icons/fa";
-import hotels from "../data/hotels";
+// import hotels from "../data/hotels";
+import { useFavorites } from "../context/FavoritesContext";
+import { useTheme } from "../context/ThemeContext.jsx";
 
 const HamburgHotelsPage = () => {
   const location = useLocation();
@@ -25,6 +27,46 @@ const HamburgHotelsPage = () => {
   const endDateParam = searchParams.get("endDate");
   const adultsParam = searchParams.get("adults");
   const childrenParam = searchParams.get("children");
+  const { toggleFavorite, isFavorite } = useFavorites();
+  const [loadingId, setLoadingId] = useState(null);
+  const [hotels, setHotels] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    // Funktion zum Laden der Hotels
+    const fetchHotels = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch("http://localhost:3000/api/hotels");
+        if (!response.ok) {
+          throw new Error("Fehler beim Laden der Hotels");
+        }
+        const data = await response.json();
+        console.log("Hotels from API:", data); 
+        setHotels(data);
+        setError(null);
+      } catch (err) {
+        console.error("Error loading hotels:", err);
+        setError(err.message);
+        // Fallback на локальные данные при ошибке
+        try {
+          const { default: localHotels } = await import("../data/hotels");
+          setHotels(localHotels);
+          setError(null);
+        } catch (localErr) {
+          console.error("Error loading local hotels:", localErr);
+          setError("Fehler beim Laden der Hotels");
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchHotels();
+  }, []);
+
+  const { isDark } = useTheme();
 
   const [filters, setFilters] = useState({
     priceRange: "all",
@@ -141,16 +183,48 @@ const HamburgHotelsPage = () => {
     });
   };
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="text-xl text-gray-600">Lädt Hotels...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="text-xl text-red-600">Fehler: {error}</div>
+      </div>
+    );
+  }
+
   return (
-    <div className="pt-15">
-      <div className="flex flex-col lg:flex-row p-4 gap-6 bg-gray-50 min-h-screen">
+    <div className={`pt-15 ${isDark ? "bg-[#242424]" : "bg-gray-50"}`}>
+      <div
+        className={`flex flex-col lg:flex-row p-4 gap-6 min-h-screen ${
+          isDark ? "bg-[#242424]" : "bg-gray-50"
+        }`}
+      >
         {/* Filter */}
-        <aside className="w-full lg:w-1/4 bg-white p-6 rounded-lg shadow-md h-fit">
+        <aside
+          className={`w-full lg:w-1/4 p-6 rounded-lg shadow-md h-fit ${
+            isDark ? "bg-[#232323] text-white" : "bg-white"
+          }`}
+        >
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-gray-600">Filter</h2>
+            <h2
+              className={`text-2xl font-bold ${
+                isDark ? "text-gray-200" : "text-gray-600"
+              }`}
+            >
+              Filter
+            </h2>
             <button
               onClick={resetFilters}
-              className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+              className={`text-blue-600 hover:text-blue-800 text-sm font-medium ${
+                isDark ? "text-blue-400 hover:text-blue-200" : ""
+              }`}
             >
               Zurücksetzen
             </button>
@@ -167,7 +241,12 @@ const HamburgHotelsPage = () => {
                 onChange={(e) =>
                   handleFilterChange("priceRange", e.target.value)
                 }
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-300"
+                className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-300
+                ${
+                  isDark
+                    ? "bg-[#232323] text-white border-gray-700"
+                    : "border-gray-300"
+                }`}
               >
                 <option value="all">Alle Preise</option>
                 <option value="under300">Unter 300€</option>
@@ -184,7 +263,12 @@ const HamburgHotelsPage = () => {
               <select
                 value={filters.stars}
                 onChange={(e) => handleFilterChange("stars", e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+                ${
+                  isDark
+                    ? "bg-[#232323] text-white border-gray-700"
+                    : "border-gray-300"
+                }`}
               >
                 <option value="all">Alle Sterne</option>
                 <option value="3">3 Sterne</option>
@@ -201,7 +285,12 @@ const HamburgHotelsPage = () => {
               <select
                 value={filters.rating}
                 onChange={(e) => handleFilterChange("rating", e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+                ${
+                  isDark
+                    ? "bg-[#232323] text-white border-gray-700"
+                    : "border-gray-300"
+                }`}
               >
                 <option value="all">Alle Bewertungen</option>
                 <option value="above80">Ab 80%</option>
@@ -218,7 +307,12 @@ const HamburgHotelsPage = () => {
               <select
                 value={filters.district}
                 onChange={(e) => handleFilterChange("district", e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+                ${
+                  isDark
+                    ? "bg-[#232323] text-white border-gray-700"
+                    : "border-gray-300"
+                }`}
               >
                 <option value="all">Alle Stadtteile</option>
                 <option value="Altstadt">Altstadt</option>
@@ -240,7 +334,12 @@ const HamburgHotelsPage = () => {
                 onChange={(e) =>
                   handleFilterChange("breakfast", e.target.value)
                 }
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+                ${
+                  isDark
+                    ? "bg-[#232323] text-white border-gray-700"
+                    : "border-gray-300"
+                }`}
               >
                 <option value="all">Alle Optionen</option>
                 <option value="Frühstück">Frühstück</option>
@@ -257,7 +356,12 @@ const HamburgHotelsPage = () => {
               <select
                 value={filters.roomType}
                 onChange={(e) => handleFilterChange("roomType", e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+                ${
+                  isDark
+                    ? "bg-[#232323] text-white border-gray-700"
+                    : "border-gray-300"
+                }`}
               >
                 <option value="all">Alle Zimmertypen</option>
                 <option value="Economy">Economy</option>
@@ -325,7 +429,9 @@ const HamburgHotelsPage = () => {
                 ].map((filter) => (
                   <label
                     key={filter.key}
-                    className="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors"
+                    className={`flex items-center space-x-3 cursor-pointer p-2 rounded-lg transition-colors ${
+                      isDark ? "hover:bg-[#232323]" : "hover:bg-gray-50"
+                    }`}
                   >
                     <input
                       type="checkbox"
@@ -336,7 +442,11 @@ const HamburgHotelsPage = () => {
                       className="appearance-none w-4 h-4 border-2 border-orange-400 rounded checked:bg-blue-400 checked:border-blue-200 focus:ring-blue-500"
                     />
                     {filter.icon}
-                    <span className="text-gray-600">{filter.label}</span>
+                    <span
+                      className={isDark ? "text-gray-200" : "text-gray-600"}
+                    >
+                      {filter.label}
+                    </span>
                   </label>
                 ))}
               </div>
@@ -350,7 +460,12 @@ const HamburgHotelsPage = () => {
               <select
                 value={filters.sortBy}
                 onChange={(e) => handleFilterChange("sortBy", e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+                ${
+                  isDark
+                    ? "bg-[#232323] text-white border-gray-700"
+                    : "border-gray-300"
+                }`}
               >
                 <option value="rating">Bewertung (höchste zuerst)</option>
                 <option value="price_low">Preis (niedrigste zuerst)</option>
@@ -363,11 +478,19 @@ const HamburgHotelsPage = () => {
 
         {/* Ergebnisse */}
         <section className="w-full lg:w-3/4">
-          <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-            <h1 className="text-3xl font-bold text-gray-600 mb-2">
+          <div
+            className={`rounded-lg shadow-md p-6 mb-6 ${
+              isDark ? "bg-[#232323] text-white" : "bg-white"
+            }`}
+          >
+            <h1
+              className={`text-3xl font-bold mb-2 ${
+                isDark ? "text-gray-200" : "text-gray-600"
+              }`}
+            >
               Hotels in Hamburg
             </h1>
-            <p className="text-gray-600">
+            <p className={isDark ? "text-gray-300" : "text-gray-600"}>
               {filteredHotels.length} von {hotels.length} Hotels gefunden
             </p>
           </div>
@@ -401,6 +524,22 @@ const HamburgHotelsPage = () => {
                 from
               )} bis ${formatDate(to)}`;
 
+              // Hinzufügen/Entfernen von Favoriten hinzu
+              const hotelId = hotel.id || hotel._id;
+
+              const handleToggleFavorite = async (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setLoadingId(hotelId);
+                try {
+                  await toggleFavorite(hotel);
+                } catch (error) {
+                  console.error("Fehler beim Umschalten der Favoriten:", error);
+                } finally {
+                  setLoadingId(null);
+                }
+              };
+
               // Preis
               const calculatePrice = () => {
                 if (startDate && endDate && hotel.priceValue) {
@@ -412,11 +551,16 @@ const HamburgHotelsPage = () => {
 
               return (
                 <div
-                  key={hotel.id}
-                  className="flex flex-col md:flex-row bg-white shadow-lg rounded-xl overflow-hidden hover:shadow-2xl transition-all duration-300 border border-gray-100"
+                  key={hotelId}
+                  className={`flex flex-col md:flex-row shadow-lg rounded-xl overflow-hidden hover:shadow-2xl transition-all duration-300 border
+                    ${
+                      isDark
+                        ? "bg-[#232323] border-gray-700"
+                        : "bg-white border-gray-100"
+                    }`}
                 >
                   <Link
-                    to={`/hotel/${hotel.id}${
+                    to={`/hotels/${hotel._id}${
                       startDateParam && endDateParam
                         ? `?startDate=${startDateParam}&endDate=${endDateParam}${
                             adultsParam ? `&adults=${adultsParam}` : ""
@@ -425,14 +569,51 @@ const HamburgHotelsPage = () => {
                     }`}
                     className="flex flex-col md:flex-row flex-1"
                   >
-                    <div className="w-full md:w-[320px] h-[250px] md:h-[220px] overflow-hidden rounded-lg ml-4 mt-4">
+                    <div className="w-full md:w-[320px] h-[250px] md:h-[220px] overflow-hidden rounded-lg ml-4 mt-4 relative">
                       <img
                         src={hotel.image}
                         alt={hotel.name}
                         className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
                       />
+                      {/* Merkzettel Button */}
+                      <button
+                        className={`absolute top-2 right-2 bg-white border ${
+                          isFavorite(hotelId)
+                            ? "border-gray-300 text-red-500"
+                            : "border-gray-300 text-gray-700"
+                        } cursor-pointer transition-all duration-200 hover:scale-110 p-2 rounded-lg shadow-lg`}
+                        title={
+                          isFavorite(hotelId)
+                            ? "Aus Favoriten entfernen"
+                            : "Zu Favoriten hinzufügen"
+                        }
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          toggleFavorite(hotel);
+                        }}
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill={isFavorite(hotelId) ? "#ef4444" : "none"}
+                          viewBox="0 0 24 24"
+                          strokeWidth={1.5}
+                          stroke="currentColor"
+                          className="w-5 h-5"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"
+                          />
+                        </svg>
+                      </button>
                     </div>
-                    <div className="p-8 flex flex-col justify-between flex-1 ml-4">
+                    <div
+                      className={`p-8 flex flex-col justify-between flex-1 ml-4 ${
+                        isDark ? "text-white" : ""
+                      }`}
+                    >
                       <div>
                         <div className="flex items-center justify-between mb-2">
                           <h3 className="text-xl font-bold text-gray-700">
@@ -455,7 +636,11 @@ const HamburgHotelsPage = () => {
                           <FaThumbsUp className="text-blue-400 mr-2" />
                           {hotel.rating} positive Bewertungen
                         </p>
-                        <p className="text-sm text-gray-500 mb-3">
+                        <p
+                          className={`text-sm mb-3 ${
+                            isDark ? "text-gray-400" : "text-gray-500"
+                          }`}
+                        >
                           {dateRange}
                         </p>
                         <div className="flex flex-wrap gap-2 mb-3">
@@ -468,7 +653,11 @@ const HamburgHotelsPage = () => {
                             </span>
                           ))}
                         </div>
-                        <p className="text-sm text-gray-600 flex items-center">
+                        <p
+                          className={`text-sm flex items-center ${
+                            isDark ? "text-gray-300" : "text-gray-600"
+                          }`}
+                        >
                           <FaBed className="text-gray-500 mr-2" />
                           {hotel.roomType} •
                           <FaUtensils className="text-gray-500 mx-2" />
@@ -478,31 +667,88 @@ const HamburgHotelsPage = () => {
                       <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
                         <div className="flex flex-wrap gap-3">
                           {hotel.parking && (
-                            <div className="flex items-center text-blue-400 border bg-white border-amber-500 px-3 py-1 rounded-full">
+                            <div
+                              className={`flex items-center text-blue-400 border px-3 py-1 rounded-full
+      ${
+        isDark ? "bg-[#232323] border-amber-700" : "bg-white border-amber-500"
+      }`}
+                            >
                               <FaCar className="mr-1" />
-                              <span className="text-sm font-medium">
+                              <span
+                                className={`text-sm font-medium ${
+                                  isDark ? "text-gray-200" : ""
+                                }`}
+                              >
                                 Parkplatz
                               </span>
                             </div>
                           )}
                           {hotel.petFriendly && (
-                            <div className="flex items-center text-blue-400 border bg-white border-amber-500 px-3 py-1 rounded-full">
+                            <div
+                              className={`flex items-center text-blue-400 border px-3 py-1 rounded-full
+      ${
+        isDark ? "bg-[#232323] border-amber-700" : "bg-white border-amber-500"
+      }`}
+                            >
                               <FaDog className="mr-1" />
-                              <span className="text-sm font-medium">
+                              <span
+                                className={`text-sm font-medium ${
+                                  isDark ? "text-gray-200" : ""
+                                }`}
+                              >
                                 Haustierfreundlich
                               </span>
                             </div>
                           )}
+                          {hotel.businessCenter && (
+                            <div
+                              className={`flex items-center text-blue-400 border px-3 py-1 rounded-full
+      ${
+        isDark ? "bg-[#232323] border-amber-700" : "bg-white border-amber-500"
+      }`}
+                            >
+                              <FaBuilding className="mr-1" />
+                              <span
+                                className={`text-sm font-medium ${
+                                  isDark ? "text-gray-200" : ""
+                                }`}
+                              >
+                                Business Center
+                              </span>
+                            </div>
+                          )}
                           {hotel.pool && (
-                            <div className="flex items-center text-blue-400 border bg-white border-amber-500 px-3 py-1 rounded-full">
+                            <div
+                              className={`flex items-center text-blue-400 border px-3 py-1 rounded-full
+      ${
+        isDark ? "bg-[#232323] border-amber-700" : "bg-white border-amber-500"
+      }`}
+                            >
                               <FaSwimmingPool className="mr-1" />
-                              <span className="text-sm font-medium">Pool</span>
+                              <span
+                                className={`text-sm font-medium ${
+                                  isDark ? "text-gray-200" : ""
+                                }`}
+                              >
+                                Pool
+                              </span>
                             </div>
                           )}
                           {hotel.wifi && (
-                            <div className="flex items-center text-blue-400 border bg-white border-amber-500 px-3 py-1 rounded-full">
+                            <div
+                              className={`flex items-center text-blue-400 border px-3 py-1 rounded-full
+      ${
+        isDark ? "bg-[#232323] border-amber-700" : "bg-white border-amber-500"
+      }`}
+                            >
                               <FaWifi className="mr-1" />
-                              <span className="text-sm font-medium">WLAN</span>
+                              <span
+                                className={`text-sm font-medium ${
+                                  isDark ? "text-gray-200" : ""
+                                }`}
+                              >
+                                WLAN
+                              </span>
                             </div>
                           )}
                         </div>
@@ -516,10 +762,14 @@ const HamburgHotelsPage = () => {
                               e.stopPropagation();
                               const params = new URLSearchParams();
                               params.append("hotelId", hotel.id);
-                              if (startDateParam) params.append("startDate", startDateParam);
-                              if (endDateParam) params.append("endDate", endDateParam);
-                              if (adultsParam) params.append("adults", adultsParam);
-                              if (childrenParam) params.append("children", childrenParam);
+                              if (startDateParam)
+                                params.append("startDate", startDateParam);
+                              if (endDateParam)
+                                params.append("endDate", endDateParam);
+                              if (adultsParam)
+                                params.append("adults", adultsParam);
+                              if (childrenParam)
+                                params.append("children", childrenParam);
                               navigate(`/booking?${params.toString()}`);
                             }}
                             className="mt-2 px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-400 transition-colors font-medium shadow-md hover:shadow-lg"
@@ -534,10 +784,13 @@ const HamburgHotelsPage = () => {
               );
             })}
           </div>
-
           {filteredHotels.length === 0 && (
-            <div className="text-center py-12 bg-white rounded-lg shadow-md">
-              <p className="text-gray-500 text-lg">
+            <div
+              className={`text-center py-12 rounded-lg shadow-md ${
+                isDark ? "bg-[#232323] text-gray-300" : "bg-white"
+              }`}
+            >
+              <p className="text-lg">
                 Keine Hotels gefunden. Versuchen Sie andere Filter.
               </p>
             </div>
