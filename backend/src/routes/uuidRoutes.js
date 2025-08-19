@@ -71,7 +71,7 @@ router.get("/generate", async (req, res) => {
 
   // Feste UUIDs für Mocking  in MongoDB
   const mockUuidsByCity = {
-    nizza: "bb18da18-6e0a-4915-ad78-716d66dbca21",
+    nizza: "54d3652f-639b-4429-ad58-c58fc65bc48c",
     berlin: "63bb4692-2d23-4aa1-b20b-7286df7c7596",
     //   genf: "4b310ba6-e3d2-4726-83f1-ac2631954b02",
     //   kopenhagen: "9b9b3d97-76d0-43eb-a3d8-820942871cc3",

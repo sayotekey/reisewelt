@@ -559,7 +559,7 @@ export default function SearchForm() {
               window.location.href = `/hamburg-hotels?${params.toString()}`;
             } else {
               // mock immer setzen (leer oder mit Wert)
-              const validMocks = ["berlin", "genf", "kopenhagen"];
+              const validMocks = ["berlin", "genf", "kopenhagen", "nizza"];
               const mockValue = validMocks.includes(lowerCity) ? lowerCity : "";
 
               params.append("mock", encodeURIComponent(mockValue));
