@@ -25,7 +25,8 @@ const ChangePasswordForm = () => {
     try {
       // Sende die Anfrage zum Ändern des Passworts
       const res = await axios.post(
-        "/api/users/change-password",
+        // "/api/users/change-password",
+        `${import.meta.env.VITE_BACKEND_API_URL}api/users/change-password`,
         { oldPassword, newPassword },
         {
           headers: {
@@ -46,7 +47,10 @@ const ChangePasswordForm = () => {
   return (
     <div className="mb-6">
       <h2 className="text-xl font-semibold mb-4">Ändern Sie Ihr Passwort</h2>
-      <form onSubmit={handleSubmit} className="border p-4 space-y-4 change-password-form rounded-md shadow-2xl w-3/4">
+      <form
+        onSubmit={handleSubmit}
+        className="border p-4 space-y-4 change-password-form rounded-md shadow-2xl w-3/4"
+      >
         <div>
           <label className="block mb-2">Altes Passwort</label>
           <div className="flex items-center border-2 border-gray-300 rounded-xl px-3 py-2 w-full">
@@ -186,15 +190,15 @@ const ChangePasswordForm = () => {
           type="submit"
           className=" px-4 py-2 rounded-md mt-2"
           style={{
-              backgroundColor: "var(--accent-color)",
-              color: "white",
-            }}
-            onMouseEnter={(e) => {
-              e.target.style.backgroundColor = "var(--accent-hover)";
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.backgroundColor = "var(--accent-color)";
-            }}
+            backgroundColor: "var(--accent-color)",
+            color: "white",
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.backgroundColor = "var(--accent-hover)";
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.backgroundColor = "var(--accent-color)";
+          }}
         >
           Passwort ändern
         </button>

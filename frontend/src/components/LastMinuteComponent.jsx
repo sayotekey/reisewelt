@@ -2,8 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslate } from "../locales/index.js";
 import beachFivehundredDeals from "../images/beach-fivehundred-deals.jpg";
-import LuggageLastMinute from "../images/luggage-last-minute.jpg";
-import LuggageLastMinute2 from "../images/luggage-last-minute2.png";
+import LuggageLastMinute from "../images/luggage-last-minute2.png";
 
 const LastMinuteComponent = () => {
   const navigate = useNavigate();
@@ -21,7 +20,7 @@ const LastMinuteComponent = () => {
           onClick={() => navigate("/lastminute-deals")}
         >
           <img
-            src={LuggageLastMinute2}
+            src={LuggageLastMinute}
             alt="Reisekoffer mit Aufklebern"
             className="w-full h-72 object-cover group-hover:scale-105 transition-transform duration-300"
           />

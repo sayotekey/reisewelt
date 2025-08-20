@@ -34,7 +34,8 @@ const AddReviewForm = ({ tripId, onReviewAdded }) => {
 
     try {
       await axios.post(
-        `/api/reviews`,
+        // `/api/reviews`,
+        `${import.meta.env.VITE_BACKEND_API_URL}/api/reviews`,
         { rating, text: comment },
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
@@ -54,7 +55,10 @@ const AddReviewForm = ({ tripId, onReviewAdded }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="border p-4 space-y-4 review-form shadow-2xl">
+    <form
+      onSubmit={handleSubmit}
+      className="border p-4 space-y-4 review-form shadow-2xl"
+    >
       {/* Bewertungsauswahl */}
       <div>
         <label className="block font-medium"> Bewertung: </label>
@@ -76,17 +80,17 @@ const AddReviewForm = ({ tripId, onReviewAdded }) => {
       <button
         type="submit"
         disabled={loading} // blockieren des Buttons während des Ladens
-         className= "px-4 py-2 rounded-md"
-         style={{
-              backgroundColor: "var(--accent-color)",
-              color: "white",
-            }}
-            onMouseEnter={(e) => {
-              e.target.style.backgroundColor = "var(--accent-hover)";
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.backgroundColor = "var(--accent-color)";
-            }}
+        className="px-4 py-2 rounded-md"
+        style={{
+          backgroundColor: "var(--accent-color)",
+          color: "white",
+        }}
+        onMouseEnter={(e) => {
+          e.target.style.backgroundColor = "var(--accent-hover)";
+        }}
+        onMouseLeave={(e) => {
+          e.target.style.backgroundColor = "var(--accent-color)";
+        }}
       >
         {loading ? "Wird gesendet..." : "Bewertung absenden"}
       </button>

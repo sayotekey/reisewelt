@@ -142,7 +142,8 @@ const MiniSearchbar = () => {
       setHotels([]); // optional: clear previous hotels
       setLoading(true); // <-- Spinner sichtbar machen
       const response = await axios.get(
-        "http://localhost:3000/api/uuid/generate",
+        // "http://localhost:3000/api/uuid/generate",
+        `${import.meta.env.VITE_BACKEND_API_URL}api/uuid/generate`,
         {
           params: {
             //zum backend schicken
@@ -161,7 +162,10 @@ const MiniSearchbar = () => {
       // 2. Endpunkt: Abfrage der Anzahl der Hotels, die unter dieser UUID gespeichert sind
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      const url = `http://localhost:3000/api/uuid/status/${myUuid}`;
+      // const url = `http://localhost:3000/api/uuid/status/${myUuid}`;
+      const url = `${
+        import.meta.env.VITE_BACKEND_API_URL
+      }api/uuid/status/${myUuid}`;
       const hotelCountResponse = await axios.get(url);
       const countRaw = hotelCountResponse.data.count; // {"count":3 }
       let flag = hotelCountResponse.data.flag; // false?
@@ -182,7 +186,10 @@ const MiniSearchbar = () => {
         if (newCount > allHotels.length) {
           //3. endpunkt
           const hotelLength = allHotels.length;
-          const urlHotel = "http://localhost:3000/api/uuid/hotels";
+          // const urlHotel = "http://localhost:3000/api/uuid/hotels";
+          const urlHotel = `${
+            import.meta.env.VITE_BACKEND_API_URL
+          }api/uuid/hotels`;
           const hotelResponse = await axios.get(urlHotel, {
             params: {
               uuid: myUuid,

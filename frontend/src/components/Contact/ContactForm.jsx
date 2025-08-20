@@ -35,7 +35,11 @@ const ContactForm = () => {
       setErrorMessage("");
 
       try {
-        await axios.post("http://localhost:3000/api/contact", formData);
+        // await axios.post("http://localhost:3000/api/contact", formData);
+        await axios.post(
+          `${import.meta.env.VITE_BACKEND_API_URL}api/contact`,
+          formData
+        );
         setSuccessMessage("Kontaktformular erfolgreich gesendet");
         setFormData({
           name: "",
@@ -55,7 +59,7 @@ const ContactForm = () => {
   // definiere gradient für Hintergrund des Kontaktformulars
   const formGradients = {
     light: "linear-gradient(135deg, #a8d5e2 0%, #b0e2f0a9 50%, #a8d5e2 100%)",
-    dark:  "#575859", // dark gradient 5b838e
+    dark: "#575859", // dark gradient 5b838e
   };
 
   return (

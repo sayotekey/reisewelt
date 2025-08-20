@@ -15,7 +15,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
-app.use(cors({ origin: "https://dein-frontend.onrender.com" }));
+app.use(cors({ origin: "https://reisewelt-frontend.onrender.com/" }));
 app.use(express.json());
 
 // Routes

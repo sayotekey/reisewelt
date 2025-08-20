@@ -31,7 +31,10 @@ const FavoriteHotels = ({ user, onUpdate }) => {
       const token =
         localStorage.getItem("token") || localStorage.getItem("authToken");
       await axios.delete(
-        `http://localhost:5000/api/user/favoriteHotels/${hotelId}`,
+        // `http://localhost:5000/api/user/favoriteHotels/${hotelId}`,
+        `${
+          import.meta.env.VITE_BACKEND_API_URL
+        }api/user/favoriteHotels/${hotelId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }

@@ -22,7 +22,8 @@ const PersonalDaten = ({ user, onUserUpdate }) => {
     try {
       setLoading(true);
       const response = await axios.patch(
-        "http://localhost:3000/api/users/profile",
+        // "http://localhost:3000/api/users/profile",
+        `${import.meta.env.VITE_BACKEND_API_URL}api/users/profile`,
         {
           name,
           email,
