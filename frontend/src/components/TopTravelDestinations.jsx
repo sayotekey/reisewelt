@@ -153,7 +153,10 @@ const TopTravelDestinations = () => {
     setError(null);
 
     try {
-      const countUrl = `http://localhost:3000/api/amadeus/getHotelCount?cityName=${city}`;
+      // const countUrl = `http://localhost:3000/api/amadeus/getHotelCount?cityName=${city}`;
+      const countUrl = `${
+        import.meta.env.VITE_BACKEND_API_URL
+      }api/amadeus/getHotelCount?cityName=${city}`;
       console.log("aktuelle City hotelName-Anfrage", city);
       const countResponse = await axios.get(countUrl);
       console.log(`API Antwort für ${city}:`, countResponse.data); // Number
@@ -163,7 +166,10 @@ const TopTravelDestinations = () => {
       setUuid(uniqueId);
 
       if (Number(hotelCount) > 0) {
-        const urlForGetHotelNames = `http://localhost:3000/api/amadeus/top-travel-hotels?uuid=${uniqueId}`;
+        // const urlForGetHotelNames = `http://localhost:3000/api/amadeus/top-travel-hotels?uuid=${uniqueId}`;
+        const urlForGetHotelNames = `${
+          import.meta.env.VITE_BACKEND_API_URL
+        }api/amadeus/top-travel-hotels?uuid=${uniqueId}`;
         const hotelResponse = await axios.get(urlForGetHotelNames);
         console.log("Hotel-Daten:", hotelResponse.data);
 
