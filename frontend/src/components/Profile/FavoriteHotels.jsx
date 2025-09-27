@@ -24,7 +24,7 @@ const FavoriteHotels = ({ user, onUpdate }) => {
     fetchFavorites();
   }, []);
 
-  // Eine Reise aus den Merkzettel entfernen
+  // Eine Reise aus dem Merkzettel entfernen
   const removeFavorite = async (hotelId) => {
     setLoading(true);
     try {

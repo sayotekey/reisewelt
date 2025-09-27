@@ -1,18 +1,19 @@
 import { useState } from "react";
 import axios from "axios";
-import { useTheme } from "../context/ThemeContext"; 
+import { useTheme } from "../context/ThemeContext";
 const ForgotPasswordPage = () => {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
-  const { isDark } = useTheme(); 
+  const { isDark } = useTheme();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/users/forgot-password",
+        // "http://localhost:3000/api/users/forgot-password",
+        `${import.meta.env.VITE_BACKEND_API_URL}api/users/forgot-password`,
         {
           email,
         }

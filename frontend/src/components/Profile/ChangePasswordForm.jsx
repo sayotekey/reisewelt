@@ -25,8 +25,7 @@ const ChangePasswordForm = () => {
     try {
       // Sende die Anfrage zum Ändern des Passworts
       const res = await axios.post(
-        // "/api/users/change-password",
-        `${import.meta.env.VITE_BACKEND_API_URL}api/users/change-password`,
+        "/api/users/change-password",
         { oldPassword, newPassword },
         {
           headers: {

@@ -238,7 +238,8 @@ const HotelResultsPage = () => {
           console.log("alle Daten valide – weiter mit uuid/generate");
 
           const response = await axios.get(
-            "http://localhost:3000/api/uuid/generate",
+            // "http://localhost:3000/api/uuid/generate",
+            `${import.meta.env.VITE_BACKEND_API_URL}api/uuid/generate`,
             {
               params: {
                 cityName: myCity,
@@ -259,7 +260,10 @@ const HotelResultsPage = () => {
           // 2. Endpunkt: Abfrage der Anzahl der Hotels, die unter dieser UUID gespeichert sind
           await new Promise((resolve) => setTimeout(resolve, 1000));
 
-          const url = `http://localhost:3000/api/uuid/status/${myUuid}`;
+          // const url = `http://localhost:3000/api/uuid/status/${myUuid}`;
+          const url = `${
+            import.meta.env.VITE_BACKEND_API_URL
+          }api/uuid/status/${myUuid}`;
           const hotelCountResponse = await axios.get(url);
           const countRaw = hotelCountResponse.data.count; // {"count":3 }
           let flag = hotelCountResponse.data.flag; // false
@@ -293,7 +297,10 @@ const HotelResultsPage = () => {
               flag = retryResponse.data.flag;
               ///
               if (newCount > allHotels.length) {
-                const urlHotel = "http://localhost:3000/api/uuid/hotels";
+                // const urlHotel = "http://localhost:3000/api/uuid/hotels";
+                const urlHotel = `${
+                  import.meta.env.VITE_BACKEND_API_URL
+                }api/uuid/hotels`;
                 const hotelResponse = await axios.get(urlHotel, {
                   params: {
                     uuid: myUuid,
@@ -344,7 +351,10 @@ const HotelResultsPage = () => {
               flag = retryResponse.data.flag;
               ///
               if (newCount > allHotels.length) {
-                const urlHotel = "http://localhost:3000/api/uuid/hotels";
+                // const urlHotel = "http://localhost:3000/api/uuid/hotels";
+                const urlHotel = `${
+                  import.meta.env.VITE_BACKEND_API_URL
+                }api/uuid/hotels`;
                 const hotelResponse = await axios.get(urlHotel, {
                   params: {
                     uuid: myUuid,

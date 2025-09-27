@@ -43,7 +43,8 @@ const HotelDetailPage = () => {
     const fetchHotel = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/hotels/hotel/${id}`
+          // `http://localhost:3000/api/hotels/hotel/${id}`
+          `${import.meta.env.VITE_BACKEND_API_URL}api/hotels/hotel/${id}`
         );
         setHotelData(response.data);
         setMainImage(response.data.image);

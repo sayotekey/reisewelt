@@ -32,10 +32,15 @@ const ResetPasswordPage = () => {
     }
 
     try {
-      await axios.post("http://localhost:3000/api/users/reset-password", {
-        token,
-        newPassword: formData.password,
-      });
+      await axios.post(
+        // "http://localhost:3000/api/users/reset-password",
+        `${import.meta.env.VITE_BACKEND_API_URL}api/users/reset-password`,
+
+        {
+          token,
+          newPassword: formData.password,
+        }
+      );
 
       setMessage("Passwort erfolgreich zurückgesetzt.");
       setError("");

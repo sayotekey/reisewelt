@@ -12,7 +12,8 @@ const SingleNews = () => {
   //Wenn die Seite geladen ist - gehen Sie zum Server, holen Sie die gewünschten Nachrichten und zeigen Sie sie.
   useEffect(() => {
     axios
-      .get(`http://localhost:3000/api/news/${id}`)
+      // .get(`http://localhost:3000/api/news/${id}`)
+      .get(`${import.meta.env.VITE_BACKEND_API_URL}api/news/${id}`)
       .then((res) => {
         setNews(res.data);
         setLoading(false);
@@ -43,7 +44,10 @@ const SingleNews = () => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <Link to="/news" className="text-blue-200 hover:underline mb-4 inline-block">
+      <Link
+        to="/news"
+        className="text-blue-200 hover:underline mb-4 inline-block"
+      >
         ← Zurück zu den Nachrichten
       </Link>
 

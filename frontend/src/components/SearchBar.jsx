@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 // import { useNavigate } from "react-router-dom";
 import DatePicker from "react-datepicker";
 import { AnimatePresence } from "framer-motion";
-import { motion } from "framer-motion";
+import { motion } from "framer-motion"; // Dein Import ist richtig.ist ein Fehlalarm von Linter
 import {
   FaCalendarAlt,
   FaMapMarkerAlt,

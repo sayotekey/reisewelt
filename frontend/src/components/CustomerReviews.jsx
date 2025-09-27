@@ -17,8 +17,7 @@ export default function CustomerReviews() {
   const { t } = useTranslate();
 
   useEffect(() => {
-    // fetch("/api/reviews")
-    fetch(`${import.meta.env.VITE_BACKEND_API_URL}/api/reviews`)
+    fetch("/api/reviews")
       .then((res) => res.json())
       .then((data) => setReviews(data))
       .catch(console.error);
@@ -45,18 +44,14 @@ export default function CustomerReviews() {
     e.preventDefault();
     const token = localStorage.getItem("token");
     try {
-      // const res = await fetch("/api/reviews", {
-      const res = await fetch(
-        `${import.meta.env.VITE_BACKEND_API_URL}/api/reviews`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ text, rating }),
-        }
-      );
+      const res = await fetch("/api/reviews", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ text, rating }),
+      });
 
       if (res.status === 401) {
         localStorage.removeItem("token");

@@ -12,7 +12,10 @@ const AllNews = () => {
     const fetchNews = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/news?language=${currentLanguage}`
+          // `http://localhost:3000/api/news?language=${currentLanguage}`
+          `${
+            import.meta.env.VITE_BACKEND_API_URL
+          }api/news?language=${currentLanguage}`
         );
         const sorted = response.data.sort(
           (a, b) => new Date(b.createdAt) - new Date(a.createdAt)

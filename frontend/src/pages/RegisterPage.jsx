@@ -50,7 +50,8 @@ const RegisterPage = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/users/register",
+        // "http://localhost:3000/api/users/register",
+        `${import.meta.env.VITE_BACKEND_API_URL}api/users/register`,
         {
           name: formData.name,
           email: formData.email,
@@ -58,7 +59,7 @@ const RegisterPage = () => {
         }
       );
 
-      // console.log("Registrierung erfolgreich:", response.data);
+      console.log("Registrierung erfolgreich:", response.data);
       // alert("Registrierung erfolgreich! Bitte loggen Sie sich ein.");
 
       // toast.success("Registrierung erfolgreich! Bitte loggen Sie sich ein.", {

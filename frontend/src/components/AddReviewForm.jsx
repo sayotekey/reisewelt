@@ -34,8 +34,7 @@ const AddReviewForm = ({ tripId, onReviewAdded }) => {
 
     try {
       await axios.post(
-        // `/api/reviews`,
-        `${import.meta.env.VITE_BACKEND_API_URL}/api/reviews`,
+        `/api/reviews`,
         { rating, text: comment },
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
