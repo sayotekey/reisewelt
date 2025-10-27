@@ -15,12 +15,24 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
+// Configure CORS - allow a list of origins from env or fallback to known dev/prod origins
+const allowedOrigins = (process.env.ALLOWED_ORIGINS &&
+  process.env.ALLOWED_ORIGINS.split(",")) || [
+  "https://reisewelt-frontend.onrender.com",
+  "https://reisewelt-zeta.vercel.app",
+  "http://localhost:5173",
+];
+
 app.use(
   cors({
-    origin: [
-      "https://reisewelt-frontend.onrender.com",
-      "http://localhost:5173",
-    ],
+    origin: function (origin, callback) {
+      // allow requests with no origin like mobile apps or curl
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.indexOf(origin) !== -1) {
+        return callback(null, true);
+      }
+      return callback(new Error("CORS policy: Origin not allowed"), false);
+    },
     credentials: true,
   })
 );
