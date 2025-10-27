@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-import Review from "../models/reviewModel.js"; 
+import Review from "../models/reviewModel.js";
 dotenv.config();
 
 const reviews = [
@@ -48,10 +48,9 @@ const reviews = [
   },
 ];
 
-
 const seedReviews = async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_URL);
+    await mongoose.connect(process.env.MONGODB_URI);
     await Review.deleteMany();
     await Review.insertMany(reviews);
     console.log(" rewiews loaded!");
@@ -63,6 +62,5 @@ const seedReviews = async () => {
 };
 
 seedReviews();
-
 
 //node src/services/reviewsSeed.js
