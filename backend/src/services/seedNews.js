@@ -1,15 +1,13 @@
 // scripts/seedNews.js
-import mongoose from 'mongoose';
-import dotenv from 'dotenv';
-import News from '../models/newsModel.js';
-import { fetchCityImage } from './utils/fetchCityImage.js';
-import path from 'path'; 
-import { fileURLToPath } from 'url';
-
-
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+import News from "../models/newsModel.js";
+import { fetchCityImage } from "./utils/fetchCityImage.js";
+import path from "path";
+import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+dotenv.config({ path: path.resolve(__dirname, "../../.env") });
 
 if (!process.env.PEXELS_API_KEY) {
   console.error(" Fehler: PEXELS_API_KEY nicht definiert in .env-Datei.");
@@ -24,15 +22,22 @@ if (!process.env.PEXELS_API_KEY) {
 } */
 
 const cities = [
-  "Berlin", "Paris", "Rom", "Amsterdam", "Wien",
-  "Madrid", "Prag", "Lissabon", "Kopenhagen", "Brüssel"
+  "Berlin",
+  "Paris",
+  "Rom",
+  "Amsterdam",
+  "Wien",
+  "Madrid",
+  "Prag",
+  "Lissabon",
+  "Kopenhagen",
+  "Brüssel",
 ];
 
 // Beispielhafte Überschriften und Beschreibungen
 
 // default language is German
-const language = process.argv[2] || 'de'; 
-
+const language = process.argv[2] || "de";
 
 const headlines = {
   de: [
@@ -45,7 +50,7 @@ const headlines = {
     "Nachhaltiger Tourismus boomt in",
     "Sommerprogramm in",
     "Neue Fahrradwege geplant in",
-    "Kunstszene wächst stark in"
+    "Kunstszene wächst stark in",
   ],
   en: [
     "New boutique hotel opens in",
@@ -57,8 +62,8 @@ const headlines = {
     "Sustainable tourism booms in",
     "Summer program in",
     "New bike paths planned in",
-    "Art scene grows strongly in"
-  ]
+    "Art scene grows strongly in",
+  ],
 };
 
 const descriptions = {
@@ -72,7 +77,7 @@ const descriptions = {
     "Lokale Unternehmen profitieren vom starken Reiseverkehr.",
     "Neue Events und Attraktionen ziehen immer mehr Besucher an.",
     "Städtereisen liegen weiterhin voll im Trend.",
-    "Die Stadt wird für ihre Nachhaltigkeitsstrategie gelobt."
+    "Die Stadt wird für ihre Nachhaltigkeitsstrategie gelobt.",
   ],
   en: [
     "The city is experiencing a tourism boom with new offerings.",
@@ -84,29 +89,43 @@ const descriptions = {
     "Local businesses benefit from strong travel traffic.",
     "New events and attractions attract more and more visitors.",
     "City breaks continue to be a major trend.",
-    "The city is praised for its sustainability strategy."
-  ]
+    "The city is praised for its sustainability strategy.",
+  ],
 };
 
 const contentTemplates = {
   de: {
-    paragraph1: (city) => `Die Tourismusbranche in ${city} erlebt eine spannende Zeit. Experten sehen positive Entwicklungen für das kommende Jahr.`,
-    paragraph2: (city) => `Lokale Behörden investieren in Infrastruktur und kulturelle Veranstaltungen. Reisende können sich auf ein vielfältiges Angebot freuen.`,
-    paragraph3: () => `Einwohner begrüßen die Veränderungen, betonen jedoch auch die Bedeutung von nachhaltiger Planung.`,
-    paragraph4: () => `Die Region bietet zahlreiche Freizeitmöglichkeiten: von Stadtführungen bis hin zu kulinarischen Touren.`,
-    paragraph5: () => `Besucher können kulturelle Highlights wie Museen, Theater und lokale Märkte entdecken.`,
-    paragraph6: (city) => `Die Behörden hoffen, dass sich ${city} langfristig als Top-Reiseziel in Europa etabliert.`,
-    mainText: (description, city) => `${description} ${city} ist bereit für neue Besucher.`
+    paragraph1: (city) =>
+      `Die Tourismusbranche in ${city} erlebt eine spannende Zeit. Experten sehen positive Entwicklungen für das kommende Jahr.`,
+    paragraph2: (city) =>
+      `Lokale Behörden investieren in Infrastruktur und kulturelle Veranstaltungen. Reisende können sich auf ein vielfältiges Angebot freuen.`,
+    paragraph3: () =>
+      `Einwohner begrüßen die Veränderungen, betonen jedoch auch die Bedeutung von nachhaltiger Planung.`,
+    paragraph4: () =>
+      `Die Region bietet zahlreiche Freizeitmöglichkeiten: von Stadtführungen bis hin zu kulinarischen Touren.`,
+    paragraph5: () =>
+      `Besucher können kulturelle Highlights wie Museen, Theater und lokale Märkte entdecken.`,
+    paragraph6: (city) =>
+      `Die Behörden hoffen, dass sich ${city} langfristig als Top-Reiseziel in Europa etabliert.`,
+    mainText: (description, city) =>
+      `${description} ${city} ist bereit für neue Besucher.`,
   },
   en: {
-    paragraph1: (city) => `The tourism industry in ${city} is experiencing an exciting time. Experts see positive developments for the coming year.`,
-    paragraph2: (city) => `Local authorities are investing in infrastructure and cultural events. Travelers can look forward to a diverse offering.`,
-    paragraph3: () => `Residents welcome the changes but also emphasize the importance of sustainable planning.`,
-    paragraph4: () => `The region offers numerous recreational opportunities: from city tours to culinary tours.`,
-    paragraph5: () => `Visitors can discover cultural highlights such as museums, theaters and local markets.`,
-    paragraph6: (city) => `Authorities hope that ${city} will establish itself as a top travel destination in Europe in the long term.`,
-    mainText: (description, city) => `${description} ${city} is ready for new visitors.`
-  }
+    paragraph1: (city) =>
+      `The tourism industry in ${city} is experiencing an exciting time. Experts see positive developments for the coming year.`,
+    paragraph2: (city) =>
+      `Local authorities are investing in infrastructure and cultural events. Travelers can look forward to a diverse offering.`,
+    paragraph3: () =>
+      `Residents welcome the changes but also emphasize the importance of sustainable planning.`,
+    paragraph4: () =>
+      `The region offers numerous recreational opportunities: from city tours to culinary tours.`,
+    paragraph5: () =>
+      `Visitors can discover cultural highlights such as museums, theaters and local markets.`,
+    paragraph6: (city) =>
+      `Authorities hope that ${city} will establish itself as a top travel destination in Europe in the long term.`,
+    mainText: (description, city) =>
+      `${description} ${city} is ready for new visitors.`,
+  },
 };
 
 // Funktion zur Generierung eines zufälligen Datums (letzte 30 Tage)
@@ -122,61 +141,74 @@ function randomDate() {
 
 //	 generateSeedData --- verwenden Sie die Wartezeit für Bilder
 async function generateSeedData() {
-/*   return await Promise.all(
+  /*   return await Promise.all(
     Array.from({ length: 10 }).map(async (_, i) => {
       const city = cities[i % cities.length];
       const headline = `${headlines[i % headlines.length]} ${city}`;
       const description = descriptions[i % descriptions.length];
       const image = await fetchCityImage(city) || "/images/fallback.jpg"; //direkt von API or fallback */
-const currentHeadlines = headlines[language];
-const currentDescriptions = descriptions[language];
-const currentContent = contentTemplates[language];
+  const currentHeadlines = headlines[language];
+  const currentDescriptions = descriptions[language];
+  const currentContent = contentTemplates[language];
 
-      return await Promise.all(
+  return await Promise.all(
     Array.from({ length: 10 }).map(async (_, i) => {
       const city = cities[i % cities.length];
-      const headline = `${currentHeadlines[i % currentHeadlines.length]} ${city}`;
+      const headline = `${
+        currentHeadlines[i % currentHeadlines.length]
+      } ${city}`;
       const description = currentDescriptions[i % currentDescriptions.length];
-      const image = await fetchCityImage(city) || "/images/fallback.jpg"; //direkt von API or fallback
+      const image = (await fetchCityImage(city)) || "/images/fallback.jpg"; //direkt von API or fallback
 
       return {
         title: headline,
         content: [
-          { type: "paragraph", text: currentContent.mainText(description, city) },
+          {
+            type: "paragraph",
+            text: currentContent.mainText(description, city),
+          },
           { type: "image", url: image },
           { type: "paragraph", text: currentContent.paragraph1(city) },
           { type: "paragraph", text: currentContent.paragraph2(city) },
           { type: "paragraph", text: currentContent.paragraph3() },
-          { type: "image", url: `https://picsum.photos/seed/${city.toLowerCase()}-extra-${i}/600/300` },
+          {
+            type: "image",
+            url: `https://picsum.photos/seed/${city.toLowerCase()}-extra-${i}/600/300`,
+          },
           { type: "paragraph", text: currentContent.paragraph4() },
           { type: "paragraph", text: currentContent.paragraph5() },
-          { type: "paragraph", text: currentContent.paragraph6(city) }
+          { type: "paragraph", text: currentContent.paragraph6(city) },
         ],
         image,
-        language: language, 
-        createdAt: randomDate()
+        language: language,
+        createdAt: randomDate(),
       };
     })
   );
 }
 
 // mongogo db connection and seeding
-mongoose.connect(process.env.MONGODB_URL)
+mongoose
+  .connect(process.env.MONGODB_URI)
   .then(async () => {
     const seedData = await generateSeedData();
-    
+
     // wenn die Sprache nicht Deutsch ist, löschen Sie die alten Nachrichten
-    if (language !== 'de') {
+    if (language !== "de") {
       await News.deleteMany({ language: language });
     } else {
       await News.deleteMany({}); // für Deutsch löschen wir alle alten Nachrichten
     }
-    
+
     await News.insertMany(seedData);
-    console.log(`10 новостей успешно добавлены на ${language === 'de' ? 'немецком' : 'английском'} языке`);
+    console.log(
+      `10 новостей успешно добавлены на ${
+        language === "de" ? "немецком" : "английском"
+      } языке`
+    );
     mongoose.disconnect();
   })
-  .catch(err => {
+  .catch((err) => {
     console.error("Ошибка при подключении к MongoDB:", err);
   });
 
@@ -185,6 +217,5 @@ mongoose.connect(process.env.MONGODB_URL)
 // node src/services/seedNews.js de      deutsch
 // node src/services/seedNews.js en      englisch
 
-
-  ///node src/services/seedNews.js BEFEHLEN, um die Nachrichten zu generieren und in die Datenbank zu schreiben 
-  //https://www.pexels.com/
+///node src/services/seedNews.js BEFEHLEN, um die Nachrichten zu generieren und in die Datenbank zu schreiben
+//https://www.pexels.com/
