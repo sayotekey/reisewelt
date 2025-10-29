@@ -63,7 +63,7 @@ app.use((req, res) => {
 // DB connection
 mongoose
   .connect(process.env.MONGODB_URI)
-  .then(async () => {
+  .then(() => {
     console.log("MongoDB connected");
 
     app.listen(PORT, () => {
