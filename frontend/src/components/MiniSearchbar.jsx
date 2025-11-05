@@ -31,9 +31,13 @@ const MiniSearchbar = () => {
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [dateRange, setDateRange] = useState([null, null]); // State for date range
   const [startDate, endDate] = dateRange;
+  // Prevent selecting past dates (start of today)
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
   const [loading, setLoading] = useState(false);
   const [showErrorInfo, setShowErrorInfo] = useState(false);
   const dropdownRef = useRef();
+  const datepickerRef = useRef(null);
   const navigate = useNavigate();
 
   const { t } = useTranslate();
@@ -120,17 +124,17 @@ const MiniSearchbar = () => {
   };
 
   const handleSearch = () => {
-    let valid = true;
     if (!myCity) {
       setCityError("Bitte einen Städtenamen eingeben.");
-      valid = false;
-    } else if (!validCities.includes(myCity)) {
-      setCityError("Ungültiger Städtename, bitte Eingabe überprüfen.");
-      valid = false;
-    } else {
-      setCityError("");
-      setShowSuggestions(false);
+      return false;
     }
+    if (!validCities.includes(myCity)) {
+      setCityError("Ungültiger Städtename, bitte Eingabe überprüfen.");
+      return false;
+    }
+    setCityError("");
+    setShowSuggestions(false);
+    return true;
   };
 
   // 1.Endpunkt für UUID
@@ -381,6 +385,13 @@ const MiniSearchbar = () => {
                   </label>
                   <div className="w-full">
                     <DatePicker
+                      ref={datepickerRef}
+                      onCalendarOpen={() =>
+                        datepickerRef.current &&
+                        typeof datepickerRef.current.setPreSelection ===
+                          "function" &&
+                        datepickerRef.current.setPreSelection(today)
+                      }
                       selectsRange
                       startDate={startDate}
                       endDate={endDate}
@@ -394,8 +405,9 @@ const MiniSearchbar = () => {
                       }
                       dateFormat="dd.MM.yyyy"
                       monthsShown={2}
+                      openToDate={today}
+                      minDate={today}
                       isClearable
-                      // selected={startDate}
                       selected={startDate}
                       customInput={
                         <input

@@ -48,6 +48,9 @@ export default function SearchForm() {
   const [showErrorInfo, setShowErrorInfo] = useState(false);
   // const navigate = useNavigate();
   const dropdownRef = useRef();
+  const datepickerRef = useRef(null);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
   // Daten aus localStorage holen
   // useEffect(() => {
@@ -351,6 +354,12 @@ export default function SearchForm() {
           </label>
           <div className="w-full">
             <DatePicker
+              ref={datepickerRef}
+              onCalendarOpen={() =>
+                datepickerRef.current &&
+                typeof datepickerRef.current.setPreSelection === "function" &&
+                datepickerRef.current.setPreSelection(today)
+              }
               selectsRange
               startDate={startDate}
               endDate={endDate}
@@ -362,6 +371,8 @@ export default function SearchForm() {
               placeholderText={t("search.selectDate") || "Datum auswählen"}
               dateFormat="dd.MM.yyyy"
               monthsShown={2}
+              openToDate={startDate || today}
+              minDate={today}
               isClearable
               customInput={
                 <input
