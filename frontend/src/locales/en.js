@@ -130,6 +130,7 @@ export const en = {
     register: "Register",
     forgotPassword: "Forgot Password",
     contactNewsletter: "Contact & Newsletter",
+    adressReisewelt: "Hamburg, Germany",
     subscribeNewsletter: "Subscribe to newsletter",
     yourEmail: "Your email",
     allRightsReserved: "All rights reserved.",

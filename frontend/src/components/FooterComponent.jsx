@@ -287,7 +287,9 @@ const FooterComponent = () => {
                     clipRule="evenodd"
                   />
                 </svg>
-                <span>Hamburg, Deutschland</span>
+                <span>
+                  {t("footer.adressReisewelt") || "Hamburg, Deutschland"}
+                </span>
               </div>
               <div className="footer-contact-item flex items-center space-x-2 text-sm">
                 <svg
