@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { FavoritesContext } from "./favoritesShared";
+import { FavoritesContext } from "./FavoritesShared.jsx";
 
 export const FavoritesProvider = ({ children }) => {
   const [favorites, setFavorites] = useState([]);
