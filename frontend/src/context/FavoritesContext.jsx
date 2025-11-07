@@ -22,10 +22,6 @@ export const FavoritesProvider = ({ children }) => {
     fetchFavorites();
   }, []);
 
-  // useEffect(() => {
-  //   console.log("Favorites loaded:", favorites);
-  // }, [favorites]);
-
   // Funktion zum Überprüfen, ob ein Hotel Favorit ist
   const isFavorite = (hotelId) =>
     favorites?.some((hotel) => hotel._id === hotelId || hotel.id === hotelId);
