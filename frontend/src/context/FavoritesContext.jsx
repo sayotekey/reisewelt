@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { FavoritesContext } from "./favoritesShared.jsx";
+import { FavoritesContext } from "./favoritesShared";
 
 export const FavoritesProvider = ({ children }) => {
   const [favorites, setFavorites] = useState([]);
@@ -20,10 +20,6 @@ export const FavoritesProvider = ({ children }) => {
   useEffect(() => {
     fetchFavorites();
   }, []);
-
-  // useEffect(() => {
-  //   console.log("Favorites loaded:", favorites);
-  // }, [favorites]);
 
   // Funktion zum Überprüfen, ob ein Hotel Favorit ist
   const isFavorite = (hotelId) =>
