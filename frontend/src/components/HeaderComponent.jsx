@@ -18,11 +18,11 @@ import {
 } from "react-icons/fa6";
 
 const languages = [
-  { value: "de", img: germany, label: "German" },
+  { value: "de", img: germany, label: "Deutsch" },
   { value: "en", img: unitedStates, label: "English" },
   { value: "uk", img: ukraine, label: "Ukrainian" },
   { value: "fr", img: france, label: "French" },
-  { value: "tr", img: turkey, label: "Turkish" },
+  { value: "tr", img: turkey, label: "Turkce" },
 ];
 
 const currencyIcons = [
@@ -104,7 +104,8 @@ const HeaderComponent = () => {
       <div className="w-full px-6 sm:px-8 lg:px-12">
         <div className="flex items-center justify-between h-18">
           {/* Logo */}
-          <div className="flex-shrink-0">
+          {/* <div className="flex-shrink-0"> */}
+          <div className="shrink-0">
             <NavLink
               to="/"
               className="flex items-center space-x-2 group transition-colors duration-200"
@@ -135,7 +136,7 @@ const HeaderComponent = () => {
                   e.target.style.display = "none";
                 }}
               />
-              <h3 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-red-500">
+              <h3 className="text-2xl font-bold text-transparent bg-clip-text bg-linear-to-r from-orange-600 to-red-500">
                 Reisewelt
               </h3>
             </NavLink>

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { I18nContext } from "./i18nStore.jsx";
+import { I18nContext } from "./I18nStore.jsx";
 export const I18nProvider = ({ children }) => {
   const [currentLanguage, setCurrentLanguage] = useState("de"); //default ist deutsch
 
