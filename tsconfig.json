@@ -1,0 +1,8 @@
+﻿{
+  "compilerOptions": {
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx"
+  },
+  "include": ["frontend/src", "frontend/vite.config.*"]
+}
